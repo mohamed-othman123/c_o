@@ -1,0 +1,22 @@
+trigger: none
+
+pool: 'Suez Canal Ubuntu 24'
+
+resources:
+  repositories:
+    - repository: Pipeline-Templates
+      type: git
+      name: Pipelines-Templates/Pipeline-Templates
+      ref: SonarTemp
+
+stages:
+  - stage: SonarQubeAnalysis
+    displayName: 'SonarQube Analysis'
+    jobs:
+      - job: RunSonarQube
+        steps:
+          - template: SonarQube/sonar-scanner.yaml@Pipeline-Templates
+            parameters:
+              projectKey: 'corporate_corp-web-monorepo_09bbc5f0-2fc4-497d-9087-82286ebbabf1'
+              projectName: 'ebanking-portal'
+              sourcesDir: '.'

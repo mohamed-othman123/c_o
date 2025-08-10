@@ -1,0 +1,23 @@
+# Add files here to ignore them from prettier formatting
+/dist
+/coverage
+/.nx/cache
+/.nx/workspace-data
+.angular
+.husky
+/node_modules
+
+.eslintignore
+.prettierignore
+
+Dockerfile
+pipelines/
+
+
+# ignore lock files
+/*-lock.yaml
+
+#ignore project assets
+/apps/ebanking-portal/public/icons
+/apps/ebanking-portal/public/*.svg
+/apps/ebanking-portal/public/*.png

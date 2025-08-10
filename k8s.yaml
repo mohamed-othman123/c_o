@@ -1,0 +1,72 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ebanking-portal
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ebanking-portal
+  template:
+    metadata:
+      labels:
+        app: ebanking-portal
+    spec:
+      containers:
+        - name: ebanking-portal
+          image: DOCKER_IMAGE
+          resources:
+            requests:
+              memory: 70Mi
+              cpu: 50m
+            limits:
+              memory: 70Mi
+              cpu: 50m
+          ports:
+            - containerPort: 8080
+          volumeMounts:
+            - name: fe-cm-ebanking
+              mountPath: /usr/share/nginx/html/config/
+      volumes:
+        - name: fe-cm-ebanking
+          configMap:
+            name: fe-cm-ebanking
+            items:
+              - key: config.json
+                path: config.json
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ebanking-portal
+  labels:
+    name: ebanking-portal
+spec:
+  ports:
+    - port: 80
+      targetPort: 8080
+      protocol: TCP
+  selector:
+    app: ebanking-portal
+---
+kind: Ingress
+apiVersion: networking.k8s.io/v1
+metadata:
+  name: ebanking-portal
+  annotations:
+    route.openshift.io/termination: edge
+spec:
+  tls:
+    - secretName: my-tls-secret
+  rules:
+    - host: INGRESS_HOST.apps.scbocp.scb.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: ebanking-portal
+                port:
+                  number: 80

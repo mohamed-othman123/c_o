@@ -1,0 +1,12 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0 18C0 12.4087 0 9.61305 0.913446 7.4078C2.13137 4.46746 4.46746 2.13137 7.4078 0.913446C9.61305 0 12.4087 0 18 0H22C27.5913 0 30.3869 0 32.5922 0.913446C35.5325 2.13137 37.8686 4.46746 39.0866 7.4078C40 9.61305 40 12.4087 40 18V22C40 27.5913 40 30.3869 39.0866 32.5922C37.8686 35.5325 35.5325 37.8686 32.5922 39.0866C30.3869 40 27.5913 40 22 40H18C12.4087 40 9.61305 40 7.4078 39.0866C4.46746 37.8686 2.13137 35.5325 0.913446 32.5922C0 30.3869 0 27.5913 0 22V18Z" fill="var(--color-bg-info-tint)"/>
+<path d="M20.37 10.1498L29.37 13.7498C29.72 13.8898 30 14.3098 30 14.6798V17.9998C30 18.5498 29.55 18.9998 29 18.9998H11C10.45 18.9998 10 18.5498 10 17.9998V14.6798C10 14.3098 10.28 13.8898 10.63 13.7498L19.63 10.1498C19.83 10.0698 20.17 10.0698 20.37 10.1498Z" stroke="#00518D" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M30 30H10V27C10 26.45 10.45 26 11 26H29C29.55 26 30 26.45 30 27V30Z" stroke="#00518D" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path opacity="0.4" d="M12 26V19" stroke="#00518D" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path opacity="0.4" d="M16 26V19" stroke="#00518D" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path opacity="0.4" d="M20 26V19" stroke="#00518D" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path opacity="0.4" d="M24 26V19" stroke="#00518D" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path opacity="0.4" d="M28 26V19" stroke="#00518D" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M9 30H31" stroke="#00518D" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+<path opacity="0.4" d="M20 16.5C20.8284 16.5 21.5 15.8284 21.5 15C21.5 14.1716 20.8284 13.5 20 13.5C19.1716 13.5 18.5 14.1716 18.5 15C18.5 15.8284 19.1716 16.5 20 16.5Z" stroke="#00518D" stroke-width="1.5" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

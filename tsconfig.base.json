@@ -1,0 +1,32 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/core/*": ["apps/ebanking-portal/src/app/core/*"],
+      "@/layout/*": ["apps/ebanking-portal/src/app/layout/*"],
+      "@/auth/*": ["apps/ebanking-portal/src/app/auth/*"],
+      "@/home/*": ["apps/ebanking-portal/src/app/home/*"],
+      "@/models/*": ["apps/ebanking-portal/src/app/core/models/*"],
+      "@/services/*": ["apps/ebanking-portal/src/app/core/services/*"],
+      "@/utils/*": ["apps/ebanking-portal/src/app/core/utils/*"],
+      "@/mocks/*": ["apps/ebanking-portal/src/app/core/mocks/*"],
+      "@/config/*": ["apps/ebanking-portal/src/app/core/config/*"],
+      "@/store/*": ["apps/ebanking-portal/src/app/core/store/*"],
+      "@/*": ["apps/ebanking-portal/src/app/*"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

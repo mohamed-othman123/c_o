@@ -1,0 +1,42 @@
+trigger: none
+variables:
+  - group: pipeline-group
+  - group: PAT
+parameters:
+  - name: namespace
+    displayName: Please slecet a namespace (DEV Cluster)
+    default: corp-dev
+    values:
+      - corp-dev
+      - corp-sit
+
+  - name: uat_namespace
+    displayName: Please slecet a namespace (UAT Cluster)
+    default: corp-uat
+    values:
+      - corp-uat
+      - corp-penetration
+
+resources:
+  repositories:
+    - repository: Pipeline-Templates
+      type: git
+      name: Pipelines-Templates/Pipeline-Templates
+      ref: main
+
+stages:
+  - template: /Docker-pipeline/build.yaml@Pipeline-Templates
+    parameters:
+      imageName: ebanking-portal
+      namespace: '${{ parameters.namespace }}'
+
+  - template: /Docker-pipeline/deploy.yaml@Pipeline-Templates
+    parameters:
+      namespace: '${{ parameters.namespace }}'
+
+  - template: /Docker-pipeline/deploy.yaml@Pipeline-Templates
+    parameters:
+      namespace: '${{ parameters.uat_namespace }}'
+      kubernetesServiceConnection: 'openshift-uat'
+      stageName: 'Deploy_uat'
+      ingressHostName: 'apps.scbocpuat.scb.local'
