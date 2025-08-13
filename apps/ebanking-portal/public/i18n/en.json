@@ -1498,7 +1498,8 @@
       "minAmount": "Amount should be great than 0",
       "minAmountError": "Minimum transfer amount is 1 EGP",
       "apiError": "Something went wrong!",
-      "apiErrorDetail": "We're unable to load your data at this moment. Please try to reload."
+      "apiErrorDetail": "We're unable to load your data at this moment. Please try to reload.",
+      "negativeTotal": "The total amount after fees should be greater than 0"
     },
     "summary": {
       "title": "Transaction Summary",
@@ -1942,6 +1943,27 @@
     "DAILY": "Daily",
     "actionMaturity": "Action at Maturity",
     "Redeem": "Redeem",
+    "currency": "Currency",
+    "tenor": "Tenor",
+    "description": "Description",
+    "reasonOfTransfer": "Reason of Transfer",
+    "transactionDate": "Transaction Date",
+    "chargesPaidBy": "Charges Paid By",
+    "executionDate": "Execution Date",
+    "appliedFees": "Applied Fees",
+    "APPROVED": "Approved",
+    "timelineTitle": "Approval Timeline",
+    "timelineSub": "Track the approval steps",
+    "submittedBy": "Submitted by",
+    "debitedAccount": "Debited Account",
+    "creditedPrincipleAccount": "Credited Principle Account",
+    "creditedAccount": "Credited Account",
+    "to": "To",
+    "you": "You",
+    "by": "By",
+    "reject": "Reject",
+    "withdraw": "Withdraw",
+    "productDetails": "Product Details",
     "depositForm": {
       "creditedPrincipleAccount": "Credited Principle Account",
       "sameDebitedAccount": "Same debited account",
@@ -1993,7 +2015,8 @@
       "insufficientBalance": "Insufficient Balance",
       "apiFails": "Something went wrong. Please try again later.",
       "done": "Done",
-      "viewProducts": "View Products"
+      "viewProducts": "View Products",
+      "sectionRequired": "This Field is required"
     },
     "timeDepositForm": {
       "fixedTimeDeposit": "Fixed Rate Time Deposit",
@@ -2122,9 +2145,32 @@
     "allList": "All",
     "filterBy": "Filter By",
     "title": "Pending Approvals",
-    "transactions": "Transactions",
+    "pendingApprovalsTitle": "Pending Approvals",
+    "pendingRequestsTitle": "Pending Requests",
+    "transfer": "Transactions",
+    "product": "Bank Products",
+    "cheque": "Chequebooks",
     "date": "Date",
+    "searchOptions": "Search",
     "transferType": "Transfer Type",
+    "requestType": "Request Type",
+    "tabs": {
+      "pending": "Pending",
+      "approved": "Approved",
+      "rejected": "Rejected ",
+      "all": "All",
+      "waiting": "Waiting Other Approvals"
+    },
+    "button": {
+      "withdraw": "Withdraw",
+      "reject": "Reject",
+      "approve": "Approve"
+    },
+    "sideMenu": {
+      "transfer": "Transfers",
+      "product": "Bank Products",
+      "cheque": "Cheques"
+    },
     "table": {
       "requestDate": "Request Date",
       "requestNumber": "Request Number",
@@ -2132,11 +2178,13 @@
       "amount": "Amount",
       "status": "Status",
       "actions": "Actions",
-      "transferType": "Transfer Type"
+      "transferType": "Transfer Type",
+      "numberofChequebooks": "Number of Chequebook",
+      "leavesPerChequebook": "Leaves per chequebook"
     },
     "empty": {
-      "title": "No transactions yet.",
-      "subTitle": " Start by making your first transaction."
+      "title": "No Data found",
+      "subTitle": "You're all set. Nothing pending right now."
     },
     "noResults": {
       "title": "No results found.",
@@ -2148,9 +2196,29 @@
       "yes": "Yes, Withdraw",
       "no": "No, Cancel"
     },
+    "rejectRequest": {
+      "rejectRemark": "Enter Reason of Rejection",
+      "rejectRemarkRequired": "Rejection reason required",
+      "title": "Reject Transaction",
+      "desc": "Please provide a reason for rejecting this transaction",
+      "yes": "Reject",
+      "no": "Cancel"
+    },
     "success": {
       "title": "Withdraw",
       "subTitle": "Withdraw successfully."
+    },
+    "withdrawSuccess": {
+      "title": "Withdraw request successful",
+      "subTitle": "Your request has been withdrawn successfully"
+    },
+    "rejectSuccess": {
+      "title": "Reject successful",
+      "subTitle": "The request was rejected successfully"
+    },
+    "approvedSuccess": {
+      "title": "Approve successful",
+      "subTitle": "The request was approved successfully"
     },
     "error": {
       "apiError": "Something went wrong!",

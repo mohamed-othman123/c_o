@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { PreloadAllModules, provideRouter, withPreloading } from '@angular/router';
+import { PreloadAllModules, provideRouter, withComponentInputBinding, withPreloading } from '@angular/router';
 import { AppConfigService } from '@/core/config/app-config.service';
 import { providePrimeNGConfig } from '@/core/config/primeng.config';
 import { provideTranslocoService } from '@/core/config/transloco.config';
@@ -47,7 +47,7 @@ export const AppConfig: ApplicationConfig = {
     provideTooltipOptions({ showDelay: 500 }),
     registerPopover(),
     provideExperimentalZonelessChangeDetection(),
-    provideRouter(appRoutes, withPreloading(PreloadAllModules)),
+    provideRouter(appRoutes, withPreloading(PreloadAllModules), withComponentInputBinding()),
     Title,
     MessageService,
   ],

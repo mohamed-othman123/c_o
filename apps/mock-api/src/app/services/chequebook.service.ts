@@ -19,7 +19,7 @@ export class ChequeBookService {
 
   public generateMockChequeBookRequests(count: number): ChequeBookRequest[] {
     const nicknames = ['John Doe', 'Alice Smith', 'شركة السلام', 'Ahmed 7amada', 'Tech Corp'];
-    const statusLabels: string[] = ['Under Reviewing', 'Approved', 'Printed', 'At Branch Side', 'Received'];
+    const statusLabels: string[] = ['Under Review', 'Approved', 'Printed', 'At Branch Side', 'Received'];
 
     const currencies = ['EGP', 'USD'];
     const accountTypes = ['Current', 'Saving'];
@@ -100,7 +100,8 @@ export class ChequeBookService {
           {
             nickname: 'ALUMINUM  INDUSTRY OVD',
             categoryDescription: 'Current Accounts',
-            accountNumber: '01303432101001',
+            accountNumber:
+              'Current Accounts : 01303432101001 دفتر الشيكات الخاص بك سيكون متاحًا للاستلام من فرعك في التجمع الخامس، شارع التس',
             workingBalance: 950206564.16,
             currency: 'EGP',
             OVD: true,

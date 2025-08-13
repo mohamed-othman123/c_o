@@ -273,6 +273,7 @@ export const appRoutes: Route[] = [
               },
               {
                 path: 'cd-form/:id',
+                canDeactivate: [CanDeactivateLeaveGuard],
                 loadComponent: () => import('./home/products/cd-form/cd-form.ng'),
                 data: { breadcrumb: 'products', sideMenu: '/products' },
                 title: 'titles.certificateOfDeposits',
@@ -290,6 +291,7 @@ export const appRoutes: Route[] = [
               },
               {
                 path: 'current-account/:id',
+                canDeactivate: [CanDeactivateLeaveGuard],
                 loadComponent: () => import('./home/products/sub-accounts/current-account.ng'),
                 data: { breadcrumb: 'products', sideMenu: '/products' },
                 title: 'titles.currentAccount',
@@ -329,15 +331,57 @@ export const appRoutes: Route[] = [
         ],
       },
       {
-        path: 'pending-approvals',
-        loadChildren: () => import('./home/pending-approvals/pending-approvals.routes'),
+        path: 'pending-transfer',
+        canActivate: [createRoleGuard(['MAKER', 'CHECKER'])],
+        title: 'titles.pendingApprovals',
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./home/pending-approvals/pending-approvals.ng'),
+            data: { breadcrumb: 'pending-approvals', sideMenu: '/pending-transfer' },
+          },
+          {
+            path: ':detailId',
+            loadComponent: () => import('./home/pending-approvals/details/delegation-details.ng'),
+            data: {
+              breadcrumb: 'pending-approvals',
+              sideMenu: '/pending-approvals',
+              parentPath: '/pending-transfer',
+              title: 'transfer',
+            },
+            title: 'titles.pendingApprovals',
+          },
+        ],
       },
-      //  {
-      //   path: 'pending-approvals',
-      //   loadComponent: () => import('./home/pending-approvals/pending-approvals.ng'),
-      //   title: 'titles.pendingApprovals',
-      //   data: { breadcrumb: 'pending-approvals', sideMenu: '/pending-approvals' },
-      // },
+      {
+        path: 'pending-product',
+        canActivate: [createRoleGuard(['MAKER', 'CHECKER'])],
+        title: 'titles.pendingApprovals',
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./home/pending-approvals/pending-approvals.ng'),
+            data: { breadcrumb: 'pending-approvals', sideMenu: '/pending-product' },
+          },
+          {
+            path: ':detailId',
+            loadComponent: () => import('./home/pending-approvals/details/delegation-details.ng'),
+            data: {
+              breadcrumb: 'pending-approvals',
+              sideMenu: '/pending-approvals',
+              parentPath: '/pending-product',
+              title: 'products',
+            },
+            title: 'titles.pendingApprovals',
+          },
+        ],
+      },
+      {
+        path: 'pending-cheques',
+        loadComponent: () => import('./home/pending-approvals/pending-approvals.ng'),
+        title: 'titles.pendingApprovals',
+        data: { breadcrumb: 'pending-approvals', sideMenu: '/pending-approvals' },
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },

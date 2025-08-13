@@ -145,6 +145,18 @@ export class HeaderDashboard {
     this.authService.logout().subscribe({
       next: () => {
         this.loading.set(false);
+        // Additional cleanup if needed
+        console.log('Logout successful');
+      },
+      error: error => {
+        this.loading.set(false);
+        console.error('Logout error:', error);
+        // Even if logout API fails, clear local state and redirect
+        this.authStore.clearAuthState();
+        this.router.navigate(['/login'], { replaceUrl: true }).catch(err => {
+          console.error('Navigation error after logout failure:', err);
+          window.location.href = '/login';
+        });
       },
     });
   }

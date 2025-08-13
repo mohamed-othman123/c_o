@@ -1,0 +1,39 @@
+<section
+  class="gap-xl flex flex-col"
+  [formGroup]="form"
+  *transloco="let t; prefix: 'pendingApprovals.rejectRequest'">
+  <div class="gap-lg flex flex-col">
+    <div class="gap-lg flex flex-col items-center text-center">
+      <h4 class="text-text-primary head-sm-s test-alert-title">{{ t('title') }}</h4>
+      <div class="body-lg text-text-secondary test-alert-body">{{ t('desc') }}</div>
+    </div>
+    <scb-form-field [maxLen]="250">
+      <label scbLabel>{{ t('rejectRemark') }}</label>
+      <textarea
+        scbInput
+        formControlName="remark"
+        class="min-h-7xl placeholder:text-input-text-label resize-none font-normal"></textarea>
+    </scb-form-field>
+    @if (form.get('remark')?.touched && form.get('remark')?.invalid) {
+      <p class="mf-sm text-input-text-danger gap-sm flex items-start">
+        <icon
+          name="info-circle"
+          class="w-[18px] flex-none" />
+        {{ t('rejectRemarkRequired') }}
+      </p>
+    }
+
+    <button
+      scbButton
+      (click)="confirm()">
+      {{ t('yes') }}
+    </button>
+
+    <button
+      scbButton
+      variant="secondary"
+      (click)="close()">
+      {{ t('no') }}
+    </button>
+  </div>
+</section>

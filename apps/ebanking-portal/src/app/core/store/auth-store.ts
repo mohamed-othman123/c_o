@@ -19,31 +19,27 @@ export interface AuthInterface {
   tokens: Tokens;
 }
 
-const initialUser: User = {
-  username: '',
-  email: '',
-  roles: [],
-  companyName: '',
-  cif: '',
-  softTokenId: '',
-  softTokenSerial: '',
-  softTokenStatus: 'INACTIVE',
-};
-
-const initialTokens: Tokens = loadTokensFromStorage();
-
-export const initialAuthState: AuthInterface = {
-  user: initialUser,
-  tokens: initialTokens,
-};
-
 export const AuthStore = signalStore(
   { providedIn: 'root' },
-  withState<AuthInterface>(initialAuthState),
+  withState<AuthInterface>({
+    user: {
+      username: '',
+      email: '',
+      roles: [],
+      companyName: '',
+      cif: '',
+      softTokenId: '',
+      softTokenSerial: '',
+      softTokenStatus: 'INACTIVE',
+    },
+    tokens: loadTokensFromStorage(),
+  }),
   withComputed(store => ({
     isAuthenticated: computed(() => {
       const tokens = store.tokens();
-      return !!tokens?.accessToken;
+      const hasToken = !!tokens?.accessToken;
+      console.log('isAuthenticated computed: tokens =', tokens, 'hasToken =', hasToken);
+      return hasToken;
     }),
     isSessionExpired: computed(() => {
       const tokens = store.tokens();
@@ -61,15 +57,36 @@ export const AuthStore = signalStore(
       patchState(store, { user });
     },
     setTokens(tokens: Tokens) {
-      // Save to localStorage
       const withIssued = { ...tokens, issuedAtMs: Date.now() } as Tokens;
       saveTokensToStorage(withIssued);
       patchState(store, { tokens: withIssued });
     },
     clearAuthState() {
-      // Clear from localStorage
+      console.log('Clearing auth state...');
       clearTokensFromStorage();
-      patchState(store, initialAuthState);
+
+      // Create a clean state instead of reusing initialAuthState
+      const cleanState: AuthInterface = {
+        user: {
+          username: '',
+          email: '',
+          roles: [],
+          companyName: '',
+          cif: '',
+          softTokenId: '',
+          softTokenSerial: '',
+          softTokenStatus: 'INACTIVE',
+        },
+        tokens: {
+          accessToken: '',
+          refreshToken: '',
+          expiresIn: 0,
+          issuedAtMs: 0,
+        },
+      };
+
+      patchState(store, cleanState);
+      console.log('Auth state cleared, isAuthenticated:', store.isAuthenticated());
     },
   })),
 );

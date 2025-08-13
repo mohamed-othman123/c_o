@@ -1,11 +1,15 @@
 export interface AllDelegation {
-  id: number;
-  requestDate: string;
+  requestId: string;
   requestType: string;
-  requestNumber: number;
-  amount: string;
   status: string;
+  amount: string;
   currency: string;
+  createdDate: string;
+  updatedDate: string;
+  updatedBy: string;
+  requiredApproval: number;
+  approved: number;
+  rejected: number;
 }
 
 export interface Pagination {
@@ -16,12 +20,19 @@ export interface Pagination {
 }
 
 export interface DelegationResponse {
+  data: {
+    requests: AllDelegation[];
+    pagination: Pagination;
+  };
+}
+
+export interface ChequebookMakerCheckerResponse {
+  requests: AllDelegation[];
   pagination: Pagination;
-  list: AllDelegation[];
 }
 
 export interface DelegationQuery {
   pageStart: number;
   pageSize: number;
-  status?: string[];
+  status?: string;
 }

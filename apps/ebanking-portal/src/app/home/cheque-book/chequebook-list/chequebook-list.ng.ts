@@ -57,6 +57,7 @@ export class ChequeBookListComponent {
   readonly searchTerm = signal('');
 
   readonly statusTypeSelect = viewChild<Select<string>>('statusTypeSelect');
+  readonly showFilters = signal(false);
 
   readonly refresh = signal(1);
   readonly chequeBookListResource = httpResource<ChequebookApiResponse>(() => {
@@ -94,10 +95,9 @@ export class ChequeBookListComponent {
 
   readonly isSearchApplied = computed(() => {
     const hasSearch = this.searchTerm().trim().length > 0;
-    const hasStatusFilter = this.statusValue().length > 0;
     const isEmptyResult = this.filteredChequeBookList().length === 0;
 
-    return (hasSearch || hasStatusFilter) && isEmptyResult;
+    return hasSearch && isEmptyResult;
   });
 
   readonly filteredChequeBookList = computed(() => {
@@ -122,6 +122,7 @@ export class ChequeBookListComponent {
   }
 
   applyFilter() {
+    this.showFilters.set(this.isChequeBookListEmpty() || (this.statusValue()?.length ?? 0) > 0);
     const selected = this.statusValue();
     const selectedStatus = selected.map(value => {
       const found = this.statusListMap.find(item => item.ar === value || item.en === value);
@@ -149,10 +150,10 @@ export class ChequeBookListComponent {
   }
 
   readonly statusListMap = [
-    { en: 'Under Reviewing', ar: 'قيد المراجعة' },
+    { en: 'Under Review', ar: 'قيد المراجعة' },
     { en: 'Approved', ar: 'تمت الموافقة' },
-    { en: 'Printed', ar: 'تم الطباعة' },
-    { en: 'At Branch Side', ar: 'في الفرع' },
+    { en: 'Printing', ar: 'تم الطباعة' },
+    { en: 'At Branch', ar: 'في الفرع' },
     { en: 'Received', ar: 'تم الاستلام' },
   ];
 }

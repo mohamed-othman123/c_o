@@ -51,4 +51,10 @@ export class ProductController {
   getAccount() {
     return this.productsService.getAccount();
   }
+
+  @Get('product/request/:requestId/details')
+  @HttpCode(HttpStatus.OK)
+  getProductDetail() {
+    return this.productsService.details();
+  }
 }

@@ -1,0 +1,247 @@
+<section class="col-span-12 max-sm:hidden 2xl:row-span-1">
+  <app-breadcrumbs
+    *transloco="let t; prefix: 'breadcrumbs'"
+    [routes]="[
+      { label: t('pendingApprovals'), path: '/transfer' },
+      { label: t(title()), path: parentPath() },
+      { label: 'Request 27384', path: '' },
+    ]"></app-breadcrumbs>
+</section>
+<scb-card class="gap-2xl col-span-12 row-span-8 flex flex-col">
+  @if (status() === 'loading') {
+    <div
+      class="py-3xl sm:px-3xl col-span-12 px-4"
+      data-testid="LCS_LOADING_STATE">
+      <scb-skeleton
+        width="15%"
+        height="40px" />
+      <scb-skeleton width="50%" />
+      <scb-skeleton width="50%" />
+      <scb-skeleton width="80%" />
+      <scb-skeleton width="90%" />
+      <scb-skeleton width="100%" />
+    </div>
+  } @else if (status() === 'error') {
+    <div
+      *transloco="let t; prefix: 'dashboard'"
+      class="py-3xl sm:px-3xl col-span-12 flex w-full flex-col items-center justify-center gap-3 px-4 text-center"
+      data-testid="LCS_ERROR_STATE">
+      <icon
+        [name]="'api-failure'"
+        class="text-3xl"
+        data-testid="LCS_API_FAILURE_ICON" />
+      <h4
+        class="head-2xs-s text-text-primary"
+        data-testid="LCS_API_ERROR_TITLE">
+        {{ t('error.apiError') }}
+      </h4>
+      <p
+        class="body-sm text-text-primary"
+        data-testid="LCS_API_ERROR_DETAIL">
+        {{ t('error.apiErrorDetail') }}
+      </p>
+      <button
+        scbButton
+        variant="ghost"
+        size="sm"
+        icon="refresh"
+        data-testid="LCS_RELOAD_BUTTON"
+        (click)="detailSource.reload()">
+        {{ t('error.reload') }}
+      </button>
+    </div>
+  } @else {
+    <div
+      class="gap-2xl flex flex-col"
+      *transloco="let t; prefix: 'products'">
+      <div class="gap-2xl flex items-center">
+        <h4 class="head-xs-s flex-1">Product Details</h4>
+        <button
+          scbButton
+          variant="secondary"
+          *rolePermission="['CHECKER']"
+          size="lg">
+          {{ t('reject') }}
+        </button>
+        <button
+          scbButton
+          *rolePermission="['CHECKER']"
+          size="lg">
+          {{ t('APPROVED') }}
+        </button>
+        @if (productDetails()?.status === 'PENDING') {
+          <button
+            scbButton
+            *rolePermission="['MAKER']"
+            size="lg">
+            {{ t('withdraw') }}
+          </button>
+        }
+      </div>
+      <div class="gap-2xl flex">
+        <div class="gap-2xl flex flex-1 flex-col">
+          <scb-card class="gap-lg border-border-secondary flex flex-col border">
+            <div class="gap-md flex items-center justify-center">
+              <div class="bg-icon-container-blue grid h-[32px] w-[32px] place-items-center rounded-full">
+                <icon
+                  [name]="icon()"
+                  class="text-icon-brand w-2xl" />
+              </div>
+              @if (detailType() === 'CD') {
+                <span class="head-xs-s">{{ productDetails()?.requestTypeDisplay }}</span>
+                <!-- <span class="head-xs-s">Floating Rate Time Deposits </span> -->
+              } @else if (detailType() === 'ACCOUNT') {
+                <span class="head-xs-s">{{ t('currentAccount') }}</span>
+                <span class="body-lg text-text-tertiary">({{ t('interest') }})</span>
+              }
+            </div>
+            <div class="flex justify-center">
+              <currency-view
+                [amount]="productDetails()?.amount"
+                [currency]="productDetails()?.currency"
+                size="xl"
+                variant="primary" />
+            </div>
+            @if (detailType() !== 'TD') {
+              <div class="gap-sm flex items-center justify-center">
+                <span class="body-label-sm-m">Monthly interest:</span>
+                <span class="body-md-s text-text-tertiary">2%</span>
+                <span class="body-md-s"> = 15,000</span>
+              </div>
+            }
+          </scb-card>
+
+          <div class="gap-sm flex flex-col">
+            <div class="body-label-md-m text-text-secondary">{{ t('debitedAccount') }}</div>
+            <app-account-selected-view
+              [nickname]="productDetails()!.debitAccountHolderNickName"
+              [accountNumber]="productDetails()!.debitAccount" />
+          </div>
+          @if (detailType() === 'CD') {
+            <div class="gap-sm flex flex-col">
+              <div class="body-label-md-m text-text-secondary">{{ t('creditedPrincipleAccount') }}</div>
+              <app-account-selected-view
+                [nickname]="productDetails()!.creditAccountHolderNickName"
+                [accountNumber]="productDetails()!.creditPrincipleAccount" />
+            </div>
+          }
+          @if (detailType() === 'transfer') {
+            <div class="gap-sm flex flex-col">
+              <div class="body-label-md-m text-text-secondary">{{ t('to') }}</div>
+              <app-beneficiary-selected-view [beneficiary]="beneficiary()" />
+            </div>
+          }
+
+          <div class="gap-2xl grid">
+            <!-- transfer -->
+            @for (item of fields(); track item.name) {
+              <div
+                class="gap-sm flex items-center"
+                *transloco="let t; prefix: 'products'">
+                <icon
+                  [name]="item.icon"
+                  class="text-icon-secondary w-[18px]" />
+                <div class="body-label-sm-m flex-1">{{ t(item.name) }}</div>
+                <div class="body-md-s">
+                  @if (item.amount) {
+                    <currency-view
+                      [amount]="item.amount.value"
+                      [currency]="item.amount.currency" />
+                  } @else if (item.translate && item.value) {
+                    {{ t(item.value) }}
+                  } @else {
+                    {{ item.value }}
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+        <div class="w-[397px]">
+          <scb-card class="border-border-secondary gap-xl flex flex-col border">
+            <div class="gap-xl flex items-center">
+              <div class="gap-sm grid flex-1">
+                <h4 class="head-xs-s">{{ t('timelineTitle') }}</h4>
+                <p class="body-sm text-text-secondary">{{ t('timelineSub') }}</p>
+              </div>
+              <div>
+                @if (detailStatus(); as ds) {
+                  <scb-badge
+                    size="xs"
+                    [variant]="ds">
+                    {{ t(productDetails()?.status || '') }}
+                  </scb-badge>
+                }
+              </div>
+            </div>
+            <scb-separator />
+
+            <!-- Timeline -->
+            <div>
+              <div class="gap-xl ng-star-inserted flex">
+                <div class="flex w-3xl flex-col items-center">
+                  <div class="h-xl bg-brand ng-star-inserted m-sm w-xl rounded-full"></div>
+                  <div class="border-border-hard ng-star-inserted w-[1px] flex-1 border border-dashed"></div>
+                </div>
+                <div class="gap-md pb-3xl flex flex-col">
+                  <div class="gap-md flex">
+                    {{ t('submittedBy') }},
+                    <span class="body-md-s">{{ timeline().user.name }}</span>
+                  </div>
+                  <div class="body-md text-text-secondary">
+                    <date-view
+                      [value]="timeline().user.date"
+                      format="d MMM yyyy, h:mm a"
+                      class="mf-sm"></date-view>
+                  </div>
+                </div>
+              </div>
+              @for (approval of timeline().approvals; track approval) {
+                @let isApproved = approval.status === 'APPROVED';
+                @let isRejected = approval.status === 'REJECTED';
+                @let showUsers = !isApproved && !isRejected && approval.users?.length;
+                <app-timeline
+                  [isLast]="$last"
+                  [status]="isApproved ? 'approved' : isRejected ? 'rejected' : 'pending'">
+                  <div timelineTitle>
+                    {{ approval.level }}
+                    @if (showUsers) {
+                      <icon
+                        name="arrow-down"
+                        (click)="approval?.expanded?.set(!approval.expanded?.())"
+                        class="text-icon-brand w-2xl cursor-pointer" />
+                    }
+                  </div>
+                  @if (!approval.isCore && approval.status !== 'PENDING') {
+                    <ng-container>
+                      <div timelineSub>
+                        {{ t('by') }}
+                        <span class="head-2xs-s text-text-primary">{{ approval.approvedBy }}</span>
+                        @if (approval.approvedBy === 'Abdelrahman Fisal') {
+                          ({{ t('you') }})
+                        }
+                      </div>
+                      <date-view
+                        [value]="approval.createdAt"
+                        format="d MMM yyyy, h:mm a"
+                        class="mf-sm" />
+                    </ng-container>
+                  }
+                  @if (showUsers) {
+                    @if (approval.expanded?.()) {
+                      @for (u of approval.users; track u.name) {
+                        <div class="body-md">{{ u.name }}</div>
+                      }
+                    } @else {
+                      <div class="body-md">{{ approval.users![0].name }} +{{ approval.users!.length - 1 }}</div>
+                    }
+                  }
+                </app-timeline>
+              }
+            </div>
+          </scb-card>
+        </div>
+      </div>
+    </div>
+  }
+</scb-card>

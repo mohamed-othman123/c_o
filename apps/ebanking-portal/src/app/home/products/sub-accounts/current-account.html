@@ -80,6 +80,14 @@
           [errorState]="fromAccountsError()"
           [setAccountData]="fromAccount()"
           (accountSelected)="handleAccountSelected($event)" />
+        @if (drawdownAccount.touched && drawdownAccount.invalid) {
+          <p class="mf-sm text-input-text-danger gap-sm flex items-start">
+            <icon
+              name="info-circle"
+              class="w-[18px] flex-none" />
+            {{ t('sectionRequired') }}
+          </p>
+        }
       </div>
       <div class="gap-lg grid">
         <h4 class="head-xs-s">{{ t('amount') }}</h4>
@@ -109,8 +117,8 @@
         *transloco="let t; prefix: 'products.subAccount'">
         <div class="body-label-md-m text-text-secondary">{{ t('from') }}</div>
         <app-account-selected-view
-          [nickname]="'Nickname'"
-          [accountNumber]="'xxxx-xxxx-3456'" />
+          [nickname]="fromAccount()!.accountNickname"
+          [accountNumber]="fromAccount()!.accountNumber" />
       </div>
       <ng-container *ngTemplateOutlet="headSection"></ng-container>
     </ng-template>
@@ -122,7 +130,7 @@
           <div class="gap-xs grid justify-center text-center">
             <div class="head-2xs-s text-text-tertiary">{{ t('amount') }}</div>
             <currency-view
-              [amount]="50000"
+              [amount]="amount.value"
               variant="primary"
               size="xs" />
           </div>

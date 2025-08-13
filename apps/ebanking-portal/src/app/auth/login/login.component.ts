@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal, viewChild } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { switchMap, tap } from 'rxjs';
 import { HeaderAuthComponent } from '@/layout/components';
 import { LayoutFacadeService } from '@/layout/layout.facade.service';
 import { ApiError } from '@/models/api';
@@ -129,19 +128,10 @@ export class LoginComponent {
 
     this.auth
       .login({ username: values.username, password: encryptedData.encryptedPassword }, token, encryptedData.publicKey)
-      .pipe(
-        switchMap(() => {
-          return this.auth.me().pipe(
-            tap(() => {
-              this.loading.set(false);
-              this.router.navigate(['dashboard'], { replaceUrl: true });
-            }),
-          );
-        }),
-      )
       .subscribe({
-        next: () => {
-          // this.router.navigate(['dashboard']);
+        next: res => {
+          this.loading.set(false);
+          this.router.navigate(['dashboard'], { replaceUrl: true });
         },
         error: error => {
           console.error('Login error:', error);

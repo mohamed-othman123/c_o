@@ -1,4 +1,4 @@
-import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
+import { HttpErrorResponse, HttpInterceptorFn, HttpStatusCode } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
@@ -39,7 +39,7 @@ export const AuthorizationJWTInterceptor: HttpInterceptorFn = (req, next) => {
   return next(authReq).pipe(
     catchError((error: HttpErrorResponse) => {
       // If token expired and we have a refresh token, try to refresh
-      if (error.status === 401 && authStore.tokens.refreshToken()) {
+      if (error.status === HttpStatusCode.Unauthorized && authStore.tokens.refreshToken()) {
         return authService.refreshToken().pipe(
           switchMap(() => {
             const newToken = authStore.tokens.accessToken();

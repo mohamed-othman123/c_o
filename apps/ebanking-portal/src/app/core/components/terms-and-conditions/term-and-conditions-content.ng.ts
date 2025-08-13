@@ -11,7 +11,7 @@ import {
   untracked,
   viewChild,
 } from '@angular/core';
-import { Skeleton } from '@/core/components';
+import { Skeleton, TCRef } from '@/core/components';
 import { LayoutFacadeService } from '@/layout/layout.facade.service';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { Button } from '@scb/ui/button';
@@ -70,15 +70,13 @@ import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
   },
 })
 export class TermsAndConditionsContent {
-  readonly dialogRef = inject<DialogRef<{ type: string }>>(DialogRef);
+  readonly dialogRef = inject<DialogRef<{ ref: TCRef }>>(DialogRef);
   readonly doc = inject(DOCUMENT);
   readonly enableButton = signal(false);
   readonly layoutFacade = inject(LayoutFacadeService);
 
   readonly scrollContent = viewChild.required<ElementRef<HTMLDivElement>>('scrollContent');
-  readonly pdfSource = httpResource<{ status: 'success'; pdfBase64: string }>(
-    () => `/api/dashboard/lookup/tnc?tncFile=${this.dialogRef.data?.type}`,
-  );
+  readonly pdfSource = this.dialogRef.data!.ref;
   readonly base64PDF = computed(() => this.pdfSource.value()?.pdfBase64 || '');
   readonly pdfSrc = computed(() => (this.base64PDF() ? `data:application/pdf;base64,${this.base64PDF()}` : ''));
 
@@ -102,6 +100,7 @@ export class TermsAndConditionsContent {
   }
 
   close(accepted = false) {
+    if (!this.enableButton()) return;
     this.dialogRef.close(accepted);
   }
 }

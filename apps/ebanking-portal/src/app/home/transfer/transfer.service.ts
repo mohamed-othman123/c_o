@@ -254,7 +254,16 @@ export class TransferService {
 
       this.insufficientBalance.set(hasInsufficientBalance);
 
-      const isInvalid = form.invalid || this.insufficientBalance();
+      const isOutsideTransfer = value.transferType === 'OUTSIDE';
+      let totalAmountInvalid = false;
+
+      if (isOutsideTransfer) {
+        const fees = this.feesAmount()[value.transferNetwork!] || 0;
+        const calculatedTotal = value.chargeBearer === 'SENDER' ? transferAmount + fees : transferAmount - fees;
+        totalAmountInvalid = calculatedTotal <= 0;
+      }
+
+      const isInvalid = form.invalid || this.insufficientBalance() || totalAmountInvalid;
 
       if (isInvalid) {
         markControlsTouched(form, { dirty: true, touched: true });
@@ -262,6 +271,8 @@ export class TransferService {
 
       if (this.insufficientBalance()) {
         form.get('transferAmount')?.setErrors({ insufficientBalance: true });
+      } else if (totalAmountInvalid) {
+        form.get('transferAmount')?.setErrors({ negativeTotal: true });
       } else {
         const amountControl = form.get('transferAmount');
         if (amountControl && amountControl.hasError('insufficientBalance')) {
@@ -272,7 +283,6 @@ export class TransferService {
       }
 
       if (this.exchangeApiFailed()) return;
-
       if (isInvalid) return;
 
       this.value.set({

@@ -29,14 +29,14 @@
     <div
       class="border-border-secondary py-xl gap-lg flex flex-col rounded-4xl border-1"
       *transloco="let t; prefix: 'pendingApprovals'">
-      <!-- Title and Download Statement Button -->
       <div class="gap-sm px-xl flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <p class="mf-lg font-semibold">{{ t('transactions') }}</p>
+        <p class="mf-lg font-semibold">{{ t(type()) }}</p>
       </div>
 
       <!-- Filter Section -->
       <app-pending-approval-filter
         [(transferType)]="transferType"
+        [(dateRange)]="date"
         [isEmpty]="isEmpty()" />
 
       <!-- Empty state & Table -->
@@ -69,9 +69,11 @@
               <th class="mf-sm !font-medium">
                 {{ t('table.requestNumber') }}
               </th>
-              <th class="mf-sm !font-medium">
-                {{ t('table.requestType') }}
-              </th>
+              @if (type() !== 'cheque') {
+                <th class="mf-sm !font-medium">
+                  {{ t('table.requestType') }}
+                </th>
+              }
               <th class="mf-sm !font-medium">
                 {{ t('table.amount') }}
               </th>
@@ -87,54 +89,48 @@
             #body
             let-transaction>
             <tr
-              class="focus:ring-primary cursor-pointer !bg-transparent transition-colors duration-200 hover:bg-gray-50 focus:ring-2 focus:outline-none focus:ring-inset dark:hover:bg-gray-800"
-              tabindex="0">
+              [routerLink]="transaction.requestId"
+              class="cursor-pointer">
               <td class="body-sm">
                 <date-view
-                  [value]="transaction.requestDate"
-                  istFormat
+                  [value]="transaction.createdDate || transaction.createdAt"
                   format="d MMM yyyy">
                 </date-view>
               </td>
               <td>
-                {{ transaction.requestNumber }}
+                {{ transaction.requestId ?? transaction.id }}
               </td>
 
-              <td>
-                {{ transaction.requestType }}
-              </td>
-
+              @if (type() !== 'cheque') {
+                <td>
+                  {{ transaction.accountType || transaction.requestType }}
+                </td>
+              }
               <td>
                 <currency-view
-                  [amount]="transaction.amount"
-                  [currency]="transaction.currency"
+                  [amount]="transaction.amount || transaction.issueFee"
+                  [currency]="transaction.currency || transaction.accountCurrency"
                   size="sm" />
               </td>
               <td class="body-sm">
                 <div class="gap-xs flex">
-                  <approval-progress status="success" />
-                  <approval-progress status="reject" />
-                  <approval-progress />
+                  @for (
+                    step of pendingService.getApprovalSteps(
+                      transaction.requiredApproval,
+                      transaction.approved ?? 0,
+                      transaction.rejected ?? 0
+                    );
+                    track $index
+                  ) {
+                    <approval-progress [status]="step.status"></approval-progress>
+                  }
                 </div>
               </td>
-              <td class="space-x-md">
-                <button
-                  scbButton
-                  size="xs">
-                  Approve
-                </button>
-                <button
-                  scbButton
-                  size="xs"
-                  variant="secondary">
-                  Reject
-                </button>
-                <button
-                  scbButton
-                  size="xs"
-                  (click)="withdraw(transaction.id)">
-                  Withdraw
-                </button>
+              <td>
+                <app-action-buttons
+                  [transaction]="transaction"
+                  [type]="type()"
+                  (reload)="allListResource.reload()" />
               </td>
             </tr>
           </ng-template>

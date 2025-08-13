@@ -48,7 +48,7 @@
           <div class="gap-xs grid">
             <h4 class="body-label-sm-m text-text-tertiary">{{ t('interestRate') }}</h4>
             <!-- <div class="body-md-s">Available</div> -->
-            <currency-view [amount]="detail()?.interestRate" />
+            {{ detail()?.interestRate }}%
           </div>
           <div class="gap-xs grid">
             <h4 class="body-label-sm-m text-text-tertiary">{{ t('frequency') }}</h4>
@@ -188,6 +188,7 @@
             <div class="head-2xs-s text-text-tertiary">{{ t('amount') }}</div>
             <currency-view
               [amount]="amount.value"
+              [currency]="currency()"
               variant="primary"
               size="xs" />
           </div>
@@ -226,6 +227,7 @@
               class="inline-flex items-center justify-end">
               <currency-view
                 [amount]="amount.value"
+                [currency]="currency()"
                 variant="primary"
                 size="xl"
                 class="mt-xl" />

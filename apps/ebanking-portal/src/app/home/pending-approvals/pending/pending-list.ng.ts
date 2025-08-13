@@ -1,30 +1,25 @@
 import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { httpResource } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { Router, RouterLink } from '@angular/router';
-import {
-  CurrencyView,
-  DateView,
-  PaginationData,
-  SelectValue,
-  TablePagination,
-  TableSkeletonComponent,
-} from '@/core/components';
-import { apiStatus, handleParams } from '@/core/models/api';
+import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { CurrencyView, DateView, PaginationData, TablePagination, TableSkeletonComponent } from '@/core/components';
+import { apiStatus } from '@/core/models/api';
 import { AccountDetailsService } from '@/home/account-details/account-details.service';
+import { TransferTypes } from '@/home/scheduled-transfer-list/model';
 import { LayoutFacadeService } from '@/layout/layout.facade.service';
-import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { Button } from '@scb/ui/button';
 import { Card } from '@scb/ui/card';
 import { Icon } from '@scb/ui/icon';
-import { Option, Select } from '@scb/ui/select';
 import { Base64ConverterService } from '@scb/util/base64-converter';
 import { PaginatorModule } from 'primeng/paginator';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
-import { AllDelegationList, AllListResponse } from '../all/all-list.models';
+import { ActionButtons } from '../action-buttons.ng';
 import { ApprovalProgress } from '../approval-progress.ng';
+import { AllListResponse, mapStatus, PendingApprovalsList } from '../model';
 import { PendingRequestsApprovalsService } from '../pending-approvals.service';
 import { PendingApprovalFilter } from '../pending-transactions-filter.ng';
 
@@ -33,7 +28,6 @@ import { PendingApprovalFilter } from '../pending-transactions-filter.ng';
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [CurrencyPipe, DatePipe, DecimalPipe, AccountDetailsService],
   imports: [
-    RouterLink,
     TooltipModule,
     Card,
     TableModule,
@@ -45,47 +39,61 @@ import { PendingApprovalFilter } from '../pending-transactions-filter.ng';
     CurrencyView,
     Button,
     PaginatorModule,
-    Select,
     SelectModule,
     CurrencyView,
-    SelectValue,
-    Option,
     DateView,
     CurrencyView,
     TablePagination,
     PendingApprovalFilter,
     Button,
     ApprovalProgress,
+    ActionButtons,
+    RouterLink,
   ],
   templateUrl: './pending-list.ng.html',
 })
 export class PendingList {
-  private readonly translateService = inject(TranslocoService);
   readonly pendingService = inject(PendingRequestsApprovalsService);
   readonly router = inject(Router);
+  readonly route = inject(ActivatedRoute);
   readonly base64Converter = inject(Base64ConverterService);
   readonly accountDetailsService = inject(AccountDetailsService);
   readonly layoutFacade = inject(LayoutFacadeService);
-  readonly transferType = signal<any[]>([]);
+  readonly transferType = signal<TransferTypes[]>([]);
   readonly loading = signal(false);
   readonly page = new PaginationData();
-  readonly refresh = signal(1);
+  readonly date = signal('');
+  readonly tab = input.required<number>();
 
-  readonly allListResource = httpResource<AllListResponse>(() => {
-    const params = {
-      pageStart: this.page.reqPageNumber(),
-      pageSize: this.page.rows(),
-    };
-    return { url: '/api/delegation/list', params: handleParams(params) };
-  });
+  readonly queryParams = toSignal(this.route.queryParamMap);
+  readonly type = computed(() => this.queryParams()?.get('type') || '');
 
-  readonly allDelegationsList = computed<AllDelegationList[]>(() => this.allListResource.value()?.list || []);
-  readonly totalAmount = computed(() => this.allListResource.value()?.equivalentBalanceEGP || 0);
-  readonly totalPages = computed(() => this.allListResource.value()?.pagination.totalPages || 0);
-  readonly totalSize = computed(() => this.allListResource.value()?.pagination.totalSize || 0);
-  readonly totalRecords = computed(() => this.allListResource.value()?.pagination.totalSize || 0);
+  readonly filters = computed(() =>
+    this.pendingService.buildFilters(
+      this.date(),
+      this.transferType(),
+      this.tab(),
+      this.pendingService.isMaker(),
+      this.type(),
+    ),
+  );
 
-  readonly lastUpdatedAt = computed(() => this.allListResource.value()?.lastUpdatedTimestamp);
+  readonly params = computed(() =>
+    this.pendingService.buildParams(this.filters(), this.page.reqPageNumber(), this.page.rows()),
+  );
+
+  readonly allListResource = httpResource<AllListResponse>(() =>
+    this.pendingService.getAllListRequest(this.type(), this.params()),
+  );
+
+  readonly allDelegationsList = computed(() => this.pendingService.extractRequests(this.allListResource.value()));
+
+  readonly totalPages = computed(() => this.pendingService.getTotalPages(this.allListResource.value()));
+
+  readonly totalSize = computed(() => this.pendingService.getTotalSize(this.allListResource.value()));
+
+  readonly totalRecords = computed(() => this.pendingService.getTotalRecords(this.allListResource.value()));
+
   readonly status = apiStatus(this.allListResource.status);
   readonly isEmpty = computed(() => this.allDelegationsList().length === 0);
 
@@ -93,11 +101,14 @@ export class PendingList {
   refreshAll() {
     this.allListResource.reload();
   }
-  withdraw(id: string) {
-    const callback = () => {
-      // this.refreshUpcomingTransfer.update(x => x + 1);
-      this.refreshAll();
-    };
-    this.pendingService.withdraw(id, callback);
+
+  constructor() {
+    effect(() => {
+      this.pendingService.requestType.set(this.type());
+      const currentTab = this.tab();
+      if (currentTab) {
+        this.refreshAll();
+      }
+    });
   }
 }

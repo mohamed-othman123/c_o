@@ -19,7 +19,7 @@
           </div>
         }
 
-        @if (status() !== 'error' && status() !== 'loading' && (!isChequeBookListEmpty() || isSearchApplied())) {
+        @if (status() !== 'error' && status() !== 'loading' && (!isChequeBookListEmpty() || showFilters())) {
           <!-- Header with Filters and Search -->
           <div class="flex w-full flex-col items-start justify-between gap-4 md:flex-row md:items-center">
             <div class="max-sm:order-3 2xl:order-2">
@@ -130,7 +130,7 @@
           <div
             data-testid="LOANS_EMPTY_STATE"
             class="emptyState flex w-full flex-col items-center justify-center text-center">
-            @if (isSearchApplied()) {
+            @if (showFilters()) {
               <icon [name]="'not-found'" />
             } @else {
               <icon
@@ -141,12 +141,12 @@
             <h4
               data-testid="LOANS_EMPTY_STATE_TITLE"
               class="mt-sm mb-sm mf-2xl font-semibold">
-              {{ t(isSearchApplied() ? 'filteredState.title' : 'empty.title') }}
+              {{ t(showFilters() ? 'filteredState.title' : 'empty.title') }}
             </h4>
             <p
               data-testid="LOANS_EMPTY_STATE_SUBTITLE"
               class="text-text-tertiary text-sm-sm">
-              {{ t(isSearchApplied() ? 'filteredState.subTitle' : 'empty.subTitle') }}
+              {{ t(showFilters() ? 'filteredState.subTitle' : 'empty.subTitle') }}
             </p>
           </div>
         } @else {
@@ -163,7 +163,7 @@
                       <h2 class="mf-sm text-text-secondary font-normal">{{ t('table.requestDate') }}</h2>
                       <date-view
                         variant="md"
-                        [value]="item.requestDate"
+                        [value]="item.createdAt"
                         istFormat
                         format="d MMM yyyy" />
                     </div>
@@ -201,7 +201,7 @@
                       <div class="flex flex-col">
                         <a
                           scbButton
-                          class="w-full sm:flex!"
+                          class="w-full whitespace-nowrap sm:flex!"
                           variant="secondary"
                           size="md"
                           (click)="goToChequeBookDetail(item)">

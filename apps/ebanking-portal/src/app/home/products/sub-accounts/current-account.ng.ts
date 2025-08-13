@@ -13,7 +13,6 @@ import { CurrencyInputField } from '@/home/transfer/components/currency-field/cu
 import { SelectAccountField } from '@/home/transfer/components/select-account-field/select-account-field.ng';
 import { TransferDataService } from '@/home/transfer/data/transfer-data.service';
 import { SelectAccountFieldProps } from '@/home/transfer/model';
-import { LayoutFacadeService } from '@/layout/layout.facade.service';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { Button } from '@scb/ui/button';
 import { Card } from '@scb/ui/card';
@@ -26,6 +25,7 @@ import {
   TermsAndConditions,
 } from '../../../core/components/terms-and-conditions/term-and-conditions.ng';
 import { ProductFormContainer } from '../cd-form/product-form-container.ng';
+import { FormDeactivate } from '../form-deactivate';
 import { ERROR_TYPE, InterestRates, ProductAccount, ProductResult } from '../model';
 import { SubAccountCreateRequest } from './interface';
 import { RoundIcon } from './round-icon.ng';
@@ -58,11 +58,10 @@ import { RoundIcon } from './round-icon.ng';
     class: 'container-grid py-3xl px-3xl',
   },
 })
-export default class CurrentAccount {
+export default class CurrentAccount extends FormDeactivate {
   readonly http = inject(HttpClient);
   readonly softToken = inject(SoftTokenService);
   readonly transferData = inject(TransferDataService);
-  readonly layoutFacade = inject(LayoutFacadeService);
   readonly route = inject(ActivatedRoute);
 
   readonly categoryId = this.route.snapshot.params['id'];
@@ -86,12 +85,13 @@ export default class CurrentAccount {
   readonly amount = new FormControl('', { validators: [Validators.required], nonNullable: true });
   readonly acceptTerms = new FormControl(false, { validators: [Validators.requiredTrue], nonNullable: true });
   readonly frequency = new FormControl('', { validators: [Validators.required], nonNullable: true });
+  readonly drawdownAccount = new FormControl('', { validators: [Validators.required], nonNullable: true });
   readonly form = new FormGroup({
     amount: this.amount,
     currencyId: new FormControl('EGP', { validators: [Validators.required], nonNullable: true }),
     categoryId: new FormControl(this.categoryId, { validators: [Validators.required], nonNullable: true }),
     productId: new FormControl('', { validators: [Validators.required], nonNullable: true }),
-    drawdownAccount: new FormControl('', { validators: [Validators.required], nonNullable: true }),
+    drawdownAccount: this.drawdownAccount,
     accountType: new FormControl('', { validators: [Validators.required], nonNullable: true }),
     frequency: this.frequency,
     isChequebookAvailable: new FormControl(false, { validators: [Validators.required], nonNullable: true }),
@@ -107,7 +107,7 @@ export default class CurrentAccount {
     const rates = this.interestRates();
     const amount = +(this.amountChanges() || '0');
 
-    return rates.find(x => x.to > amount)?.interestRate;
+    return rates.find(x => x.to >= amount)?.interestRate;
   });
   readonly minAmountValue = computed(() => {
     const minimumDeposit = (this.detail()?.minimumDeposit || '0').split(' ')[0] || 0.01;
@@ -116,6 +116,9 @@ export default class CurrentAccount {
   readonly termsType = TERMS_AND_CONDITIONS_ID.SUB_ACCOUNT_TNC;
 
   constructor() {
+    super();
+    this.setForm(this.form);
+
     this.transferData.loadAccountsData('EGP');
 
     effect(() => {

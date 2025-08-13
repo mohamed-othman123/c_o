@@ -546,26 +546,134 @@ export class ProductsService {
       data: {
         accountListResponse: {
           accountType: 'CURRENT.ACCOUNT',
-          accountTitle: 'ح جارى الذهبى',
-          accountDescription: 'حساب جارى الذهبى',
+          accountTitle: 'Golden Current',
+          accountDescription: 'Golden Current Account',
           categoryId: '1024',
-          productId: '1024-EGP-10-NONE',
-          interest: '10',
+          productId: '1024-EGP-Interest-NONE',
           interestType: 'Interest',
-          frequency: null,
-          minimumDeposit: '99999.99',
-          maxDeposit: '499999.99',
+          frequency: 'DAILY',
+          minimumDeposit: '5000',
           minForInterest: '99999.99',
           currency: 'EGP',
           checkBookAvailable: true,
         },
         interestRateResponses: [
-          { from: '0', to: '500000', interestRate: '0' },
-          { from: '500000', to: '1000000', interestRate: '1' },
-          { from: '1000000', to: '5000000', interestRate: '2' },
-          { from: '5000000', to: '10000000', interestRate: '2.25' },
-          { from: '10000000', to: 'Max', interestRate: '2.5' },
+          {
+            from: '99999.99',
+            to: '499999.99',
+            interestRate: '10',
+          },
+          {
+            from: '99999.99',
+            to: '999999.99',
+            interestRate: '12',
+          },
+          {
+            from: '99999.99',
+            to: '4999999.99',
+            interestRate: '13',
+          },
+          {
+            from: '99999.99',
+            to: '9999999.99',
+            interestRate: '13.5',
+          },
+          {
+            from: '99999.99',
+            to: '19999999.99',
+            interestRate: '14',
+          },
+          {
+            from: '99999.99',
+            to: '49999999.99',
+            interestRate: '14.5',
+          },
+          {
+            from: '99999.99',
+            to: '9223372036854775807',
+            interestRate: '15',
+          },
         ],
+      },
+      // {
+      //     "accountListResponse": {
+      //         "accountType": "CURRENT.ACCOUNT",
+      //         "accountTitle": "Current Account",
+      //         "accountDescription": "Current Account",
+      //         "categoryId": "1001",
+      //         "productId": "1001-EGP-Non-Interest-NONE",
+      //         "interestType": "Non-Interest",
+      //         "minimumDeposit": "5000",
+      //         "currency": "EGP",
+      //         "checkBookAvailable": true
+      //     }
+      // }
+    };
+  }
+
+  details() {
+    return {
+      status: 'Success',
+      message: 'Product request detail fetched successfully',
+      data: {
+        productDetail: {
+          cdTdId: 'EGP-2000-12M',
+          productTitle: 'USD 3-Year CD',
+          requestType: 'CD',
+          requestId: 'DB9E230D2031423A88C3088AF0C194CB',
+          requestTypeDisplay: 'Open New CD',
+          status: 'APPROVED',
+          requiredApproval: 3,
+          approved: 1,
+          rejected: 1,
+          debitAccount: '1231234432',
+          debitAccountHolderNickName: 'ABC',
+          creditPrincipleAccount: '23423423',
+          creditAccountHolderNickName: 'XYZ',
+          amount: '10000',
+          currency: 'EGP',
+          interestRate: '15',
+          minimumDepositAmount: '10000',
+          minimumDepositCurrency: 'EGP',
+          frequency: '1M',
+          interestType: 'FIXED',
+          actionAtMaturity: 'Redeem',
+          createdDate: '2025-08-04T18:33:11.573268',
+          updatedDate: '2025-08-04T18:33:12.547683',
+          updatedBy: 'dinesh_super_user',
+          createdBy: 'dinesh_super_user',
+        },
+        approvalRejection: [
+          {
+            status: 'APPROVED',
+            role: 'CHECKER_LEVEL_1',
+            approverName: 'Mostafa',
+            note: 'rejection or approval note',
+            createdAt: '2025-08-10T21:08:08.134039',
+          },
+        ],
+        users: {
+          CHECKER_LEVEL_2: [
+            {
+              name: 'ahmed',
+              id: 'uuid',
+            },
+            {
+              name: 'ahmed',
+              id: 'uuid',
+            },
+          ],
+          CHECKER_LEVEL_3: [
+            {
+              name: 'ahmed',
+              id: 'uuid',
+            },
+            {
+              name: 'ahmed',
+              id: 'uuid',
+            },
+          ],
+        },
       },
     };
   }

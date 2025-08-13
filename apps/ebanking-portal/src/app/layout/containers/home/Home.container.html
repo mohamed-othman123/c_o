@@ -74,14 +74,15 @@
           activeIcon="profile-2user-solid"
           testId="HOME_MAIN_BENEFICIARY_LINK"
           [sideMenu]="sideMenu()" />
-        <app-layout-item
+        <!-- <app-layout-item
           *rolePermission="['SUPER_USER', 'MAKER', 'CHECKER']"
           name="dashboardLayout.pendingApprovals"
           icon="pending-approvals"
           href="/pending-approvals"
           activeIcon="pending-approvals-active"
           testId="HOME_MAIN_BENEFICIARY_LINK"
-          [sideMenu]="sideMenu()" />
+          [sideMenu]="sideMenu()" /> -->
+
         <app-layout-item
           *rolePermission="['SUPER_USER', 'MAKER', 'CHECKER']"
           name="dashboardLayout.softToken"
@@ -92,6 +93,7 @@
           [sideMenu]="sideMenu()" />
 
         <app-layout-item
+          *rolePermission="['SUPER_USER', 'MAKER', 'CHECKER']"
           name="dashboardLayout.chequeBook"
           icon="chequebook"
           activeIcon="chequebook-solid"
@@ -99,13 +101,11 @@
           testId="HOME_MAIN_CHEQUE_BOOK"
           [sideMenu]="sideMenu()" />
 
-        <!-- <app-layout-item
-          name="dashboardLayout.delegation"
-          icon="home"
-          activeIcon="home-solid"
-          href="/delegation-matrix"
-          testId="HOME_MAIN_CHEQUE_BOOK"
-          [sideMenu]="sideMenu()" /> -->
+        @if (items(); as menu) {
+          <app-layout-panel
+            *rolePermission="['SUPER_USER', 'MAKER', 'CHECKER']"
+            [menuItem]="menu" />
+        }
       </div>
     </div>
     <div

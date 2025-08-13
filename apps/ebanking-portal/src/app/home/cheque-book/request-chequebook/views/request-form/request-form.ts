@@ -97,7 +97,7 @@ export class RequestNewChequeBookForm {
     if (!accountNumber) return undefined;
 
     return {
-      url: `/api/product/chequebooks/branch-info`,
+      url: `/api/product/chequebooks/branch-info?lang=${this.lang()}`,
     };
   });
 

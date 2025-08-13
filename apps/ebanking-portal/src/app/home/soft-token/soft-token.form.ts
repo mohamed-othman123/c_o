@@ -1,5 +1,5 @@
 import { NgClass, NgComponentOutlet } from '@angular/common';
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, inject, OnDestroy } from '@angular/core';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { Card } from '@scb/ui/card';
 import { Icon } from '@scb/ui/icon';
@@ -61,7 +61,7 @@ import { SoftTokenStepFourWidget } from './steps/step-4-widget';
     </div>
   `,
 })
-export class SoftTokenFormComponent {
+export class SoftTokenFormComponent implements OnDestroy {
   readonly stepperService = inject(StepperService);
 
   // Component mapping based on step number
@@ -77,4 +77,8 @@ export class SoftTokenFormComponent {
     const currentStep = this.stepperService.currentStep();
     return this.stepComponents[currentStep - 1];
   });
+
+  ngOnDestroy() {
+    this.stepperService.reset();
+  }
 }

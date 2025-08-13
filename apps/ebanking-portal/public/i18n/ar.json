@@ -212,7 +212,7 @@
     "darkMode": "الوضع الليلي",
     "logout": "تسجيل الخروج",
     "chequeBook": "إدارة دفاتر الشيكات",
-    "pendingApprovals": "Pending Approvals"
+    "pendingApprovals": "لا توجد بيانات"
   },
   "quickAction": {
     "quickAction": "إجراءات سريعة",
@@ -416,7 +416,7 @@
     "accounts": "الحسابات",
     "currentAccount": "الحساب الجاري",
     "chequeBook": "دفتر الشيكات",
-    "pendingApprovals": "Pending Approvals"
+    "pendingApprovals": "لا توجد بيانات"
   },
   "breadcrumbs": {
     "home": "لوحة التحكم",
@@ -457,7 +457,7 @@
     "chequeBook": "إدارة دفاتر الشيكات",
     "requestNewChecquebook": "طلب دفتر شيكات جديد",
     "chequeBookDetails": "تفاصيل طلب دفتر الشيكات",
-    "pendingApprovals": "Pending Approvals"
+    "pendingApprovals": "لا توجد بيانات"
   },
   "facilitiesOverview": {
     "title": "ملخص التسهيلات",
@@ -1482,7 +1482,8 @@
       "minAmount": "يجب أن يكون المبلغ أكبر من 0",
       "minAmountError": "أقل مبلغ يمكن تحويله هو 1 جنيه",
       "apiError": "حدث خطأ ما!",
-      "apiErrorDetail": "لا يمكننا تحميل بياناتك في الوقت الحالي. يرجى محاولة إعادة التحميل."
+      "apiErrorDetail": "لا يمكننا تحميل بياناتك في الوقت الحالي. يرجى محاولة إعادة التحميل.",
+      "negativeTotal": "يجب أن يكون إجمالي المبلغ بعد العمولات أكبر من 0"
     },
     "summary": {
       "title": "ملخص التحويل",
@@ -1912,6 +1913,27 @@
     "DAILY": "يومي",
     "actionMaturity": "الإجراء عند الاستحقاق",
     "Redeem": "استرداد",
+    "currency": "العملة",
+    "tenor": "[MISSING]",
+    "description": "وصف المعاملة",
+    "reasonOfTransfer": "سبب التحويل",
+    "transactionDate": "تاريخ المعاملة",
+    "chargesPaidBy": "المصاريف المدفوعة بواسطة",
+    "executionDate": "تاريخ التنفيذ",
+    "appliedFees": "[MISSING]",
+    "APPROVED": "تمت الموافقة",
+    "timelineTitle": "الجدول الزمني للموافقات",
+    "timelineSub": "[MISSING]",
+    "submittedBy": "[MISSING]",
+    "debitedAccount": "تم انشاء الوديعة من",
+    "creditedPrincipleAccount": "الحساب المُحوَّل إليه أصل المبلغ",
+    "creditedAccount": "الحساب المُودَع فيه",
+    "to": "إلي",
+    "you": "[MISSING]",
+    "by": "حسب",
+    "reject": "رفض",
+    "withdraw": "سحب الطلب",
+    "productDetails": "[MISSING]",
     "depositForm": {
       "creditedPrincipleAccount": "الحساب المُحوَّل إليه أصل المبلغ",
       "sameDebitedAccount": "الحساب المخصوم منه",
@@ -1963,7 +1985,8 @@
       "insufficientBalance": "الرصيد غير كافي",
       "apiFails": "حدث خطأ ما. يرجى المحاولة لاحقًا.",
       "done": "تم",
-      "viewProducts": "عرض المنتجات"
+      "viewProducts": "عرض المنتجات",
+      "sectionRequired": "هذا الحقل مطلوب"
     },
     "timeDepositForm": {
       "fixedTimeDeposit": "الوديعة لأجل ذات العائد الثابت",
@@ -2039,7 +2062,7 @@
       "numberOfLeaves": "عدد ورق الدفتر",
       "numberOfChequebooks": "عدد دفاتر الشيكات",
       "termConditions": "أوافق على الشروط والأحكام",
-      "chequeBookStatus": "دفتر الشيكات الخاص بك سيكون متاحًا للاستلام من فرعك في التجمع الخامس، شارع التسعين.",
+      "chequeBookStatus": "دفتر الشيكات الخاص بك سيكون متاحًا للاستلام من فرعك في التجمع الخامس، شارع التسعين:",
       "submit": "إرسال الطلب",
       "totalFeesHint": "إجمالي الرسوم: ",
       "returnToDashboard": "العودة الي لوحة التحكم ",
@@ -2080,27 +2103,85 @@
     }
   },
   "pendingApprovals": {
-    "pendingApprovalsTitle": "Pending Approvals",
-    "pendingRequestsTitle": "Pending Requests",
-    "transactions": "Transactions",
-    "date": "Date",
-    "transferType": "Transfer Type",
+    "allList": "الكل",
+    "filterBy": "التصفية حسب",
+    "title": "لا توجد بيانات",
+    "pendingApprovalsTitle": "لا توجد بيانات",
+    "pendingRequestsTitle": "الطلبات المعلقة",
+    "transfer": "التحويلات",
+    "product": "المنتجات المصرفية",
+    "cheque": "دفاتر الشيكات",
+    "searchOptions": "بحث",
+    "transferType": "نوع التحويل",
+    "requestType": "نوع الطلب",
+    "tabs": {
+      "pending": "الطلبات المعلقة",
+      "approved": "الطلبات الموافق عليها",
+      "rejected": "الطلبات المرفوضة ",
+      "all": "الكل",
+      "waiting": "في انتظار موافقة أطراف أخرى"
+    },
+    "button": {
+      "approve": "موافقة",
+      "reject": "رفض",
+      "withdraw": "سحب الطلب"
+    },
+    "sideMenu": {
+      "transfer": "التحويلات",
+      "product": "المنتجات المصرفية",
+      "cheque": "دفاتر الشيكات"
+    },
     "table": {
       "requestDate": "تاريخ الطلب",
       "requestNumber": "رقم الطلب",
       "requestType": "نوع الطلب",
-      "amount": "Amount",
+      "amount": "المبلغ",
       "status": "الحالة",
       "actions": "إجراء",
-      "transferType": "Transfer Type"
+      "transferType": "نوع التحويل"
     },
     "empty": {
-      "title": "No transactions yet.",
-      "subTitle": " Start by making your first transaction."
+      "title": "لا توجد بيانات",
+      "subTitle": "كل شيء جاهز. لا توجد طلبات معلقة الآن."
     },
     "noResults": {
-      "title": "No results found.",
-      "subTitle": "Try adjusting your filters."
+      "title": "م يتم العثور على نتائج.",
+      "subTitle": "قم بتغيير عوامل التصفية."
+    },
+    "withdrawConfirmation": {
+      "title": "معاملة السحب",
+      "desc": "هل أنت متأكد أنك تريد سحب هذه المعاملة؟ قد لا يكون من الممكن التراجع عن هذا الإجراء.",
+      "yes": "نعم، سحب",
+      "no": "لا, إلغاء"
+    },
+    "rejectRequest": {
+      "rejectRemark": "Enter Reason of Rejection",
+      "rejectRemarkRequired": "Rejection reason required",
+      "title": "Reject Transaction",
+      "desc": "Please provide a reason for rejecting this transaction",
+      "yes": "Reject",
+      "no": "إلغاء"
+    },
+    "success": {
+      "title": "Withdraw",
+      "subTitle": "Withdraw successfully."
+    },
+    "withdrawSuccess": {
+      "title": "Withdraw request successful",
+      "subTitle": "Your request has been withdrawn successfully"
+    },
+    "rejectSuccess": {
+      "title": "Reject successful",
+      "subTitle": "The request was rejected successfully"
+    },
+    "approvedSuccess": {
+      "title": "Approve successful",
+      "subTitle": "The request was approved successfully"
+    },
+    "error": {
+      "apiError": "حدث خطأ ما!",
+      "apiErrorDetail": "لا يمكننا تحميل بياناتك في الوقت الحالي. يرجى محاولة إعادة التحميل.",
+      "reload": "إعادة التحميل"
     }
   },
   "idle": {

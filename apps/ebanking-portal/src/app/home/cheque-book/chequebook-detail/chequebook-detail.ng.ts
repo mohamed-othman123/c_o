@@ -62,7 +62,7 @@ export class ChequeBookDetail {
 
   readonly statusMap = {
     en: {
-      UNDER_REVIEW: 'Under Reviewing',
+      UNDER_REVIEW: 'Under Review',
       APPROVED: 'Approved',
       PRINTING: 'Printed',
       AT_BRANCH: 'At Branch Side',

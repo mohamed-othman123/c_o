@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, finalize, map, Observable, throwError } from 'rxjs';
+import { catchError, map, Observable, tap, throwError } from 'rxjs';
 import { IdleAlertService } from '@/core/components/idle-alert/idle-alert.service';
 import { AuthStore, Role } from '@/core/store/auth-store';
 import { ApiResult } from '@/models/api';
@@ -83,12 +83,23 @@ export class AuthService {
 
   logout(): Observable<ApiResult<null>> {
     return this.http.post<ApiResult<null>>(`/api/authentication/auth/logout`, {}).pipe(
-      finalize(() => {
-        // Close any idle dialog and reset clientside timers before navigation
+      tap(res => {
         this.idleAlert.closeAll();
         this.authStore.clearAuthState();
-        this.router.navigate(['/login'], { replaceUrl: true });
+        // Use setTimeout to ensure auth state is cleared before navigation
+        setTimeout(() => {
+          this.router.navigate(['/login'], { replaceUrl: true }).catch(err => {
+            console.error('Navigation error during logout:', err);
+            // Fallback: try to navigate without replaceUrl
+            this.router.navigate(['/login']).catch(fallbackErr => {
+              console.error('Fallback navigation also failed:', fallbackErr);
+              // Last resort: force page reload to login
+              window.location.href = '/login';
+            });
+          });
+        }, 0);
       }),
+      map(res => res),
     );
   }
 

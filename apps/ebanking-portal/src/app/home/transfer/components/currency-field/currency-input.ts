@@ -55,6 +55,7 @@ import { Icon } from '@scb/ui/icon';
     <p scbError="!required && min">{{ minError() || t('minAmountError') }}</p>
     <p scbError="!required && !min && max">{{ t('insufficientBalance') }}</p>
     <p scbError="insufficientBalance">{{ t('insufficientBalance') }}</p>
+    <p scbError="negativeTotal">{{ t('negativeTotal') }}</p>
   </scb-form-field>`,
   host: {
     class: 'block w-full',

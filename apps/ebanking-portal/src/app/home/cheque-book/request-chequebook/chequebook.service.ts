@@ -52,12 +52,15 @@ export class ChequeBookService {
         accountNickname: value.linkedAccount.accountNickname,
         accountType: value.linkedAccount.categoryDescription,
         accountNumber: value.linkedAccount.accountNumber,
+        accountCurrency: 'EGP',
         ...(value.feeDebitedAccountNumber.accountNumber && {
           feeDebitedAccountNumber: value.feeDebitedAccountNumber.accountNumber,
           branchDetails: 'Main Branch',
         }),
+        cifBranch: this.branchName(),
         chequebooksIssued: +value.chequebooksIssued,
         leavesCount: +value.leavesCount,
+        otp: '12345678',
         requestDate: value.requestDate,
       };
 
@@ -94,7 +97,7 @@ export class ChequeBookService {
   save = (token: string) => {
     // const request = this.getRequest(token);
     this.loading.set(true);
-    this.http.post<ChequeBookInfo>(`/api/product/chequebooks/issue`, this.value()).subscribe({
+    this.http.post<ChequeBookInfo>(`/api/product/chequebook/workflow/request`, this.value()).subscribe({
       next: res => {
         this.loading.set(false);
         this.dialog.closeAll();

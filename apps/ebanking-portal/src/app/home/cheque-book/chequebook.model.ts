@@ -10,6 +10,7 @@ export interface ChequebookItem {
   cifBranch: string;
   issueFee: number;
   requestDate: string;
+  createdAt: string;
 }
 
 export interface PaginationInfo {

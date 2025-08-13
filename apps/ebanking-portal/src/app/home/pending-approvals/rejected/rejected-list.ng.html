@@ -29,14 +29,14 @@
     <div
       class="border-border-secondary py-xl gap-lg flex flex-col rounded-4xl border-1"
       *transloco="let t; prefix: 'pendingApprovals'">
-      <!-- Title and Download Statement Button -->
       <div class="gap-sm px-xl flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <p class="mf-lg font-semibold">{{ t('transactions') }}</p>
+        <p class="mf-lg font-semibold">{{ t(type()) }}</p>
       </div>
 
       <!-- Filter Section -->
       <app-pending-approval-filter
         [(transferType)]="transferType"
+        [(dateRange)]="date"
         [isEmpty]="isEmpty()" />
 
       <!-- Empty state & Table -->
@@ -82,36 +82,43 @@
           </ng-template>
           <ng-template
             #body
-            let-account>
+            let-transaction>
             <tr
-              class="focus:ring-primary cursor-pointer !bg-transparent transition-colors duration-200 hover:bg-gray-50 focus:ring-2 focus:outline-none focus:ring-inset dark:hover:bg-gray-800"
-              tabindex="0">
+              [routerLink]="transaction.requestId"
+              class="cursor-pointer">
               <td class="body-sm">
                 <date-view
-                  [value]="account.requestDate"
-                  istFormat
+                  [value]="transaction.createdDate || transaction.createdAt"
                   format="d MMM yyyy">
                 </date-view>
               </td>
               <td>
-                {{ account.requestNumber }}
+                {{ transaction.requestId ?? transaction.id }}
               </td>
 
               <td>
-                {{ account.requestType }}
+                {{ transaction.accountType || transaction.requestType }}
               </td>
 
               <td>
                 <currency-view
-                  [amount]="account.amount"
-                  [currency]="account.currency"
+                  [amount]="transaction.amount || transaction.issueFee"
+                  [currency]="transaction.currency || transaction.accountCurrency"
                   size="sm" />
               </td>
+
               <td class="body-sm">
                 <div class="gap-xs flex">
-                  <approval-progress status="success" />
-                  <approval-progress status="reject" />
-                  <approval-progress />
+                  @for (
+                    step of pendingService.getApprovalSteps(
+                      transaction.requiredApproval,
+                      transaction.approved ?? 0,
+                      transaction.rejected ?? 0
+                    );
+                    track $index
+                  ) {
+                    <approval-progress [status]="step.status"></approval-progress>
+                  }
                 </div>
               </td>
             </tr>

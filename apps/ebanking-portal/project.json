@@ -69,11 +69,11 @@
           "proxyConfig": "apps/ebanking-portal/proxy-config/proxy.mock.json"
         },
         "dev": {
-          "buildTarget": "ebanking-portal:build:development",
+          "buildTarget": "ebanking-portal:build:production",
           "proxyConfig": "apps/ebanking-portal/proxy-config/proxy.dev.json"
         },
         "sit": {
-          "buildTarget": "ebanking-portal:build:development",
+          "buildTarget": "ebanking-portal:build:production",
           "proxyConfig": "apps/ebanking-portal/proxy-config/proxy.sit.json"
         }
       },

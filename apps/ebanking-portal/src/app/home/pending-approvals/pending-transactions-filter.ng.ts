@@ -1,3 +1,4 @@
+import { httpResource } from '@angular/common/http';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,22 +9,26 @@ import {
   model,
   viewChild,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { SelectFooter, SelectValue } from '@/core/components';
 import { isEqual } from '@/core/utils/utils';
 import { TranslocoDirective } from '@jsverse/transloco';
+import { Button } from '@scb/ui/button';
 import { FormField, ScbInput } from '@scb/ui/form-field';
 import { Icon } from '@scb/ui/icon';
 import { Option, Select, SelectTrigger } from '@scb/ui/select';
 import { ScbDate } from '@scb/util/datepicker';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 import { RadioButtonModule } from 'primeng/radiobutton';
-import { TransactionsHistoryData } from '../transactions-history/transactions-history';
+import { RequestTypeResponse } from './model';
+import { PendingRequestsApprovalsService } from './pending-approvals.service';
 
 @Component({
   selector: 'app-pending-approval-filter',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [TransactionsHistoryData],
+  providers: [],
   imports: [
     BreadcrumbModule,
     FormField,
@@ -38,6 +43,7 @@ import { TransactionsHistoryData } from '../transactions-history/transactions-hi
     FormsModule,
     RadioButtonModule,
     Icon,
+    Button,
   ],
   template: `
     @if (!isEmpty() || showClearFilter()) {
@@ -95,35 +101,81 @@ import { TransactionsHistoryData } from '../transactions-history/transactions-hi
           </scb-form-field>
 
           <!-- Status -->
-          <scb-form-field
-            [variant]="_transferType().length ? 'primary' : 'ghost'"
-            class="bg-white-custom [&>.input-main]:w-max"
-            data-testid="APPROVALS_FORMFIELD_STATUS">
-            <scb-select
-              #transferTypeSelect
-              [options]="transferTypeList()"
-              [filterFn]="transferTypeFn"
-              [(value)]="_transferType"
-              multiple
-              data-testid="TRANSACTIONS_HISTORY_SELECT_TRANSFER_TYPE_VALUE"
-              [searchPlaceholder]="t('searchOptions')"
-              (closed)="transferTypeClosed()"
-              noAutoClose>
-              <app-select-value
-                scbSelectTrigger
-                [placeholder]="t('transferType')"
-                [len]="_transferType().length" />
-              @for (item of transferTypeSelect.optionsFilter.filteredList(); track item) {
-                <scb-option [value]="item.value">
-                  {{ item.name }}
-                </scb-option>
-              }
-              <app-select-footer
-                class="select-footer"
-                (apply)="apply()"
-                (resetValue)="_transferType.set([])" />
-            </scb-select>
-          </scb-form-field>
+          @if (type() === 'transfer') {
+            <scb-form-field
+              [variant]="_transferType().length ? 'primary' : 'ghost'"
+              class="bg-white-custom [&>.input-main]:w-max"
+              data-testid="APPROVALS_FORMFIELD_STATUS">
+              <scb-select
+                #transferTypeSelect
+                [options]="transferTypeList()"
+                [filterFn]="transferTypeFn"
+                [(value)]="_transferType"
+                multiple
+                data-testid="TRANSACTIONS_HISTORY_SELECT_TRANSFER_TYPE_VALUE"
+                [searchPlaceholder]="t('searchOptions')"
+                (closed)="transferTypeClosed()"
+                noAutoClose>
+                <app-select-value
+                  scbSelectTrigger
+                  [placeholder]="t('pendingApprovals.transferType')"
+                  [len]="_transferType().length" />
+                @for (item of transferTypeSelect.optionsFilter.filteredList(); track item) {
+                  <scb-option [value]="item.value">
+                    {{ item.name }}
+                  </scb-option>
+                }
+                <app-select-footer
+                  class="select-footer"
+                  (apply)="apply()"
+                  (resetValue)="_transferType.set([])" />
+              </scb-select>
+            </scb-form-field>
+          }
+
+          <!-- request Type -->
+          @if (type() === 'product') {
+            <scb-form-field
+              [variant]="_transferType().length ? 'primary' : 'ghost'"
+              class="bg-white-custom [&>.input-main]:w-max"
+              data-testid="APPROVALS_FORMFIELD_STATUS">
+              <scb-select
+                #requestTypeSelect
+                [options]="requestTypeStatus()"
+                [filterFn]="transferTypeFn"
+                [(value)]="_transferType"
+                multiple
+                data-testid="TRANSACTIONS_HISTORY_SELECT_TRANSFER_TYPE_VALUE"
+                [searchPlaceholder]="t('searchOptions')"
+                (closed)="transferTypeClosed()"
+                noAutoClose>
+                <app-select-value
+                  scbSelectTrigger
+                  [placeholder]="t('pendingApprovals.requestType')"
+                  [len]="_transferType().length" />
+                @for (item of requestTypeStatus(); track item) {
+                  <scb-option [value]="item.value">
+                    {{ item.name }}
+                  </scb-option>
+                }
+                <app-select-footer
+                  class="select-footer"
+                  (apply)="apply()"
+                  (resetValue)="_transferType.set([])" />
+              </scb-select>
+            </scb-form-field>
+          }
+
+          @if (showClearFilter()) {
+            <button
+              scbButton
+              size="md"
+              variant="secondary"
+              class="flex-none !px-2"
+              (click)="clearFilter()">
+              {{ t('clearFilter') }}
+            </button>
+          }
           <div class="flex-1"></div>
           <scb-form-field mode="search">
             <icon
@@ -139,26 +191,45 @@ import { TransactionsHistoryData } from '../transactions-history/transactions-hi
   `,
 })
 export class PendingApprovalFilter {
-  readonly transferType = model<any[]>([]);
-  // readonly transferTypeList = input<any[]>([]);
-  readonly scheduledTransfersData = inject(TransactionsHistoryData);
+  readonly transferType = model<TransactionsTransferTypes[]>([]);
+  readonly pendingService = inject(PendingRequestsApprovalsService);
+  readonly route = inject(ActivatedRoute);
   readonly dateRange = model<string>('');
   readonly isEmpty = input(false);
   readonly _dateRange = linkedSignal(this.dateRange);
+
   readonly transferTypeFn = (option: StatusOptions<TransactionsTransferTypes>) => option.name;
+
+  readonly queryParams = toSignal(this.route.queryParamMap);
+  readonly type = computed(() => this.queryParams()?.get('type') || '');
 
   readonly _transferType = linkedSignal(this.transferType);
   readonly transferTypeSelect = viewChild<Select<string>>('transferTypeSelect');
-  readonly showClearFilter = computed(() => this.transferType().length);
+  readonly requestTypeSelect = viewChild<Select<string>>('requestTypeSelect');
+  readonly showClearFilter = computed(() => {
+    const hasTransferType = this.transferType().length > 0;
+    const hasDateRange = this.dateRange().trim().length > 0;
+    return hasTransferType || hasDateRange;
+  });
 
+  readonly transferTypes = computed(() => this.pendingService.lookupData.value()?.transferType || []);
   readonly transferTypeList = computed(() => {
-    return this.scheduledTransfersData
-      .transferTypes()
+    return this.transferTypes()
       .filter(item => item.key !== 'CHARITY')
       .map(item => ({
         name: item.value,
         value: item.key as TransactionsTransferTypes,
       }));
+  });
+
+  readonly requestTypeResource = this.pendingService.requestTypeResource;
+  readonly requestTypeStatus = computed(() => {
+    const response = this.requestTypeResource.value();
+    const requestTypes = response?.data?.requestTypes ?? [];
+    return requestTypes.map(rt => ({
+      name: rt.label,
+      value: rt.code as TransactionsTransferTypes, // cast if needed
+    }));
   });
 
   readonly settlementDateList = [
@@ -184,10 +255,16 @@ export class PendingApprovalFilter {
 
   clearFilter() {
     this.transferType.set([]);
+    this.dateRange.set('');
   }
 
   apply() {
+    // this.status.set(this._status());
+    this.dateRange.set(this._dateRange());
     this.transferType.set(this._transferType());
+    // this.searchTerm.set(this._searchTerm());
+    this.transferTypeSelect()?.close();
+    this.requestTypeSelect()?.close();
   }
 
   transferTypeClosed() {

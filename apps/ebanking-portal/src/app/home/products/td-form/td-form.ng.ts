@@ -199,6 +199,7 @@ export default class TDForm {
         this.form.controls.interestRate.setValue(v.interestRate);
         this.form.controls.currencyId.setValue(v.currency);
         this.interestRate.set(v.interestRate);
+        this.fixedInterestPercentage.set(Number(v.interestRate));
       }
     });
 
@@ -233,7 +234,6 @@ export default class TDForm {
     this.amount.valueChanges.subscribe(value => {
       const amountValue = Number(value);
       if (this.amount.invalid || isNaN(amountValue)) {
-        this.fixedInterestPercentage.set(0);
         return;
       }
       this.fixedInterestPercentage.set(this.getFixedInterestRate(amountValue));

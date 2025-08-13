@@ -12,7 +12,7 @@ export class CanDeactivateLeaveGuard implements CanDeactivate<CanDeactivateCompo
 
   canDeactivate(component: CanDeactivateComponent): boolean {
     // If component has its own canDeactivate method, use it
-    if (component.canDeactivate) {
+    if (component?.canDeactivate) {
       return component.canDeactivate();
     }
 

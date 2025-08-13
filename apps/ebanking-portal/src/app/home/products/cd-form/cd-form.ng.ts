@@ -12,7 +12,6 @@ import { CurrencyInputField } from '@/home/transfer/components/currency-field/cu
 import { SelectAccountField } from '@/home/transfer/components/select-account-field/select-account-field.ng';
 import { TransferDataService } from '@/home/transfer/data/transfer-data.service';
 import { SelectAccountFieldProps } from '@/home/transfer/model';
-import { LayoutFacadeService } from '@/layout/layout.facade.service';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { Button } from '@scb/ui/button';
 import { Card } from '@scb/ui/card';
@@ -25,6 +24,7 @@ import {
   TERMS_AND_CONDITIONS_ID,
   TermsAndConditions,
 } from '../../../core/components/terms-and-conditions/term-and-conditions.ng';
+import { FormDeactivate } from '../form-deactivate';
 import { ERROR_TYPE, ProductCdDetail, ProductResult } from '../model';
 import { RoundIcon } from '../sub-accounts/round-icon.ng';
 import { CdCreateRequest } from './interface';
@@ -61,11 +61,10 @@ import { ProductFormContainer } from './product-form-container.ng';
     class: 'container-grid py-3xl px-3xl',
   },
 })
-export default class CdForm {
+export default class CdForm extends FormDeactivate {
   readonly http = inject(HttpClient);
   readonly softToken = inject(SoftTokenService);
   readonly transferData = inject(TransferDataService);
-  readonly layoutFacade = inject(LayoutFacadeService);
   readonly route = inject(ActivatedRoute);
 
   readonly paramIds = (() => {
@@ -96,7 +95,7 @@ export default class CdForm {
   readonly amount = new FormControl('', { validators: [Validators.required], nonNullable: true });
   readonly drawdownAccount = new FormControl('', { validators: [Validators.required], nonNullable: true });
   readonly anotherAccount = new FormControl('', { nonNullable: true });
-  readonly acceptTerms = new FormControl(false, { validators: [Validators.requiredTrue], nonNullable: true });
+  readonly acceptTerms = new FormControl(false, { nonNullable: true });
   readonly form = new FormGroup({
     amount: this.amount,
     categoryId: new FormControl(this.paramIds.id, { validators: [Validators.required], nonNullable: true }),
@@ -126,6 +125,9 @@ export default class CdForm {
   });
 
   constructor() {
+    super();
+    this.setForm(this.form);
+
     this.transferData.loadAccountsData('USD');
 
     effect(() => {
