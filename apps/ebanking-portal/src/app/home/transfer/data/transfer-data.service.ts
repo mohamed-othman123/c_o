@@ -118,12 +118,10 @@ export class TransferDataService {
       return;
     }
 
-    // Check if request is already in progress
     if (this.ongoingAccountRequests.has(cacheKey)) {
       return;
     }
 
-    // Mark request as ongoing
     this.ongoingAccountRequests.add(cacheKey);
 
     this.toAccountsLoading.set(true);
@@ -184,11 +182,13 @@ export class TransferDataService {
       },
     });
   }
+  private readonly loadedBeneficiaryTypes = new Set<string>();
+  private readonly loadedAccountTypes = new Set<string>();
 
   loadBeneficiariesData(beneficiaryType: string): void {
     const cacheKey = beneficiaryType;
 
-    if (this.beneficiariesData()[cacheKey]?.length > 0) {
+    if (this.beneficiariesData()[cacheKey] !== undefined) {
       return;
     }
 
@@ -203,11 +203,12 @@ export class TransferDataService {
 
     this.http.get<BeneficiaryResponse>('/api/transfer/beneficiary/list', { params: { beneficiaryType } }).subscribe({
       next: response => {
+        this.loadedBeneficiaryTypes.add(cacheKey);
         const beneficiaries = Array.isArray(response.data)
           ? response.data.map(beneficiary => {
-              const icon = PAYMENT_METHODS_OUTSIDE.find(item => item.id === beneficiary.transactionMethod)?.icon;
-              return { ...beneficiary, icon: icon || 'bank' };
-            })
+            const icon = PAYMENT_METHODS_OUTSIDE.find(item => item.id === beneficiary.transactionMethod)?.icon;
+            return { ...beneficiary, icon: icon || 'bank' };
+          })
           : [];
 
         this.beneficiariesData.update(state => ({ ...state, [cacheKey]: beneficiaries }));
@@ -215,6 +216,7 @@ export class TransferDataService {
         this.ongoingRequests.delete(cacheKey);
       },
       error: () => {
+        this.loadedBeneficiaryTypes.add(cacheKey);
         this.beneficiariesError.update(state => ({ ...state, [cacheKey]: 'Failed to load beneficiaries' }));
         this.beneficiariesLoading.update(state => ({ ...state, [cacheKey]: false }));
         this.ongoingRequests.delete(cacheKey);

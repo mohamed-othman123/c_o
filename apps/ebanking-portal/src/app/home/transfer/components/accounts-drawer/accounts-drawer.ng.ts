@@ -9,6 +9,7 @@ import {
   model,
   output,
   signal,
+  untracked,
   ViewEncapsulation,
 } from '@angular/core';
 import { CurrencyView, Skeleton } from '@/core/components';
@@ -161,17 +162,22 @@ export class AccountsDrawer {
 
     effect(() => {
       if (this.open() && this.selectedCurrency()) {
-        const type = this.type();
-        const currency = this.selectedCurrency();
-        const currentData = this.accountsData();
+        untracked(() => {
+          const type = this.type();
+          const currency = this.selectedCurrency();
+          const currentData = this.accountsData();
 
-        const hasMatchingCurrencyData = currentData.some(
-          account => account.currency.toUpperCase() === currency.toUpperCase(),
-        );
+          // Add this check to prevent infinite loops on empty data
+          const hasValidData = currentData !== undefined;
+          const hasMatchingCurrencyData = currentData.some(
+            account => account.currency.toUpperCase() === currency.toUpperCase(),
+          );
 
-        if (!hasMatchingCurrencyData && currency !== '' && currentData.length) {
-          this.refreshRequest.emit({ type, currency });
-        }
+          // Only refresh if we have no data at all OR no matching currency data
+          if (!hasValidData || (!hasMatchingCurrencyData && currency !== '' && currentData.length > 0)) {
+            this.refreshRequest.emit({ type, currency });
+          }
+        });
       }
     });
   }
