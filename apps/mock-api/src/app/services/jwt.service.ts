@@ -20,6 +20,19 @@ export class JwtService {
     return this.jwt.verify<T>(token);
   }
 
+  /**
+   * Decode JWT token without verification
+   * Useful for extracting payload information from tokens
+   */
+  decodeToken<T extends object = Record<string, unknown>>(token: string): T | null {
+    try {
+      const decoded = this.jwt.decode(token);
+      return decoded as T;
+    } catch {
+      return null;
+    }
+  }
+
   refreshAccessToken(refreshToken: string): string | null {
     try {
       // Throws if invalid or expired

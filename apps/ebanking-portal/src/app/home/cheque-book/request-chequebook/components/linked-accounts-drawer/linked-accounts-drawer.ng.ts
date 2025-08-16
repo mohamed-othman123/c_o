@@ -112,6 +112,7 @@ export class LinkedAccountsDrawer {
 
   closeDrawer() {
     this.open.set(false);
+    this.searchTerm.set('');
   }
 
   setCurrency(currency: string): void {
@@ -138,7 +139,7 @@ export class LinkedAccountsDrawer {
 
     return list.filter(item => {
       const matchesSearch =
-        !term || item.accountNumber?.toLowerCase().includes(term) || item.accountNumber?.toLowerCase().includes(term);
+        !term || item.accountNumber?.toLowerCase().includes(term) || item.nickname?.toLowerCase().includes(term);
 
       return matchesSearch;
     });

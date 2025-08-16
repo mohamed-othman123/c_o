@@ -101,7 +101,8 @@
     "notMatch": "Password not match",
     "companyIdRequired": "Company ID is required",
     "ruleTitle": "Password should contains the following:",
-    "successTitle": "Password changed successfully"
+    "successTitle": "Password changed successfully",
+    "successRequest": "Reset password link sent to your email and OTP sent to your phone number"
   },
   "fpRules": {
     "rule1": "Should be between 8 to 20 characters long",
@@ -212,7 +213,8 @@
     "darkMode": "Dark Mode",
     "logout": "Logout",
     "chequeBook": "Chequebook Management",
-    "pendingApprovals": "Pending Approvals"
+    "pendingApprovals": "Pending Approvals",
+    "ChangePassword": "Change Password"
   },
   "quickAction": {
     "quickAction": "Quick Action",
@@ -417,7 +419,8 @@
     "currentAccount": "Current Account",
     "chequeBook": "Chequebook Management",
     "pendingApprovals": "Pending Approvals",
-    "pendingRequests": "Pending Requests"
+    "pendingRequests": "Pending Requests",
+    "changePassword": "Change Password"
   },
   "breadcrumbs": {
     "home": "Dashboard",
@@ -458,7 +461,9 @@
     "chequeBook": "Chequebook Management",
     "chequeBookDetails": "Cheque Book Request Details",
     "requestNewChecquebook": "Request a new chequebook",
-    "pendingApprovals": "Pending Approvals"
+    "pendingApprovals": "Pending Approvals",
+    "changePassword": "Change Password",
+    "cheques": "Cheques"
   },
   "facilitiesOverview": {
     "title": "Facilities Overview",
@@ -1418,8 +1423,8 @@
       "subTitle": "Please open an EGP account before continuing."
     },
     "empty": {
-      "title": "You don’t have any accounts",
-      "subTitle": "Please open an account before continuing."
+      "title": "You don’t have any EGP account.",
+      "subTitle": "Please open an EGP account before continuing."
     }
   },
   "transfer": {
@@ -1964,6 +1969,7 @@
     "reject": "Reject",
     "withdraw": "Withdraw",
     "productDetails": "Product Details",
+    "PENDING": "Pending",
     "depositForm": {
       "creditedPrincipleAccount": "Credited Principle Account",
       "sameDebitedAccount": "Same debited account",
@@ -2014,7 +2020,7 @@
       "minAmountError": "Minimum Deposit is {{value}}",
       "insufficientBalance": "Insufficient Balance",
       "apiFails": "Something went wrong. Please try again later.",
-      "done": "Done",
+      "done": "Return to Dashboard",
       "viewProducts": "View Products",
       "sectionRequired": "This Field is required"
     },
@@ -2053,7 +2059,8 @@
     "title": "Terms & Conditions",
     "Iagree": "I agree to the",
     "termsAndConditions": "Terms And Conditions",
-    "interestType": "Interest Type"
+    "interestType": "Interest Type",
+    "sectionRequired": "This Field is required"
   },
   "chequeBook": {
     "requestChequebookTitle": "Chequebook Requests",
@@ -2084,7 +2091,7 @@
     },
     "table": {
       "requestDate": "Request Date",
-      "numberofChequebooks": "Number of Chequebook",
+      "numberofChequebooks": "Number of Chequebooks",
       "leavesPerChequebook": "Leaves per chequebook",
       "status": "Status",
       "viewDetails": "View Details"
@@ -2102,6 +2109,7 @@
       "returnToDashboard": "Return To Dashboard",
       "requestNewChequeBook": "Request Cheque Book",
       "totalFeesHint": "Total Fees: ",
+      "feeWaivedTooltip": "Fee waived based on your profile.",
       "sectionRequired": "This field is required",
       "tandcrequired": "This section is required",
       "notEligible": "A chequebook request is already in progress. You can submit a new request once you receive the current chequebook.",
@@ -2118,6 +2126,10 @@
     "empty": {
       "title": "No chequebook requests yet",
       "subTitle": "Request a chequebook now"
+    },
+    "noResults": {
+      "title": "No results found.",
+      "subTitle": "Try adjusting your filters."
     },
     "filteredState": {
       "title": "No Results Found",
@@ -2159,7 +2171,7 @@
       "approved": "Approved",
       "rejected": "Rejected ",
       "all": "All",
-      "waiting": "Waiting Other Approvals"
+      "waiting": "Waiting Others Approvals"
     },
     "button": {
       "withdraw": "Withdraw",
@@ -2168,8 +2180,8 @@
     },
     "sideMenu": {
       "transfer": "Transfers",
-      "product": "Bank Products",
-      "cheque": "Cheques"
+      "product": "Banking Product",
+      "cheque": "Chequebooks"
     },
     "table": {
       "requestDate": "Request Date",
@@ -2232,5 +2244,14 @@
     "extend": "Continue Session",
     "logout": "Logout",
     "cancel": "Cancel"
+  },
+  "resetPassword": {
+    "oldPassword": "Old password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "oldPasswordRequired": "Old password is required",
+    "newPasswordRequired": "New password is required",
+    "confirmPasswordRequired": "Confirm password is required",
+    "successTitle": "Password changed successfully"
   }
 }

@@ -12,8 +12,9 @@
   [apiRef]="detailsSource"
   class="gap-2xl col-span-12 row-span-8 grid">
   <ng-template #headSection>
+    @let isReview = steps() !== 'form';
     <scb-card
-      class="gap-lg flex flex-col"
+      class="{{ `gap-lg flex flex-col ${isReview ? 'border border-border-secondary' : ''}` }}"
       *transloco="let t; prefix: 'products'">
       <div class="gap-md flex items-center">
         <div>
@@ -29,7 +30,7 @@
             }
           </span>
         </div>
-        @if (steps() === 'form') {
+        @if (!isReview) {
           <div>
             <button
               scbButton
@@ -55,10 +56,6 @@
           <div class="gap-xs grid">
             <h4 class="body-label-sm-m text-text-tertiary">{{ t('frequency') }}</h4>
             <div class="body-md-s">{{ t(detail()?.frequency || '') }}</div>
-          </div>
-          <div class="gap-xs grid">
-            <h4 class="body-label-sm-m text-text-tertiary">{{ t('minForInterest') }}</h4>
-            <currency-view [amount]="detail()?.minForInterest" />
           </div>
         }
       </div>
@@ -94,7 +91,7 @@
         <app-currency-input-field
           [control]="amount"
           [currency]="currency()"
-          [placeholder]="t('certificateAmount')"
+          [placeholder]="t('amount')"
           [minError]="t('minAmountError', { value: minAmountValue() })"
           [mainHint]="withInterest() ? t('amountHint', { percentage: interestPercentage() }) : ''" />
       </div>
@@ -106,7 +103,7 @@
           scbButton
           class="w-[200px]"
           (click)="next()">
-          {{ t('submitRequest') }}
+          {{ t('continue') }}
         </button>
       </div>
     </scb-card>
@@ -205,7 +202,7 @@
             <button
               scbButton
               class="w-[200px]"
-              routerLink="/products">
+              routerLink="/dashboard">
               {{ t('done') }}
             </button>
           </div>

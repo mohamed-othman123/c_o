@@ -134,6 +134,7 @@ export class ChequeBookListComponent {
   }
 
   resetFilter() {
+    this.statusValue.set([]);
     this.reload();
   }
 

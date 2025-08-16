@@ -115,7 +115,7 @@ export class CharityTransferForm implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.transfer.loadAllTransferDataWithCharity();
+    this.transfer.loadCharityTransferData();
   }
 
   handleAccountSelected(value: SelectAccountFieldProps) {
@@ -160,7 +160,9 @@ export class CharityTransferForm implements OnInit, OnDestroy {
   }
 
   handleRefreshRequest(request: { type: 'from' | 'to'; currency?: string }) {
-    this.transfer.refreshAccountsData(request.type, request.currency);
+    if (request.type === 'from') {
+      this.transfer.refreshAccountsData(request.type, request.currency);
+    }
   }
 
   ngOnDestroy(): void {

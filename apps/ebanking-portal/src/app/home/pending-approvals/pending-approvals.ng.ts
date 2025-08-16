@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, effect, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, effect, inject, input, signal } from '@angular/core';
 import { RolePermissionDirective } from '@/core/directives/role-permission.directive';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { Tab, TabLazy, Tabs } from '@scb/ui/tabs';
@@ -18,7 +18,6 @@ import { WaitingList } from './waiting/waiting-list.ng';
     Tabs,
     Tab,
     TabLazy,
-    PendingTransactions,
     ApprovedList,
     WaitingList,
     RejectedList,
@@ -38,6 +37,7 @@ import { WaitingList } from './waiting/waiting-list.ng';
         *rolePermission="['MAKER']">
         <all-list
           [tab]="selectedTab()"
+          [type]="type()"
           *scbTabLazy />
       </scb-tab>
       <scb-tab
@@ -45,6 +45,7 @@ import { WaitingList } from './waiting/waiting-list.ng';
         *rolePermission="['MAKER', 'CHECKER']">
         <pending-list
           [tab]="selectedTab()"
+          [type]="type()"
           *scbTabLazy />
       </scb-tab>
       <scb-tab
@@ -52,6 +53,7 @@ import { WaitingList } from './waiting/waiting-list.ng';
         *rolePermission="['CHECKER']">
         <waiting-list
           [tab]="selectedTab()"
+          [type]="type()"
           *scbTabLazy />
       </scb-tab>
       <scb-tab
@@ -59,6 +61,7 @@ import { WaitingList } from './waiting/waiting-list.ng';
         *rolePermission="['MAKER', 'CHECKER']">
         <approved-list
           [tab]="selectedTab()"
+          [type]="type()"
           *scbTabLazy />
       </scb-tab>
       <scb-tab
@@ -66,6 +69,7 @@ import { WaitingList } from './waiting/waiting-list.ng';
         *rolePermission="['MAKER', 'CHECKER']">
         <rejected-list
           [tab]="selectedTab()"
+          [type]="type()"
           *scbTabLazy />
       </scb-tab>
     </scb-tabs>
@@ -75,11 +79,14 @@ import { WaitingList } from './waiting/waiting-list.ng';
   },
 })
 export default class PendingApprovals {
+  readonly type = input.required<string>();
+
+  readonly pendingService = inject(PendingRequestsApprovalsService);
   readonly activeIndex = signal(0);
-  readonly selectedTab = signal<number>(0);
+  readonly selectedTab = signal<number>(this.pendingService.isMaker() ? 1 : 0);
   constructor() {
     effect(() => {
-      const tab = this.selectedTab();
+      this.pendingService.currentTab.set(this.selectedTab());
     });
   }
 }

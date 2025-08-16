@@ -51,58 +51,62 @@ import { PendingRequestsApprovalsService } from './pending-approvals.service';
         class="gap-md flex flex-row items-center overflow-auto px-4 py-0.5 whitespace-nowrap"
         data-testid="APPROVALS_FILTER_CONTAINER"
         *transloco="let t">
-        <div>
-          <p
-            class="mf-md flex-1"
-            data-testid="APPROVALS_FILTER_BY">
-            {{ t('filterBy') }}:
-          </p>
-        </div>
+        @if (type() !== 'transfer') {
+          <div>
+            <p
+              class="mf-md flex-1"
+              data-testid="APPROVALS_FILTER_BY">
+              {{ t('filterBy') }}:
+            </p>
+          </div>
+        }
 
         <div class="gap-md flex flex-1">
-          <!-- Settlement Date -->
-          <scb-form-field
-            [variant]="_dateRange() ? 'primary' : 'ghost'"
-            class="bg-white-custom [&>.input-main]:w-max"
-            data-testid="CHEQUES_OUT_FORMFIELD_DATE">
-            <scb-select
-              [(value)]="_dateRange"
-              data-testid="CHEQUES_OUT_SELECT_DATE_VALUE"
-              [searchPlaceholder]="t('searchOptions')"
-              (closed)="dateClosed()"
-              noAutoClose>
-              <div class="select-header body-md-s px-md">{{ t('datepicker.durations') }}</div>
-              <app-select-value
-                scbSelectTrigger
-                [placeholder]="t('date')"
-                [len]="_dateRange() ? 1 : 0" />
-
-              @for (item of settlementDateList; track item.name) {
-                <scb-option [value]="item.value">
-                  <div class="gap-lg flex items-center">
-                    <p-radiobutton
-                      name="pizza"
-                      [value]="item.value"
-                      [(ngModel)]="_dateRange"
-                      inputId="ingredient{{ $index }}" />
-                    <label
-                      for="ingredient{{ $index }}"
-                      class="body-md cursor-pointer">
-                      {{ t('datepicker.' + item.name) }}
-                    </label>
-                  </div>
-                </scb-option>
-              }
-              <app-select-footer
-                class="select-footer"
-                (apply)="apply()"
-                (resetValue)="_dateRange.set('')" />
-            </scb-select>
-          </scb-form-field>
-
-          <!-- Status -->
-          @if (type() === 'transfer') {
+          @if (type() !== 'transfer') {
+            <!-- Settlement Date -->
             <scb-form-field
+              [variant]="_dateRange() ? 'primary' : 'ghost'"
+              class="bg-white-custom [&>.input-main]:w-max"
+              data-testid="CHEQUES_OUT_FORMFIELD_DATE">
+              <scb-select
+                [(value)]="_dateRange"
+                data-testid="CHEQUES_OUT_SELECT_DATE_VALUE"
+                [searchPlaceholder]="t('searchOptions')"
+                (closed)="dateClosed()"
+                noAutoClose>
+                <div class="select-header body-md-s px-md">{{ t('datepicker.durations') }}</div>
+                <app-select-value
+                  scbSelectTrigger
+                  [placeholder]="t('date')"
+                  [len]="_dateRange() ? 1 : 0" />
+
+                @for (item of settlementDateList; track item.name) {
+                  <scb-option [value]="item.value">
+                    <div class="gap-lg flex items-center">
+                      <p-radiobutton
+                        name="pizza"
+                        [value]="item.value"
+                        [(ngModel)]="_dateRange"
+                        inputId="ingredient{{ $index }}" />
+                      <label
+                        for="ingredient{{ $index }}"
+                        class="body-md cursor-pointer">
+                        {{ t('datepicker.' + item.name) }}
+                      </label>
+                    </div>
+                  </scb-option>
+                }
+                <app-select-footer
+                  class="select-footer"
+                  (apply)="apply()"
+                  (resetValue)="_dateRange.set('')" />
+              </scb-select>
+            </scb-form-field>
+
+            <!-- Status -->
+
+            <!-- Commented for the time until BE team fix -->
+            <!-- <scb-form-field
               [variant]="_transferType().length ? 'primary' : 'ghost'"
               class="bg-white-custom [&>.input-main]:w-max"
               data-testid="APPROVALS_FORMFIELD_STATUS">
@@ -130,7 +134,7 @@ import { PendingRequestsApprovalsService } from './pending-approvals.service';
                   (apply)="apply()"
                   (resetValue)="_transferType.set([])" />
               </scb-select>
-            </scb-form-field>
+            </scb-form-field> -->
           }
 
           <!-- request Type -->
@@ -177,14 +181,18 @@ import { PendingRequestsApprovalsService } from './pending-approvals.service';
             </button>
           }
           <div class="flex-1"></div>
-          <scb-form-field mode="search">
-            <icon
-              name="search-normal"
-              class="prefix text-input-icon-enabled" />
-            <input
-              scbInput
-              placeholder="Search for..." />
-          </scb-form-field>
+          @if (type() !== 'transfer') {
+            <scb-form-field
+              mode="search"
+              class="max-sm:w-[300px]">
+              <icon
+                name="search-normal"
+                class="prefix text-input-icon-enabled" />
+              <input
+                scbInput
+                placeholder="Search for..." />
+            </scb-form-field>
+          }
         </div>
       </div>
     }
@@ -200,8 +208,10 @@ export class PendingApprovalFilter {
 
   readonly transferTypeFn = (option: StatusOptions<TransactionsTransferTypes>) => option.name;
 
-  readonly queryParams = toSignal(this.route.queryParamMap);
-  readonly type = computed(() => this.queryParams()?.get('type') || '');
+  readonly type = computed(() => {
+    const parentPath = this.route.parent?.snapshot.url[0]?.path ?? '';
+    return parentPath.replace('pending-', ''); // 'product', 'transfer', 'cheque'
+  });
 
   readonly _transferType = linkedSignal(this.transferType);
   readonly transferTypeSelect = viewChild<Select<string>>('transferTypeSelect');

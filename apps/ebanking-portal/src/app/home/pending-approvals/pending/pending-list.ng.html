@@ -93,17 +93,17 @@
               class="cursor-pointer">
               <td class="body-sm">
                 <date-view
-                  [value]="transaction.createdDate || transaction.createdAt"
+                  [value]="transaction.createdDate || transaction.createdAt || transaction.requestDate"
                   format="d MMM yyyy">
                 </date-view>
               </td>
               <td>
-                {{ transaction.requestId ?? transaction.id }}
+                {{ transaction.requestId ?? (transaction.id || transaction.requestNumber) }}
               </td>
 
               @if (type() !== 'cheque') {
                 <td>
-                  {{ transaction.accountType || transaction.requestType }}
+                  {{ transaction.accountType || transaction.requestType || transaction.transferType }}
                 </td>
               }
               <td>
@@ -116,8 +116,8 @@
                 <div class="gap-xs flex">
                   @for (
                     step of pendingService.getApprovalSteps(
-                      transaction.requiredApproval,
-                      transaction.approved ?? 0,
+                      transaction.approvalStatus?.totalNumberOfApproval ?? transaction.requiredApproval,
+                      transaction.approvalStatus?.approvedNumber ?? transaction.approved ?? 0,
                       transaction.rejected ?? 0
                     );
                     track $index
@@ -128,8 +128,10 @@
               </td>
               <td>
                 <app-action-buttons
-                  [transaction]="transaction"
                   [type]="type()"
+                  [requestId]="transaction.requestId"
+                  [status]="transaction.status"
+                  [approved]="transaction.approved"
                   (reload)="allListResource.reload()" />
               </td>
             </tr>

@@ -8,6 +8,7 @@ import { ToasterComponent } from '@/core/components';
 import { RolePermissionDirective } from '@/core/directives/role-permission.directive';
 import { HeaderDashboard, Logo, ShellItem } from '@/layout/components';
 import { LayoutPanel } from '@/layout/components/app-layout-accodion/app-layout-panel';
+import { SettingsPanel } from '@/layout/components/app-layout-accodion/app-settings-panel';
 import { LayoutFacadeService } from '@/layout/layout.facade.service';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { Button } from '@scb/ui/button';
@@ -32,6 +33,7 @@ import { PanelMenuModule } from 'primeng/panelmenu';
     AccordionModule,
     PanelMenuModule,
     LayoutPanel,
+    SettingsPanel,
   ],
   templateUrl: './Home.container.html',
 })
@@ -70,13 +72,15 @@ export class HomeContainer {
     url: '/api/product/product/request/count/pending',
   }));
 
-  readonly transferResource = httpResource<CountResponse>(() => ({
-    url: '/api/transfer/request/count/pending',
+  readonly transferResource = httpResource<any>(() => ({
+    url: this.isMaker()
+      ? `/api/transfer/transfer-workflow/maker-pending/pending_approval?pageSize=10&pageStart=0`
+      : `/api/transfer/transfer-workflow/checker-pending/pending_approval?pageSize=10&pageStart=0`,
   }));
 
   readonly chequeCount = computed(() => this.chequeResource.value()?.requests?.length ?? 0);
   readonly productCount = computed(() => this.productResource.value()?.data.count ?? null);
-  readonly transferCount = computed(() => this.transferResource.value()?.data.count ?? null);
+  readonly transferCount = computed(() => this.transferResource.value()?.requests?.length ?? 0);
   readonly totalCount = computed(
     () => (this.chequeCount() ?? 0) + (this.productCount() ?? 0) + (this.transferCount() ?? 0),
   );
@@ -86,12 +90,26 @@ export class HomeContainer {
       icon: 'pending-approvals',
       totalCount: this.totalCount(),
       children: [
-        { label: 'transfer', count: this.transferCount(), active: true, href: '/pending-transfer', param: 'transfer' },
-        { label: 'product', count: this.productCount(), active: false, href: '/pending-product', param: 'product' },
-        { label: 'cheque', count: this.chequeCount(), active: false, href: '/pending-cheques', param: 'cheque' },
+        { label: 'transfer', count: this.transferCount(), active: true, href: '/pending-transfer' },
+        { label: 'product', count: this.productCount(), active: false, href: '/pending-product' },
+        { label: 'cheque', count: this.chequeCount(), active: false, href: '/pending-cheques' },
       ],
     };
   });
+
+  settingsItems = {
+    label: 'Settings',
+    icon: 'settings',
+    children: [
+      {
+        label: 'ChangePassword',
+        icon: 'change-password',
+        activeIcon: 'change-password-solid',
+        href: '/change-password',
+        testId: 'HOME_MAIN_CHANGE_PASSWORD_LINK',
+      },
+    ],
+  };
 
   readonly sideMenu = computed(() => {
     const child = this.activeChild();

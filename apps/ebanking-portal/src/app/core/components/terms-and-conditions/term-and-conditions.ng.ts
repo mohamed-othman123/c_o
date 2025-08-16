@@ -3,6 +3,7 @@ import { ChangeDetectionStrategy, Component, input, model, signal } from '@angul
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { TranslocoPipe } from '@jsverse/transloco';
 import { dialogPortal } from '@scb/ui/dialog';
+import { Icon } from '@scb/ui/icon';
 import { CheckboxModule } from 'primeng/checkbox';
 import { TermsAndConditionsContent } from './term-and-conditions-content.ng';
 
@@ -26,25 +27,35 @@ export type TCRef = HttpResourceRef<
 @Component({
   selector: 'app-terms-and-conditions',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CheckboxModule, ReactiveFormsModule, TranslocoPipe],
-  template: `<p-checkbox
-      inputId="size_normal"
-      name="size"
-      size="large"
-      binary="true"
-      variant="filled"
-      [formControl]="field()"
-      (click)="handledTermClick($event)" />
-    <span>
-      {{ 'termsAndConditions.Iagree' | transloco }}
-      <button
-        (click)="open($event)"
-        class="cursor-pointer underline">
-        {{ 'termsAndConditions.termsAndConditions' | transloco }}.
-      </button>
-    </span>`,
+  imports: [CheckboxModule, ReactiveFormsModule, TranslocoPipe, Icon],
+  template: `<div class="gap-lg body-md flex items-center">
+      <p-checkbox
+        inputId="size_normal"
+        name="size"
+        size="large"
+        binary="true"
+        variant="filled"
+        [formControl]="field()"
+        (click)="handledTermClick($event)" />
+      <span>
+        {{ 'termsAndConditions.Iagree' | transloco }}
+        <button
+          (click)="open($event)"
+          class="cursor-pointer underline">
+          {{ 'termsAndConditions.termsAndConditions' | transloco }}.
+        </button>
+      </span>
+    </div>
+    @if (field().touched && field().invalid) {
+      <p class="mf-sm text-input-text-danger gap-sm flex items-start">
+        <icon
+          name="info-circle"
+          class="w-[18px] flex-none" />
+        {{ 'termsAndConditions.sectionRequired' | transloco }}
+      </p>
+    }`,
   host: {
-    class: 'body-md gap-lg flex',
+    class: 'flex flex-col gap-sm',
   },
 })
 export class TermsAndConditions {

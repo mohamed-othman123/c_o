@@ -14,7 +14,7 @@ import { ChequeBookService } from '../chequebook.service';
         <button
           (click)="chequeBook.onContinueClick('form', form())"
           scbButton
-          class="w-full"
+          class="w-full whitespace-nowrap"
           size="lg">
           {{ 'chequeBook.form.submit' | transloco }}
         </button>
@@ -28,7 +28,7 @@ import { ChequeBookService } from '../chequebook.service';
           size="lg"
           type="button"
           routerLink="/dashboard"
-          class="w-full">
+          class="w-full text-xl whitespace-nowrap">
           {{ 'chequeBook.form.returnToDashboard' | transloco }}
         </a>
       </div>
@@ -39,7 +39,7 @@ import { ChequeBookService } from '../chequebook.service';
           routerLink="/chequebook"
           variant="secondary"
           type="button"
-          class="w-full">
+          class="w-full text-xl whitespace-nowrap">
           {{ 'chequeBook.form.requestNewChequeBook' | transloco }}
         </button>
       </div>

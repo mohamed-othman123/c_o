@@ -1,8 +1,7 @@
 import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { httpResource } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CurrencyView, DateView, PaginationData, TablePagination, TableSkeletonComponent } from '@/core/components';
 import { apiStatus, handleParams } from '@/core/models/api';
 import { AccountDetailsService } from '@/home/account-details/account-details.service';
@@ -57,15 +56,15 @@ export class AllList {
   readonly base64Converter = inject(Base64ConverterService);
   readonly accountDetailsService = inject(AccountDetailsService);
   readonly layoutFacade = inject(LayoutFacadeService);
+
+  readonly tab = input.required<number>();
+  readonly type = input.required<string>();
+
   readonly transferType = signal<any[]>([]);
   readonly loading = signal(false);
   readonly page = new PaginationData();
-  readonly tab = input.required<number>();
   readonly refresh = signal(1);
   readonly date = signal('');
-  readonly route = inject(ActivatedRoute);
-  readonly queryParams = toSignal(this.route.queryParamMap);
-  readonly type = computed(() => this.queryParams()?.get('type') || '');
 
   readonly filters = computed(() =>
     this.pendingService.buildFilters(

@@ -41,19 +41,21 @@ export class AuthenticationController {
     }
 
     // Generate short-lived JWT tokens for mock testing
-    const { accessToken, refreshToken, expiresIn } = this.jwtService.generateTokens({ username });
+    const { accessToken, refreshToken, expiresIn } = this.jwtService.generateTokens({
+      username,
+      email: 'hatem@corporate.com',
+      roles: ['CHECKER', 'SUPER_USER'],
+      companyName: 'AL-Hatem Group',
+    });
 
-    // credentials for Maker User
-    // return {
-    //   accessToken:
-    //     'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJQU2hlcmxGdWkwcnJJMnQta084Q2IzTXNUaHkxTHNackRRSUduMTBrNU13In0.eyJleHAiOjE3NTQ2MDMzMjAsImlhdCI6MTc1NDU5OTcyMCwianRpIjoiZTg3MGFkNDgtZWM1OS00MmExLTk1ZDUtMDk3ZjQ4MGZkYzQxIiwiaXNzIjoiaHR0cDovL2tleWNsb2FrLmFwcHMuc2Nib2NwLnNjYi5sb2NhbC9yZWFsbXMvc2NiLWNvcnAiLCJhdWQiOlsiYXV0aC1zdmMiLCJ0cmFuc2Zlci1zdmMiLCJzb2Z0dG9rZW4tc3ZjIiwiZGFzaGJvYXJkLXN2YyIsInByb2R1Y3Qtc3ZjIiwiYWNjb3VudCJdLCJzdWIiOiJkZjUxYjhhMC1kYmRkLTRhMjgtODJiNS1lZmJlOWZkN2FjYTUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhdXRoLXN2YyIsInNpZCI6ImI4ZDE5ZGM2LTk5NDItNDM2Zi1iN2YwLTczNDgyNDcyNTgzYiIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJkZWZhdWx0LXJvbGVzLXNjYi1jb3JwIiwidW1hX2F1dGhvcml6YXRpb24iLCJNQUtFUiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoic29mdFRva2VuSWQgc29mdFRva2VuU3RhdHVzIGNpZiBzZWNvbmROYW1lIHByb2ZpbGUgaWROdW1iZXIgbW9iaWxlIGNvbXBhbnlOYW1lIHNvZnRUb2tlblNlcmlhbCBlbWFpbCB0aGlyZE5hbWUiLCJjaWYiOiI0MDMwMDQ4NiIsImxhc3ROYW1lIjoidXNlciIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiY29tcGFueU5hbWUiOiJzY2IiLCJtb2JpbGUiOiIwMTAxMjM0NTY3ODkiLCJ0aGlyZE5hbWUiOiJ1c2VyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoibWFrZXIiLCJpZE51bWJlciI6IjI5MDExMTEwMTAzMzMiLCJnaXZlbl9uYW1lIjoibWFrZXIiLCJuYW1lIjoibWFrZXIgdXNlciIsImZhbWlseV9uYW1lIjoidXNlciIsImVtYWlsIjoibWFrZXJAc2NiLmNvbSIsInNlY29uZE5hbWUiOiJ1c2VyIn0.XNOZVcf0iecM9mum7i1lGBlKmy03LeAglCIwLx1L0yeb8AqQ0y_GfNHysOarQjNWpVCStMpD9GNBkPDSesg8La8OKcAtK8N1jrk9cPKmSMnuCxae1QA1LYyEWvefu5ZBYj0eMwpPtprY4IWLwZ7TLjJYvVnx6UHvKfDKacEV9JGaxCyv1aHGsulEfIGZ89rCUfetu_zC9H0PPohn7XXQ0QoSsLZHXpVc20IGbmjARcI3MihkrVEjKkOy_kZJL9j2_C6JXXVGrmXfVuOwm6OicgtCVQtdW22XXBdzHhu63LbVWHGGchPH2yaYfFbkOevtl46TQBHAbrgQ5HxY7NqQ-w',
-    //   refreshToken:
-    //     'eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJQU2hlcmxGdWkwcnJJMnQta084Q2IzTXNUaHkxTHNackRRSUduMTBrNU13In0.eyJleHAiOjE3NTQ2MDMzMjAsImlhdCI6MTc1NDU5OTcyMCwianRpIjoiZTg3MGFkNDgtZWM1OS00MmExLTk1ZDUtMDk3ZjQ4MGZkYzQxIiwiaXNzIjoiaHR0cDovL2tleWNsb2FrLmFwcHMuc2Nib2NwLnNjYi5sb2NhbC9yZWFsbXMvc2NiLWNvcnAiLCJhdWQiOlsiYXV0aC1zdmMiLCJ0cmFuc2Zlci1zdmMiLCJzb2Z0dG9rZW4tc3ZjIiwiZGFzaGJvYXJkLXN2YyIsInByb2R1Y3Qtc3ZjIiwiYWNjb3VudCJdLCJzdWIiOiJkZjUxYjhhMC1kYmRkLTRhMjgtODJiNS1lZmJlOWZkN2FjYTUiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJhdXRoLXN2YyIsInNpZCI6ImI4ZDE5ZGM2LTk5NDItNDM2Zi1iN2YwLTczNDgyNDcyNTgzYiIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiKiJdLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJkZWZhdWx0LXJvbGVzLXNjYi1jb3JwIiwidW1hX2F1dGhvcml6YXRpb24iLCJNQUtFUiJdfSwicmVzb3VyY2VfYWNjZXNzIjp7ImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJtYW5hZ2UtYWNjb3VudC1saW5rcyIsInZpZXctcHJvZmlsZSJdfX0sInNjb3BlIjoic29mdFRva2VuSWQgc29mdFRva2VuU3RhdHVzIGNpZiBzZWNvbmROYW1lIHByb2ZpbGUgaWROdW1iZXIgbW9iaWxlIGNvbXBhbnlOYW1lIHNvZnRUb2tlblNlcmlhbCBlbWFpbCB0aGlyZE5hbWUiLCJjaWYiOiI0MDMwMDQ4NiIsImxhc3ROYW1lIjoidXNlciIsImVtYWlsX3ZlcmlmaWVkIjpmYWxzZSwiY29tcGFueU5hbWUiOiJzY2IiLCJtb2JpbGUiOiIwMTAxMjM0NTY3ODkiLCJ0aGlyZE5hbWUiOiJ1c2VyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoibWFrZXIiLCJpZE51bWJlciI6IjI5MDExMTEwMTAzMzMiLCJnaXZlbl9uYW1lIjoibWFrZXIiLCJuYW1lIjoibWFrZXIgdXNlciIsImZhbWlseV9uYW1lIjoidXNlciIsImVtYWlsIjoibWFrZXJAc2NiLmNvbSIsInNlY29uZE5hbWUiOiJ1c2VyIn0.XNOZVcf0iecM9mum7i1lGBlKmy03LeAglCIwLx1L0yeb8AqQ0y_GfNHysOarQjNWpVCStMpD9GNBkPDSesg8La8OKcAtK8N1jrk9cPKmSMnuCxae1QA1LYyEWvefu5ZBYj0eMwpPtprY4IWLwZ7TLjJYvVnx6UHvKfDKacEV9JGaxCyv1aHGsulEfIGZ89rCUfetu_zC9H0PPohn7XXQ0QoSsLZHXpVc20IGbmjARcI3MihkrVEjKkOy_kZJL9j2_C6JXXVGrmXfVuOwm6OicgtCVQtdW22XXBdzHhu63LbVWHGGchPH2yaYfFbkOevtl46TQBHAbrgQ5HxY7NqQ-w',
-    //   expiresIn: 3600,
-    // };
-
-    // credentials for Super User
     return { accessToken, refreshToken, expiresIn };
+  }
+
+  @Get('auth/me')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  me(@Headers('Authorization') accessToken: string) {
+    return this.jwtService.decodeToken(accessToken.split(' ')[1]);
   }
 
   @Post('auth/refresh')
@@ -161,26 +163,46 @@ export class AuthenticationController {
     return { message: 'Logged out successfully' };
   }
 
+  @Post('user/pwd-change')
+  @UseGuards(JwtAuthGuard)
+  @HttpCode(HttpStatus.OK)
+  changePassword(
+    @Body('currentPassword') currentPassword: string,
+    @Body('newPassword') newPassword: string,
+    @Body('confirmPassword') confirmPassword: string,
+  ) {
+    if (currentPassword === 'wrongpassword') {
+      throw new HttpException(
+        {
+          status: 'error',
+          message: 'Current password is incorrect',
+          code: 'PWD-001',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    if (newPassword !== confirmPassword) {
+      throw new HttpException(
+        {
+          status: 'error',
+          message: 'New password and confirm password do not match',
+          code: 'PWD-002',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
+    return {
+      status: 'success',
+      message: 'Password changed successfully',
+    };
+  }
+
   @Get('auth/verify')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
   verifyAuth(@Req() req) {
     return req.user;
-  }
-
-  @Get('auth/me')
-  @UseGuards(JwtAuthGuard)
-  @HttpCode(HttpStatus.OK)
-  me(@Req() req) {
-    return {
-      username: 'corp100',
-      email: 'hatem@corporate.com',
-      roles: ['MAKER'],
-      companyName: 'AL-Hatem Group',
-      cif: '01102757',
-      softTokenId: '123',
-      softTokenSerial: '123',
-      softTokenStatus: 'PENDING',
-    };
   }
 }

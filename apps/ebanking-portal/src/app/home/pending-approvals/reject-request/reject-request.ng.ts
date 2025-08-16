@@ -35,13 +35,13 @@ import { PendingRequestsApprovalsService } from '../pending-approvals.service';
 })
 export class RejectRequest {
   readonly pendingService = inject(PendingRequestsApprovalsService);
-  readonly diaRef = inject(DialogRef);
+  readonly diaRef = inject<DialogRef<string>>(DialogRef);
   readonly router = inject(Router);
   readonly layoutFacade = inject(LayoutFacadeService);
   readonly toasterService = inject(ToasterService);
 
   //   readonly beneficiaryData = inject(BeneficiaryData);
-  readonly data = this.diaRef.data as any;
+  readonly data = this.diaRef.data!;
   readonly translateService = inject(TranslocoService);
   readonly loading = signal(false);
   readonly lang = computed(() => this.layoutFacade.language());

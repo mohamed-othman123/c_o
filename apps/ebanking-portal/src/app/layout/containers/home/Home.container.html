@@ -126,10 +126,9 @@
           name="dashboardLayout.FAQs"
           icon="faqs"
           testId="HOME_SERVICES_FAQS_LINK" />
-        <app-layout-item
-          name="dashboardLayout.Settings"
-          icon="settings"
-          testId="HOME_SERVICES_SETTINGS_LINK" />
+        <app-settings-panel
+          [menuItem]="settingsItems"
+          [sideMenu]="sideMenu()" />
       </div>
     </div>
   </scb-sidenav-header>

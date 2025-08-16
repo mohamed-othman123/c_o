@@ -1,8 +1,7 @@
 import { httpResource } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, inject, input, signal, WritableSignal } from '@angular/core';
 import { AppBreadcrumbsComponent, CurrencyView, DateView, Skeleton } from '@/core/components';
-import { RolePermissionDirective } from '@/core/directives/role-permission.directive';
-import { ApiResult, apiStatus } from '@/core/models/api';
+import { apiStatus } from '@/core/models/api';
 import { Beneficiary } from '@/home/beneficiary/models/models';
 import { AccountSelectedView } from '@/home/transfer/components/account-selected/account-selected-view.ng';
 import { BeneficiarySelectedView } from '@/home/transfer/components/beneficiary-selected/beneficiary-selected-view.ng';
@@ -12,8 +11,11 @@ import { Button } from '@scb/ui/button';
 import { Card } from '@scb/ui/card';
 import { Icon } from '@scb/ui/icon';
 import { Separator } from '@scb/ui/separator';
+import { ActionButtons } from '../action-buttons.ng';
+import { PendingRequestsApprovalsService } from '../pending-approvals.service';
 import { Timeline, TimelineSub, TimelineTitle } from '../timeline.ng';
-import { ApiRes, DelegationDetail, LevelUser } from './model';
+import { LevelUser } from './model';
+import { universalDelegationParse } from './products-adapter';
 
 interface ApprovalList {
   level: string;
@@ -29,6 +31,7 @@ interface ApprovalList {
 @Component({
   selector: 'app-delegation-details',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [PendingRequestsApprovalsService],
   imports: [
     AppBreadcrumbsComponent,
     Card,
@@ -45,7 +48,7 @@ interface ApprovalList {
     TimelineTitle,
     TimelineSub,
     BeneficiarySelectedView,
-    RolePermissionDirective,
+    ActionButtons,
   ],
   templateUrl: './delegation-details.ng.html',
   host: {
@@ -59,29 +62,25 @@ export default class DelegationDetails {
   readonly parentPath = input.required<string>();
   readonly title = input.required<string>();
 
-  readonly fromAccount = signal({ accountNickname: 'Nickname', accountNumber: '12334812781289' });
-
-  readonly detailSource = httpResource<ApiRes<DelegationDetail>>(
-    () => `/api/product/product/request/${this.detailId()}/details`,
-  );
-  readonly status = apiStatus(this.detailSource.status);
-  readonly detailsData = computed(() => this.detailSource.value()?.data);
-  readonly productDetails = computed(() => this.detailsData()?.productDetail);
-  readonly beneficiary = computed(
+  readonly productSource = httpResource(
     () =>
-      ({
-        transactionMethod: 'BANK_ACCOUNT',
-        beneficiaryName: 'Enas Nasr',
-        beneficiaryNickname: 'TMG Finance',
-        beneficiaryNumber: '12334812781289',
-        bank: {
-          bankNameEn: 'EG Bank',
-        },
-      }) as Beneficiary,
+      this.parentPath() === '/pending-cheques'
+        ? `/api/product/chequebook/workflow/requestStatus/${this.detailId()}`
+        : `/api/product/product/request/${this.detailId()}/details`,
+    {
+      parse: universalDelegationParse(this.parentPath),
+    },
   );
+  readonly apiStatus = apiStatus(this.productSource.status);
+  readonly detailsData = computed(() => this.productSource.value()?.data);
+  readonly productDetails = computed(() => this.detailsData()?.details);
+  readonly beneficiary = computed(() => this.detailsData()?.details.beneficiary);
 
+  readonly fromAccount = computed(() => this.detailsData()?.details.from);
   readonly icon = computed(() => 'time-deposits'); // time-deposits, prod
   readonly detailType = computed(() => this.productDetails()?.requestType);
+  readonly status = computed(() => this.productDetails()?.status);
+  readonly requestId = computed(() => this.productDetails()?.requestId);
 
   readonly detailStatus = computed<BadgeType | undefined>(() => {
     const type = this.productDetails()?.status;
@@ -96,18 +95,18 @@ export default class DelegationDetails {
 
   readonly timeline = computed(() => {
     const data = this.detailsData();
-    const d = data?.productDetail;
+    const d = data?.details;
     const allUsers = data?.users || {};
     return {
       user: {
-        name: 'Ahmed Mohamed',
-        date: '01/12/2025',
+        name: d?.submittedBy,
+        date: d?.createdDate,
       },
       approvals: <ApprovalList[]>[
         ...Array.from({ length: d?.requiredApproval || 0 }, (x, i) => {
           const role = `CHECKER_LEVEL_${i + 1}`;
           const users = allUsers[role];
-          const approval = data?.approvalRejection.find(x => x.role === role);
+          const approval = data?.approvalRejection.find(x => x.role.toUpperCase() === role);
           const v: ApprovalList = {
             level: `Level ${i + 1}`,
             status: 'PENDING',
@@ -140,6 +139,7 @@ export default class DelegationDetails {
       { name: 'transactionDate', value: '5 Oct 2025, 12:00 AM', icon: 'calendar' },
       { name: 'reasonOfTransfer', value: 'Family Expenses', icon: 'reason' },
       { name: 'description', value: 'Family Expenses', icon: 'note' },
+      { name: 'chequebook', value: d?.chequebookAvailable, icon: 'note' },
       //
       { name: 'executionDate', value: '5 Oct 2025, 12:00 AM', icon: 'calendar' },
       //
@@ -150,11 +150,11 @@ export default class DelegationDetails {
         name: 'minimumDeposit',
         amount: {
           value: d?.minimumDepositAmount,
-          currency: d?.minimumDepositCurrency,
+          currency: d?.currency,
         },
         icon: 'minimum-deposit',
       },
-      { name: 'frequency', value: d?.frequency, icon: 'money-receive' },
+      { name: 'frequency', value: d?.frequency, translate: true, icon: 'money-receive' },
       {
         name: 'interestType',
         value: d?.interestType,
@@ -166,10 +166,15 @@ export default class DelegationDetails {
   });
   readonly fieldType: Record<string, string[]> = {
     CD: ['interestRate', 'minimumDeposit', 'frequency', 'interestType', 'actionMaturity'],
+    ACCOUNT: ['frequency', 'chequebook', 'minimumDeposit'],
   };
 
   readonly fields = computed(() => {
     const columns = this.fieldType[this.productDetails()?.requestType || ''] || [];
     return this.allFields().filter(x => columns.includes(x.name));
   });
+
+  reload() {
+    this.productSource.reload();
+  }
 }

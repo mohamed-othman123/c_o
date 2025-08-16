@@ -46,7 +46,9 @@
       <div class="{{ 'gap-y-lg grid grid-cols-2 ' + (withInterest() ? 'sm:grid-cols-5' : '') }}">
         <div class="gap-xs grid">
           <h4 class="body-label-sm-m text-text-tertiary">{{ t('minimumDeposit') }}</h4>
-          <currency-view [amount]="detail()?.minimumDeposit" />
+          <currency-view
+            [amount]="detail()?.minimumDeposit"
+            [currency]="detail()?.currency" />
         </div>
         <div class="gap-xs grid">
           <h4 class="body-label-sm-m text-text-tertiary">{{ t('timeDepositForm.tenor') }}</h4>
@@ -83,13 +85,14 @@
           <select-account-field
             type="from"
             transferType="OUTSIDE"
-            currency="EGP"
+            [currency]="currency()"
             [isLoadingState]="fromAccountsLoading()"
             [accountsData]="fromAccountsData()"
             [errorState]="fromAccountsError()"
             [setAccountData]="fromAccount()"
             [skipAccount]="toAccount()?.accountNumber"
-            (accountSelected)="handleAccountSelected($event)" />
+            (accountSelected)="handleAccountSelected($event)"
+            (refreshRequest)="handleRefreshRequest($event)" />
           @if (drawdownAccount.touched && drawdownAccount.invalid) {
             <p class="mf-sm text-input-text-danger gap-sm flex items-start">
               <icon
@@ -119,13 +122,14 @@
             <select-account-field
               type="from"
               transferType="OUTSIDE"
-              currency="EGP"
+              [currency]="currency()"
               [isLoadingState]="fromAccountsLoading()"
               [accountsData]="fromAccountsData()"
               [errorState]="fromAccountsError()"
               [setAccountData]="toAccount()"
               [skipAccount]="fromAccount()?.accountNumber"
-              (accountSelected)="handleToAccountSelected($event)" />
+              (accountSelected)="handleToAccountSelected($event)"
+              (refreshRequest)="handleRefreshRequest($event)" />
             @if (anotherAccount.touched && anotherAccount.invalid) {
               <p class="mf-sm text-input-text-danger gap-sm mt-lg flex items-start">
                 <icon
@@ -200,7 +204,7 @@
             scbButton
             class="w-[200px]"
             (click)="next()">
-            {{ t('submitRequest') }}
+            {{ t('continue') }}
           </button>
         </div>
       </form>
@@ -236,6 +240,7 @@
               <div class="head-2xs-s text-text-tertiary">{{ t('amount') }}</div>
               <currency-view
                 [amount]="amount.value"
+                [currency]="currency()"
                 variant="primary"
                 size="xs" />
             </div>
@@ -274,6 +279,7 @@
                 class="inline-flex items-center justify-end">
                 <currency-view
                   [amount]="requestData()?.amount"
+                  [currency]="currency()"
                   variant="primary"
                   size="xl"
                   class="mt-xl" />

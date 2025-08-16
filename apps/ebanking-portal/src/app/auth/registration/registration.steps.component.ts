@@ -6,15 +6,12 @@ import { Button } from '@scb/ui/button';
 import { Card } from '@scb/ui/card';
 import { dialogPortal } from '@scb/ui/dialog';
 import { Icon } from '@scb/ui/icon';
-import { ForgetPassword } from '../forget-password/forget-password';
-import { ForgetPasswordService } from '../forget-password/forget-password.service';
 import { Registration } from './registration';
 import { RegistrationService } from './registration.service';
 
 @Component({
   selector: 'app-registration-steps',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [ForgetPassword, ForgetPasswordService],
   imports: [Card, Icon, Button, TranslocoDirective, RouterLink],
   template: `
     <scb-card

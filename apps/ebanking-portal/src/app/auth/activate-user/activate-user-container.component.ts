@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { HeaderAuthComponent } from '@/layout/components';
 import { ApiError } from '@/models/api';
 import { ERR } from '@/models/error';
-import { lockedActivateUserTitleDesc } from '@/utils/utils';
+import { extractTokenData, lockedActivateUserTitleDesc } from '@/utils/utils';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
 import { Alert } from '@scb/ui/alert';
 import { getPhoneDigits, OtpComponent, OtpStatus } from '../../auth/otp/otp.component';
@@ -112,9 +112,28 @@ export default class ActivateUserContainerComponent {
     const token = this.route.snapshot.queryParamMap.get('token');
 
     if (token) {
-      this.userData = this.au.extractTokenData(token);
-      this.au.userDetails.set({ phone: getPhoneDigits(this.userData?.mobile ?? '') });
-      this.au.email.set(this.userData?.email ?? '');
+      try {
+        this.userData = extractTokenData(token);
+
+        if (!this.userData) {
+          // Token extraction failed - show error but stay on page
+          console.error('Failed to extract token data from URL token:', token);
+          // Don't redirect - let user stay on activation page to request new activation
+          return;
+        }
+
+        // Token extraction successful, set user details
+        this.au.userDetails.set({ phone: getPhoneDigits(this.userData.mobile) });
+        this.au.email.set(this.userData.email);
+      } catch (error) {
+        // Unexpected error during token extraction
+        console.error('Unexpected error during token extraction:', error);
+        // Don't redirect - let user stay on activation page to request new activation
+      }
+    } else {
+      // No token in URL - this is normal, user can request activation
+      console.log('No token in URL - user can request activation');
+      // Stay on the activation page - this is the expected behavior
     }
   }
 

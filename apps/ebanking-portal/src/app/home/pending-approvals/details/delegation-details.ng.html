@@ -8,7 +8,7 @@
     ]"></app-breadcrumbs>
 </section>
 <scb-card class="gap-2xl col-span-12 row-span-8 flex flex-col">
-  @if (status() === 'loading') {
+  @if (apiStatus() === 'loading') {
     <div
       class="py-3xl sm:px-3xl col-span-12 px-4"
       data-testid="LCS_LOADING_STATE">
@@ -21,7 +21,7 @@
       <scb-skeleton width="90%" />
       <scb-skeleton width="100%" />
     </div>
-  } @else if (status() === 'error') {
+  } @else if (apiStatus() === 'error') {
     <div
       *transloco="let t; prefix: 'dashboard'"
       class="py-3xl sm:px-3xl col-span-12 flex w-full flex-col items-center justify-center gap-3 px-4 text-center"
@@ -46,7 +46,7 @@
         size="sm"
         icon="refresh"
         data-testid="LCS_RELOAD_BUTTON"
-        (click)="detailSource.reload()">
+        (click)="reload()">
         {{ t('error.reload') }}
       </button>
     </div>
@@ -55,27 +55,14 @@
       class="gap-2xl flex flex-col"
       *transloco="let t; prefix: 'products'">
       <div class="gap-2xl flex items-center">
-        <h4 class="head-xs-s flex-1">Product Details</h4>
-        <button
-          scbButton
-          variant="secondary"
-          *rolePermission="['CHECKER']"
-          size="lg">
-          {{ t('reject') }}
-        </button>
-        <button
-          scbButton
-          *rolePermission="['CHECKER']"
-          size="lg">
-          {{ t('APPROVED') }}
-        </button>
-        @if (productDetails()?.status === 'PENDING') {
-          <button
-            scbButton
-            *rolePermission="['MAKER']"
-            size="lg">
-            {{ t('withdraw') }}
-          </button>
+        <h4 class="head-xs-s flex-1">{{ t('productDetails') }}</h4>
+        @if (requestId() && status()) {
+          <app-action-buttons
+            [requestId]="requestId()!"
+            [status]="status()!"
+            [buttonSize]="'lg'"
+            [type]="''"
+            (reload)="reload()" />
         }
       </div>
       <div class="gap-2xl flex">
@@ -88,7 +75,7 @@
                   class="text-icon-brand w-2xl" />
               </div>
               @if (detailType() === 'CD') {
-                <span class="head-xs-s">{{ productDetails()?.requestTypeDisplay }}</span>
+                <span class="head-xs-s">{{ productDetails()?.productTitle }}</span>
                 <!-- <span class="head-xs-s">Floating Rate Time Deposits </span> -->
               } @else if (detailType() === 'ACCOUNT') {
                 <span class="head-xs-s">{{ t('currentAccount') }}</span>
@@ -102,7 +89,7 @@
                 size="xl"
                 variant="primary" />
             </div>
-            @if (detailType() !== 'TD') {
+            @if (detailType() === 'ACCOUNT') {
               <div class="gap-sm flex items-center justify-center">
                 <span class="body-label-sm-m">Monthly interest:</span>
                 <span class="body-md-s text-text-tertiary">2%</span>
@@ -125,10 +112,10 @@
                 [accountNumber]="productDetails()!.creditPrincipleAccount" />
             </div>
           }
-          @if (detailType() === 'transfer') {
+          @if (detailType() === 'transfer' && beneficiary(); as b) {
             <div class="gap-sm flex flex-col">
               <div class="body-label-md-m text-text-secondary">{{ t('to') }}</div>
-              <app-beneficiary-selected-view [beneficiary]="beneficiary()" />
+              <app-beneficiary-selected-view [beneficiary]="b" />
             </div>
           }
 
@@ -233,7 +220,12 @@
                         <div class="body-md">{{ u.name }}</div>
                       }
                     } @else {
-                      <div class="body-md">{{ approval.users![0].name }} +{{ approval.users!.length - 1 }}</div>
+                      <div class="body-md">
+                        {{ approval.users![0].name }}
+                        @if (approval.users!.length - 1 > 0) {
+                          +{{ approval.users!.length - 1 }}
+                        }
+                      </div>
                     }
                   }
                 </app-timeline>

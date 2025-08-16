@@ -119,7 +119,7 @@ export default class CurrentAccount extends FormDeactivate {
     super();
     this.setForm(this.form);
 
-    this.transferData.loadAccountsData('EGP');
+    this.transferData.loadProductFormData('EGP');
 
     effect(() => {
       const value = this.detail();
@@ -143,9 +143,7 @@ export default class CurrentAccount extends FormDeactivate {
     effect(() => {
       const balance = this.availableBalance();
       const validators = [Validators.required, minCurrencyAmountValidator(this.minAmountValue())];
-      if (balance) {
-        validators.push(Validators.max(balance));
-      }
+      validators.push(Validators.max(balance));
       this.updateValidators(this.amount, true, validators);
     });
   }

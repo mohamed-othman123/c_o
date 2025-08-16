@@ -95,7 +95,7 @@ export default class CdForm extends FormDeactivate {
   readonly amount = new FormControl('', { validators: [Validators.required], nonNullable: true });
   readonly drawdownAccount = new FormControl('', { validators: [Validators.required], nonNullable: true });
   readonly anotherAccount = new FormControl('', { nonNullable: true });
-  readonly acceptTerms = new FormControl(false, { nonNullable: true });
+  readonly acceptTerms = new FormControl(false, { validators: [Validators.requiredTrue], nonNullable: true });
   readonly form = new FormGroup({
     amount: this.amount,
     categoryId: new FormControl(this.paramIds.id, { validators: [Validators.required], nonNullable: true }),
@@ -128,7 +128,7 @@ export default class CdForm extends FormDeactivate {
     super();
     this.setForm(this.form);
 
-    this.transferData.loadAccountsData('USD');
+    this.transferData.loadProductFormData('USD');
 
     effect(() => {
       const v = !this.detailsSource.isLoading() && this.detail();
@@ -142,9 +142,7 @@ export default class CdForm extends FormDeactivate {
       const balance = this.availableBalance();
 
       const validators = [Validators.required, minCurrencyAmountValidator(this.minAmountValue())];
-      if (balance) {
-        validators.push(Validators.max(balance));
-      }
+      validators.push(Validators.max(balance));
       this.updateValidators(this.amount, true, validators);
     });
 

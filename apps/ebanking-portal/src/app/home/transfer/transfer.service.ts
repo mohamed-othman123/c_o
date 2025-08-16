@@ -11,7 +11,6 @@ import { TranslocoService } from '@jsverse/transloco';
 import { markControlsTouched } from '@scb/ui/input';
 import { Beneficiary } from '../beneficiary/models/models';
 import {
-  AccountDTO,
   CharityItem,
   FrequencyType,
   TransferDataResponse,
@@ -127,10 +126,24 @@ export class TransferService {
     return formValue.chargeBearer === 'SENDER' ? transferAmount + fees : transferAmount - fees;
   });
 
-  readonly getTransferTypes = () => this.transferData.transferTypes;
+  loadCharityTransferData(currency?: string): void {
+    this.transferData.loadCharityTransferData(currency);
+  }
+
+  loadOutsideTransferData(currency?: string): void {
+    this.transferData.loadOutsideTransferData(currency);
+  }
+
+  loadInsideTransferData(currency?: string): void {
+    this.transferData.loadInsideTransferData(currency);
+  }
+
+  loadAccountsData(currency?: string): void {
+    this.transferData.loadAccountsData(currency);
+  }
+
   readonly getReasons = () => this.transferData.reasons;
   readonly getChargeBearers = () => this.transferData.chargeBearers;
-  readonly getFrequencyTypes = () => this.transferData.frequencyTypes;
   readonly getTransferNetworks = () => this.transferData.transferNetworksFiltered;
   readonly getCharityList = () => this.transferData.charityList;
   readonly isCharityLoading = () => computed(() => this.transferData.charityLoading());
@@ -168,29 +181,8 @@ export class TransferService {
     });
   }
 
-  loadAllTransferData(currency?: string): void {
-    this.transferData.loadAllTransferData(currency);
-  }
-
-  loadAllTransferDataWithCharity(currency?: string): void {
-    this.transferData.loadAllTransferDataWithCharity(currency);
-  }
-
-  loadAccountsData(currency?: string): void {
-    this.transferData.loadAccountsData(currency);
-  }
-
   refreshAccountsData(type: 'from' | 'to', currency?: string): void {
     this.transferData.refreshAccountsData(type, currency);
-  }
-
-  getFilteredAccounts(type: 'from' | 'to', searchTerm?: string): AccountDTO[] {
-    const skipAccount = type === 'from' ? this.selectedToAccountNumber() : this.selectedAccountNumber();
-    return this.transferData.getFilteredAccounts(type, searchTerm, skipAccount);
-  }
-
-  getAccountsByCurrency(type: 'from' | 'to', currency: string): AccountDTO[] {
-    return this.transferData.getAccountsByCurrency(type, currency);
   }
 
   getAvailableCurrencies(type: 'from' | 'to'): string[] {

@@ -47,8 +47,7 @@
         @if (withInterest()) {
           <div class="gap-xs grid">
             <h4 class="body-label-sm-m text-text-tertiary">{{ t('interestRate') }}</h4>
-            <!-- <div class="body-md-s">Available</div> -->
-            {{ detail()?.interestRate }}%
+            <div class="body-md-s">{{ detail()?.interestRate }}%</div>
           </div>
           <div class="gap-xs grid">
             <h4 class="body-label-sm-m text-text-tertiary">{{ t('frequency') }}</h4>
@@ -61,7 +60,9 @@
         }
         <div class="gap-xs grid">
           <h4 class="body-label-sm-m text-text-tertiary">{{ t('minimumDeposit') }}</h4>
-          <currency-view [amount]="detail()?.minimumDeposit" />
+          <currency-view
+            [amount]="detail()?.minimumDeposit"
+            [currency]="detail()?.currency" />
         </div>
         <div class="gap-xs grid">
           <h4 class="body-label-sm-m text-text-tertiary">{{ t('actionMaturity') }}</h4>
@@ -141,7 +142,7 @@
           <app-currency-input-field
             [control]="amount"
             [currency]="currency()"
-            [placeholder]="t('certificateAmount')"
+            [placeholder]="t('amount')"
             [minError]="t('minAmountError', { value: minAmountValue() })"
             [mainHint]="interestPercentage() ? t('amountHint', { percentage: interestPercentage() }) : ''" />
         </div>
@@ -153,7 +154,7 @@
             scbButton
             class="w-[200px]"
             (click)="next()">
-            {{ t('submitRequest') }}
+            {{ t('continue') }}
           </button>
         </div>
       </form>
@@ -171,7 +172,7 @@
         </div>
 
         <div class="gap-sm grid flex-1">
-          <div class="body-label-md-m text-text-secondary">{{ t('to') }}</div>
+          <div class="body-label-md-m text-text-secondary">{{ t('creditedPrincipleAccount') }}</div>
           <app-account-selected-view
             [nickname]="selectedToAccount()!.accountNickname"
             [accountNumber]="selectedToAccount()!.accountNumber" />

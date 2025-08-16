@@ -19,6 +19,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { DatePickerModule } from 'primeng/datepicker';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { SelectModule } from 'primeng/select';
+import { TooltipModule } from 'primeng/tooltip';
 import { ChequeBookService } from '../../chequebook.service';
 import {
   LinkedAccountField,
@@ -52,6 +53,7 @@ import { SubmitChequeBookButtonsFooter } from '../../components/submit-chequeboo
     TermsAndConditions,
     CurrencyView,
     Skeleton,
+    TooltipModule,
   ],
   host: {
     class: 'col-span-12',

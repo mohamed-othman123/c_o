@@ -61,7 +61,7 @@
                   [name]="chequeBookService.isError() ? 'web-error' : 'web-success'"
                   class="text-3xl" />
 
-                <p class="text-text-primary head-lg-s text-center">
+                <p class="text-text-primary head-lg-s mf-2xl text-center">
                   @switch (chequeBookService.isError()) {
                     @case ('API') {
                       {{ t('form.apiFails') }}
@@ -95,11 +95,11 @@
                 </div>
                 <div class="flex flex-1 flex-col gap-1 max-sm:w-1/5">
                   <span class="mf-sm text-text-tertiary font-medium">{{ t('chequeBookDetail.chequesBooks') }}</span>
-                  <span class="text-md font-semibold">{{ detail()?.chequebooksIssued }}</span>
+                  <span class="mf-md font-semibold">{{ detail()?.chequebooksIssued }}</span>
                 </div>
                 <div class="flex flex-1 flex-col gap-1">
                   <span class="mf-sm text-text-tertiary font-medium">{{ t('chequeBookDetail.leaves') }}</span>
-                  <span class="text-md font-semibold">{{ detail()?.leavesCount }}</span>
+                  <span class="mf-md font-semibold">{{ detail()?.leavesCount }}</span>
                 </div>
               </div>
 
@@ -143,7 +143,7 @@
                   </div>
                   <div class="flex flex-1 flex-col gap-1">
                     <span class="body-md text-text-secondary">{{ t('chequeBookDetail.currency') }}</span>
-                    <span class="body-md-s text-text-primary">{{ detail()?.accountType }}</span>
+                    <span class="body-md-s text-text-primary">{{ detail()?.accountCurrency }}</span>
                   </div>
                 </div>
               </div>
@@ -170,7 +170,7 @@
                     </div>
                     <div class="flex flex-1 flex-col gap-1">
                       <span class="body-md text-text-secondary">{{ t('chequeBookDetail.currency') }}</span>
-                      <span class="body-md-s text-text-primary">{{ detail()?.accountType }}</span>
+                      <span class="body-md-s text-text-primary">{{ detail()?.accountCurrency }}</span>
                     </div>
                   </div>
                 </div>
@@ -225,6 +225,7 @@
                           <span class="text-text-primary ml-1">{{ t('chequeBookDetail.requested') }}</span>
                         }
                         <date-view
+                          class="mf-md"
                           [value]="getStatusDate(statusKey) ?? ''"
                           format="d MMM yyyy, h:mm a">
                         </date-view>

@@ -133,22 +133,27 @@ export class InsideTransferForm implements OnInit, OnDestroy {
   }
 
   handleRefreshRequest(request: { type: 'from' | 'to'; currency?: string }) {
-    this.transfer.refreshAccountsData(request.type, request.currency);
+    if (request.type === 'from') {
+      this.transfer.refreshAccountsData(request.type, request.currency);
+    }
   }
 
   ngOnInit(): void {
-    this.transfer.loadAllTransferData();
+    this.transfer.loadInsideTransferData();
   }
 
   handleAccountSelected(value: SelectAccountFieldProps) {
-    const account = value.accountSelected;
-    this.fromAccount.setValue({
-      accountNumber: account?.accountNumber || '',
-      accountNickname: account?.nickname || '',
-      accountType: account?.accountType || '',
-    });
-    this.transferCurrency.setValue(account?.currency.toLocaleUpperCase() || 'EGP');
-    this.transfer.availableBalance.set(account.availableBalance);
+    if (value.type === 'from') {
+      const account = value.accountSelected;
+      this.fromAccount.setValue({
+        accountNumber: account?.accountNumber || '',
+        accountNickname: account?.nickname || '',
+        accountType: account?.accountType || '',
+      });
+      this.transferCurrency.setValue(account?.currency.toLocaleUpperCase() || 'EGP');
+      this.transfer.availableBalance.set(account.availableBalance);
+    }
+
     if (this.repeatTransferData()) {
       this.transfer.currencyField.setValue(this.repeatTransferData()?.transferAmount || 0);
     }

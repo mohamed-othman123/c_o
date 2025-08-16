@@ -105,37 +105,51 @@
         </scb-form-field>
 
         <div class="gap-2xl flex flex-col">
-          @for (account of filteredAccountsList(); track account) {
-            <div
-              (click)="selectAccount(account)"
-              class="p-xl border-border-secondary flex cursor-pointer rounded-lg border sm:flex-row sm:items-center sm:justify-between dark:border-gray-600">
-              <div class="gap-sm flex w-1/2 flex-col sm:w-auto">
-                <div class="mf-lg text-text-primary truncate-force font-semibold">
-                  {{ account.nickname }}
-                </div>
-                <div class="gap-sm flex items-center">
-                  <scb-badge
-                    class="whitespace-nowrap"
-                    size="xs"
-                    variant="grey">
-                    {{ account.categoryDescription | titlecase }}
-                  </scb-badge>
-                  <span class="mf-sm text-text-tertiary truncate-force font-normal">
-                    {{ account.accountNumber }}
-                  </span>
-                </div>
-              </div>
-              <div class="gap-sm flex w-1/2 flex-col items-end text-right sm:w-auto">
-                <div class="mf-sm text-text-secondary whitespace-nowrap">
-                  {{ t('availableBalance') }}
-                </div>
-                <currency-view
-                  [amount]="account.workingBalance"
-                  [currency]="account.currency"
-                  size="xs"
-                  class="text-text-primary" />
-              </div>
+          @if (filteredAccountsList().length === 0 && searchTerm().trim()) {
+            <div class="emptyState py-3xl flex w-full flex-col items-center justify-center text-center">
+              <icon
+                [name]="'not-found'"
+                class="text-text-tertiary text-3xl" />
+              <h4 class="mt-sm mb-sm mf-lg text-text-primary font-semibold">
+                {{ t('noResults.title') }}
+              </h4>
+              <p class="text-text-tertiary text-sm-sm">
+                {{ t('noResults.subTitle') }}
+              </p>
             </div>
+          } @else if (filteredAccountsList().length > 0) {
+            @for (account of filteredAccountsList(); track account) {
+              <div
+                (click)="selectAccount(account)"
+                class="p-xl border-border-secondary flex cursor-pointer rounded-lg border sm:flex-row sm:items-center sm:justify-between dark:border-gray-600">
+                <div class="gap-sm flex w-1/2 flex-col sm:w-auto">
+                  <div class="mf-lg text-text-primary truncate-force font-semibold">
+                    {{ account.nickname }}
+                  </div>
+                  <div class="gap-sm flex items-center">
+                    <scb-badge
+                      class="whitespace-nowrap"
+                      size="xs"
+                      variant="grey">
+                      {{ account.categoryDescription | titlecase }}
+                    </scb-badge>
+                    <span class="mf-sm text-text-tertiary truncate-force font-normal">
+                      {{ account.accountNumber }}
+                    </span>
+                  </div>
+                </div>
+                <div class="gap-sm flex w-1/2 flex-col items-end text-right sm:w-auto">
+                  <div class="mf-sm text-text-secondary whitespace-nowrap">
+                    {{ t('availableBalance') }}
+                  </div>
+                  <currency-view
+                    [amount]="account.workingBalance"
+                    [currency]="account.currency"
+                    size="xs"
+                    class="text-text-primary" />
+                </div>
+              </div>
+            }
           }
         </div>
       </div>

@@ -101,7 +101,8 @@
     "notMatch": "كلمة المرور غير متطابقة",
     "companyIdRequired": "الرقم التعريفي للشركة مطلوب",
     "ruleTitle": "يجب أن تحتوي كلمة المرور على ما يلي:",
-    "successTitle": "تم تغيير كلمة المرور بنجاح"
+    "successTitle": "تم تغيير كلمة المرور بنجاح",
+    "successRequest": "تم ارسال رابط اعادة تعيين كلمة المرور على بريدك الالكترونى و ارسال كلمة مرور لمرة واحدة الى هاتفك المحمول"
   },
   "fpRules": {
     "rule1": "يجب أن تكون بين 8 إلى 20 حرفاً",
@@ -212,7 +213,8 @@
     "darkMode": "الوضع الليلي",
     "logout": "تسجيل الخروج",
     "chequeBook": "إدارة دفاتر الشيكات",
-    "pendingApprovals": "لا توجد بيانات"
+    "pendingApprovals": "لا توجد بيانات",
+    "ChangePassword": "تغيير كلمة المرور"
   },
   "quickAction": {
     "quickAction": "إجراءات سريعة",
@@ -416,7 +418,8 @@
     "accounts": "الحسابات",
     "currentAccount": "الحساب الجاري",
     "chequeBook": "دفتر الشيكات",
-    "pendingApprovals": "لا توجد بيانات"
+    "pendingApprovals": "لا توجد بيانات",
+    "changePassword": "تغيير كلمة المرور"
   },
   "breadcrumbs": {
     "home": "لوحة التحكم",
@@ -457,7 +460,9 @@
     "chequeBook": "إدارة دفاتر الشيكات",
     "requestNewChecquebook": "طلب دفتر شيكات جديد",
     "chequeBookDetails": "تفاصيل طلب دفتر الشيكات",
-    "pendingApprovals": "لا توجد بيانات"
+    "pendingApprovals": "لا توجد بيانات",
+    "changePassword": "تغيير كلمة المرور",
+    "cheques": "الشيكات"
   },
   "facilitiesOverview": {
     "title": "ملخص التسهيلات",
@@ -1914,17 +1919,17 @@
     "actionMaturity": "الإجراء عند الاستحقاق",
     "Redeem": "استرداد",
     "currency": "العملة",
-    "tenor": "[MISSING]",
+    "tenor": "مدة",
     "description": "وصف المعاملة",
     "reasonOfTransfer": "سبب التحويل",
     "transactionDate": "تاريخ المعاملة",
     "chargesPaidBy": "المصاريف المدفوعة بواسطة",
     "executionDate": "تاريخ التنفيذ",
-    "appliedFees": "[MISSING]",
+    "appliedFees": "الرسوم المطبقة",
     "APPROVED": "تمت الموافقة",
     "timelineTitle": "الجدول الزمني للموافقات",
-    "timelineSub": "[MISSING]",
-    "submittedBy": "[MISSING]",
+    "timelineSub": "تتبّع خطوات الموافقة",
+    "submittedBy": "مقدم الطلب",
     "debitedAccount": "تم انشاء الوديعة من",
     "creditedPrincipleAccount": "الحساب المُحوَّل إليه أصل المبلغ",
     "creditedAccount": "الحساب المُودَع فيه",
@@ -1933,7 +1938,8 @@
     "by": "حسب",
     "reject": "رفض",
     "withdraw": "سحب الطلب",
-    "productDetails": "[MISSING]",
+    "productDetails": "تفاصيل المنتج",
+    "PENDING": "المعلقة",
     "depositForm": {
       "creditedPrincipleAccount": "الحساب المُحوَّل إليه أصل المبلغ",
       "sameDebitedAccount": "الحساب المخصوم منه",
@@ -1984,7 +1990,7 @@
       "minAmountError": "الحد الأدني للإيداع {{value}}",
       "insufficientBalance": "الرصيد غير كافي",
       "apiFails": "حدث خطأ ما. يرجى المحاولة لاحقًا.",
-      "done": "تم",
+      "done": "العودة الي لوحة التحكم ",
       "viewProducts": "عرض المنتجات",
       "sectionRequired": "هذا الحقل مطلوب"
     },
@@ -2023,7 +2029,8 @@
     "title": "الشروط والأحكام",
     "Iagree": "أوافق على",
     "termsAndConditions": "الشروط والأحكام",
-    "interestType": "نوع الفائدة"
+    "interestType": "نوع الفائدة",
+    "sectionRequired": "هذا الحقل مطلوب"
   },
   "chequeBook": {
     "requestChequebookTitle": "طلبات دفاتر الشيكات",
@@ -2062,9 +2069,10 @@
       "numberOfLeaves": "عدد ورق الدفتر",
       "numberOfChequebooks": "عدد دفاتر الشيكات",
       "termConditions": "أوافق على الشروط والأحكام",
-      "chequeBookStatus": "دفتر الشيكات الخاص بك سيكون متاحًا للاستلام من فرعك في التجمع الخامس، شارع التسعين:",
+      "chequeBookStatus": "دفتر الشيكات الخاص بك سيكون متاحًا للاستلام من فرعك :",
       "submit": "إرسال الطلب",
-      "totalFeesHint": "إجمالي الرسوم: ",
+      "totalFeesHint": "المصاريف: ",
+      "feeWaivedTooltip": "تم إعفاؤك من الرسوم بناءً على ملفك الشخصي.",
       "returnToDashboard": "العودة الي لوحة التحكم ",
       "requestNewChequeBook": "طلب دفتر شيكات",
       "sectionRequired": "هذا الحقل مطلوب",
@@ -2084,6 +2092,10 @@
       "title": "لا يوجد طلبات دفاتر شيكات",
       "subTitle": "تقدم بطلب دفتر شيكات الان"
     },
+    "noResults": {
+      "title": "لم يتم العثور على نتائج",
+      "subTitle": "قم بتغيير عوامل التصفية."
+    },
     "filteredState": {
       "title": "لم يتم العثور على نتائج",
       "subTitle": "قم بتغيير عوامل التصفية"
@@ -2091,7 +2103,7 @@
     "chequeBookDetail": {
       "requested": "تم الطلب ",
       "requestDate": "تاريخ الطلب",
-      "chequesBooks": "Request Date",
+      "chequesBooks": "عدد دفاتر الشيكات",
       "leaves": "إجازات",
       "fees": "العمولات",
       "branch": "فرع الاستلام",
@@ -2190,5 +2202,14 @@
     "extend": "أكمل الجلسة",
     "logout": "تسجيل الخروج",
     "cancel": "إلغاء"
+  },
+  "resetPassword": {
+    "oldPassword": "كلمة المرور القديمة",
+    "newPassword": "كلمة المرور الجديدة",
+    "confirmPassword": "تأكيد كلمة المرور الجديدة",
+    "oldPasswordRequired": "كلمة المرور القديمة مطلوبة",
+    "newPasswordRequired": "كلمة المرور الجديدة مطلوبة",
+    "confirmPasswordRequired": "تأكيد كلمة المرور مطلوب",
+    "successTitle": "تم تغيير كلمة المرور بنجاح"
   }
 }

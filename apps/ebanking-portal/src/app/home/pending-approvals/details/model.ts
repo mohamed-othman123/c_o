@@ -1,10 +1,12 @@
+import { Beneficiary } from '@/home/beneficiary/models/models';
+
 export interface ApiRes<T> {
   data: T;
   message: string;
   status: string;
 }
 
-export interface DelegationDetail {
+export interface ProductApprovalRes {
   productDetail: ProductDetail;
   approvalRejection: ApprovalRejection[];
   users: Users;
@@ -34,6 +36,7 @@ interface ProductDetail {
   requestType: string;
   requestId: string;
   requestTypeDisplay: string;
+  productTitle: string;
   status: string;
   requiredApproval: number;
   approved: number;
@@ -45,13 +48,62 @@ interface ProductDetail {
   amount: string;
   currency: string;
   interestRate: string;
+  chequebookAvailable: boolean;
   minimumDepositAmount: string;
   minimumDepositCurrency: string;
   frequency: string;
   interestType: string;
   actionAtMaturity: string;
+  submittedBy: string;
   createdDate: string;
   updatedDate: string;
   updatedBy: string;
   createdBy: string;
+}
+
+export interface ChequeDelegationRes {
+  requestId: string;
+  status: string;
+  data: {
+    chequebookDetail: ChequebookDetail;
+    approvalRejection: ApprovalRejection[];
+    users: Users;
+  };
+}
+
+export interface ChequebookDetail {
+  accountNumber: string;
+  chequebooksIssued: number;
+  leavesCount: number;
+  createdBy: string;
+  createdAt: string;
+  requiredApprovalLevel: number;
+}
+
+export interface DelegationDetailsRes {
+  details: ProductDetail &
+    ChequebookDetail & {
+      from: { nickname: string; accountNumber: string };
+      to: { nickname: string; accountNumber: string };
+      beneficiary: Beneficiary;
+    };
+  approvalRejection: ApprovalRejection[];
+  users: Users;
+}
+
+export interface TransferApprovalStatus {
+  totalNumberOfApproval: number;
+  approvedNumber: number;
+}
+
+export interface PendingRequest {
+  amount: number;
+  approvalStatus: TransferApprovalStatus;
+  approvedNumber: number;
+  totalNumberOfApproval: number;
+  currency: string;
+  requestDate: string;
+  requestNumber: string;
+  transferType: string;
+  transferStatus: string;
 }

@@ -23,6 +23,7 @@ export class PendingRequestsApprovalsService {
   readonly dialogPortal = dialogPortal();
   readonly loading = signal(false);
   readonly requestType = signal('');
+  readonly currentTab = signal(0);
 
   isMaker(): boolean {
     const userRoles = this.authService.getRolesFromToken();
@@ -31,27 +32,28 @@ export class PendingRequestsApprovalsService {
 
   //withdraw
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  withdraw(payload: PendingApprovalsList, callback: Function) {
+  withdraw(requestId: string, callback: Function) {
     this.confirmation(() => {
       this.softToken.open(this.loading.asReadonly(), (token: string) => {
         if (token) {
-          this.withdrawProcess({ ...payload, token }, callback);
+          this.withdrawProcess({ requestId, token, id: requestId }, callback);
         }
       });
     });
   }
 
   private withdrawProcess = (
-    payload: PendingApprovalsList & { token: string },
+    payload: { token: string; requestId?: string; id?: string },
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     callback: Function,
   ) => {
     this.loading.set(true);
 
+    const finalRequestId = payload.requestId || payload.id;
     const { url, method, otpKey, payloadValue } = this.getRequestConfig('withdraw');
     const requestPayload = {
       [otpKey]: '12345678',
-      requestId: payload.requestId ?? payload.id,
+      requestId: finalRequestId,
       action: payloadValue,
     };
 
@@ -110,10 +112,10 @@ export class PendingRequestsApprovalsService {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-  approveRequest(payload: PendingApprovalsList, callback: Function) {
+  approveRequest(requestId: string, callback: Function) {
     this.softToken.open(this.loading.asReadonly(), (token: string) => {
       if (token) {
-        this.approveProcess({ ...payload, token }, callback);
+        this.approveProcess({ requestId, token }, callback);
       }
     });
   }
@@ -187,13 +189,13 @@ export class PendingRequestsApprovalsService {
     });
   }
 
-  rejectRequestConfirmation(request: PendingApprovalsList) {
+  rejectRequestConfirmation(requestId: string) {
     return this.dialogPortal.open(RejectRequest, {
       containerClassNames: ['bg-white h-full p-xl dark:bg-gray-850'],
       classNames: ['self-end mb-2xl 2xl:mb-0 2xl:self-center w-full! 2xl:w-[376px]!'],
       disableClose: true,
       fullWindow: false,
-      data: request.requestId,
+      data: requestId,
     });
   }
 
@@ -224,25 +226,28 @@ export class PendingRequestsApprovalsService {
     };
   });
 
-  getAllListRequest(type: string, params: any, isMaker?: boolean): HttpResourceRequest {
-    const chequeUrl = this.isMaker()
-      ? '/api/product/chequebook/workflow/status'
-      : '/api/product/chequebook/workflow/checker/status';
-
-    const baseUrlMap: Record<string, string> = {
-      cheque: chequeUrl,
-      product: '/api/product/product/request/list',
-      transfer: '/api/dashboard/transfer/transferlist/status',
-    };
-
+  getAllListRequest(type: string, params: any, tab?: number): HttpResourceRequest {
+    let url = '';
     const methodMap: Record<string, 'GET' | 'POST'> = {
       cheque: 'GET',
       product: 'POST',
-      transfer: 'POST',
+      transfer: 'GET',
     };
-
-    const url = baseUrlMap[type] || baseUrlMap['cheque'];
     const method = methodMap[type] || 'GET';
+    if (type === 'transfer') {
+      const base = this.isMaker()
+        ? '/api/transfer/transfer-workflow/maker-pending'
+        : '/api/transfer/transfer-workflow/checker-pending';
+
+      const status = this.getTransferStatuses();
+      url = `${base}/${status.toLowerCase()}`;
+    } else if (type === 'cheque') {
+      url = this.isMaker()
+        ? '/api/product/chequebook/workflow/status'
+        : '/api/product/chequebook/workflow/checker/status';
+    } else if (type === 'product') {
+      url = '/api/product/product/request/list';
+    }
 
     return {
       url,
@@ -272,12 +277,14 @@ export class PendingRequestsApprovalsService {
       requestType: transferType,
       fromDate,
       toDate,
-      status: [mapStatus(this.getStatusTab(isMaker, tab))],
+      status: type === 'transfer' ? [] : [mapStatus(this.getStatusTab(isMaker, tab))],
     };
   }
 
   buildParams(filters: Record<string, any>, pageStart: number, pageSize: number) {
     const filtered = Object.entries(filters).reduce((acc, [key, value]) => {
+      if (this.requestType() === 'transfer' && key === 'status') return acc; // skip transfer status in params
+
       if (Array.isArray(value)) {
         const cleanedArray = value.filter(v => v !== null && v !== undefined && v !== '');
         if (cleanedArray.length > 0) {
@@ -355,5 +362,16 @@ export class PendingRequestsApprovalsService {
       otpKey,
       payloadValue,
     };
+  }
+
+  getTransferStatuses(): string {
+    const makerStatuses = ['ALL', 'PENDING_APPROVAL', 'APPROVED', 'REJECTED'];
+    const checkerStatuses = ['PENDING_MY_APPROVAL', 'PENDING_APPROVAL', 'APPROVED', 'REJECTED'];
+
+    if (this.isMaker()) {
+      return makerStatuses[this.currentTab()] || 'ALL';
+    } else {
+      return checkerStatuses[this.currentTab()] || 'PENDING_MY_APPROVAL';
+    }
   }
 }

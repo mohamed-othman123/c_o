@@ -1,12 +1,11 @@
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, inject, input, output, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { SoftTokenService } from '@/core/components';
 import { RolePermissionDirective } from '@/core/directives/role-permission.directive';
 import { TranslocoDirective } from '@jsverse/transloco';
-import { Button } from '@scb/ui/button';
+import { Button, ButtonSize } from '@scb/ui/button';
 import { TransactionsHistoryData } from '../transactions-history/transactions-history';
-import { PendingApprovalsList } from './model';
 import { PendingRequestsApprovalsService } from './pending-approvals.service';
 
 @Component({
@@ -21,34 +20,24 @@ import { PendingRequestsApprovalsService } from './pending-approvals.service';
       <button
         *rolePermission="['CHECKER']"
         scbButton
-        size="xs"
-        (click)="approveRequest(transaction(), $event)">
+        [size]="buttonSize()"
+        (click)="approveRequest($event)">
         {{ t('approve') }}
       </button>
       <button
         *rolePermission="['CHECKER']"
         scbButton
-        size="xs"
+        [size]="buttonSize()"
         variant="secondary"
-        (click)="rejectRequest(transaction(), $event)">
+        (click)="rejectRequest($event)">
         {{ t('reject') }}
       </button>
-      @if (type() === 'cheque') {
-        @if (transaction().status === 'PENDING' && transaction().approved === 0) {
-          <button
-            *rolePermission="['MAKER']"
-            scbButton
-            size="xs"
-            (click)="withdraw(transaction(), $event)">
-            {{ t('withdraw') }}
-          </button>
-        }
-      } @else if (transaction().status === 'PENDING') {
+      @if (status() === 'PENDING' && approved() === 0) {
         <button
           *rolePermission="['MAKER']"
           scbButton
-          size="xs"
-          (click)="withdraw(transaction(), $event)">
+          [size]="buttonSize()"
+          (click)="withdraw($event)">
           {{ t('withdraw') }}
         </button>
       }
@@ -57,25 +46,30 @@ import { PendingRequestsApprovalsService } from './pending-approvals.service';
 })
 export class ActionButtons {
   readonly pendingService = inject(PendingRequestsApprovalsService);
+  readonly http = inject(HttpClient);
   readonly softToken = inject(SoftTokenService);
-  readonly transaction = input.required<PendingApprovalsList>();
+
   readonly type = input.required<string>();
+  readonly requestId = input.required<string>();
+  readonly status = input.required<string>();
+  readonly approved = input<number>(0);
+  readonly buttonSize = input<ButtonSize>('xs');
+
   readonly loading = signal(false);
   readonly reload = output();
-  readonly http = inject(HttpClient);
 
-  withdraw(payload: PendingApprovalsList, event: MouseEvent) {
+  withdraw(event: MouseEvent) {
     event.stopPropagation();
     const callback = () => {
       this.softToken.closeAll();
       this.reload.emit();
     };
-    this.pendingService.withdraw(payload, callback);
+    this.pendingService.withdraw(this.requestId(), callback);
   }
 
-  rejectRequest(payload: PendingApprovalsList, event: MouseEvent) {
+  rejectRequest(event: MouseEvent) {
     event.stopPropagation();
-    const dialogRef = this.pendingService.rejectRequestConfirmation(payload);
+    const dialogRef = this.pendingService.rejectRequestConfirmation(this.requestId());
 
     dialogRef.afterClosed.subscribe(result => {
       if (result === true) {
@@ -84,13 +78,13 @@ export class ActionButtons {
     });
   }
 
-  approveRequest(payload: PendingApprovalsList, event: MouseEvent) {
+  approveRequest(event: MouseEvent) {
     event.stopPropagation();
     const callback = () => {
       this.softToken.closeAll();
       this.reload.emit();
     };
-    this.pendingService.approveRequest(payload, callback);
+    this.pendingService.approveRequest(this.requestId(), callback);
   }
 }
 

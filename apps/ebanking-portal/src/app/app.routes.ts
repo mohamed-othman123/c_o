@@ -16,16 +16,6 @@ export const appRoutes: Route[] = [
     loadComponent: () => import('./auth/login/login.component').then(m => m.LoginComponent),
   },
   {
-    path: 'locate-us',
-    canActivate: [LoginGuard],
-    loadComponent: () => import('./auth/locate-us/locate-us.component'),
-  },
-  {
-    path: 'forget-password',
-    canActivate: [LoginGuard],
-    loadComponent: () => import('./auth/forget-password/forget-password-container.component'),
-  },
-  {
     path: 'registration',
     canActivate: [LoginGuard],
     loadComponent: () => import('./auth/registration/registration.container.component'),
@@ -34,6 +24,21 @@ export const appRoutes: Route[] = [
     path: 'activate-user',
     canActivate: [LoginGuard],
     loadComponent: () => import('./auth/activate-user/activate-user-container.component'),
+  },
+  {
+    path: 'forget-password',
+    canActivate: [LoginGuard],
+    loadComponent: () => import('./auth/forget-password/forget-password-container.component'),
+  },
+  {
+    path: 'reset-password',
+    canActivate: [LoginGuard],
+    loadComponent: () => import('./auth/forget-password/forget-password-container.component'),
+  },
+  {
+    path: 'locate-us',
+    canActivate: [LoginGuard],
+    loadComponent: () => import('./auth/locate-us/locate-us.component'),
   },
   /**
    * All Pages that are commonly using the same Header and Footer grouped under the Home Layout
@@ -338,7 +343,7 @@ export const appRoutes: Route[] = [
           {
             path: '',
             loadComponent: () => import('./home/pending-approvals/pending-approvals.ng'),
-            data: { breadcrumb: 'pending-approvals', sideMenu: '/pending-transfer' },
+            data: { breadcrumb: 'pending-approvals', sideMenu: '/pending-transfer', type: 'transfer' },
           },
           {
             path: ':detailId',
@@ -361,7 +366,7 @@ export const appRoutes: Route[] = [
           {
             path: '',
             loadComponent: () => import('./home/pending-approvals/pending-approvals.ng'),
-            data: { breadcrumb: 'pending-approvals', sideMenu: '/pending-product' },
+            data: { breadcrumb: 'pending-approvals', sideMenu: '/pending-product', type: 'product' },
           },
           {
             path: ':detailId',
@@ -378,10 +383,39 @@ export const appRoutes: Route[] = [
       },
       {
         path: 'pending-cheques',
-        loadComponent: () => import('./home/pending-approvals/pending-approvals.ng'),
+        canActivate: [createRoleGuard(['MAKER', 'CHECKER'])],
         title: 'titles.pendingApprovals',
-        data: { breadcrumb: 'pending-approvals', sideMenu: '/pending-approvals' },
+        children: [
+          {
+            path: '',
+            loadComponent: () => import('./home/pending-approvals/pending-approvals.ng'),
+            data: { breadcrumb: 'pending-approvals', sideMenu: '/pending-approvals', type: 'cheque' },
+          },
+          {
+            path: ':detailId',
+            loadComponent: () => import('./home/pending-approvals/details/delegation-details.ng'),
+            data: {
+              breadcrumb: 'pending-approvals',
+              sideMenu: '/pending-approvals',
+              parentPath: '/pending-cheques',
+              title: 'cheques',
+            },
+            title: 'titles.pendingApprovals',
+          },
+        ],
       },
+      {
+        path: 'change-password',
+        loadComponent: () => import('./home/change-password/change-password.component'),
+        data: { breadcrumb: 'change-password', sideMenu: '/change-password' },
+        title: 'titles.changePassword',
+      },
+      //  {
+      //   path: 'pending-approvals',
+      //   loadComponent: () => import('./home/pending-approvals/pending-approvals.ng'),
+      //   title: 'titles.pendingApprovals',
+      //   data: { breadcrumb: 'pending-approvals', sideMenu: '/pending-approvals' },
+      // },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },

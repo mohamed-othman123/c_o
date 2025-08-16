@@ -167,13 +167,11 @@ export class AccountsDrawer {
           const currency = this.selectedCurrency();
           const currentData = this.accountsData();
 
-          // Add this check to prevent infinite loops on empty data
           const hasValidData = currentData !== undefined;
           const hasMatchingCurrencyData = currentData.some(
             account => account.currency.toUpperCase() === currency.toUpperCase(),
           );
 
-          // Only refresh if we have no data at all OR no matching currency data
           if (!hasValidData || (!hasMatchingCurrencyData && currency !== '' && currentData.length > 0)) {
             this.refreshRequest.emit({ type, currency });
           }

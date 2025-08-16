@@ -43,7 +43,7 @@
               </div>
             }
             <!-- Amount -->
-            <div class="gap-lg mt-3 flex flex-col">
+            <div class="gap-lg flex flex-col">
               <p class="mf-lg font-semibold">{{ t('chequeBookType') }}</p>
               <div class="gap-2xl flex justify-between max-sm:flex-col max-sm:gap-0">
                 <div class="gap-2xl block w-1/2 max-sm:w-full">
@@ -69,7 +69,9 @@
                     class="gap-sm text-input-text-supporting body-label-sm flex items-center">
                     <icon
                       name="info-circle"
-                      class="w-[20px] flex-none" />
+                      class="w-[20px] flex-none"
+                      [pTooltip]="t('feeWaivedTooltip')"
+                      tooltipPosition="top" />
                     {{ t('totalFeesHint') }}
                     @if (chequeBookFeeResource.isLoading()) {
                       <scb-skeleton class="!h-xl !mb-0 !w-[10%]" />

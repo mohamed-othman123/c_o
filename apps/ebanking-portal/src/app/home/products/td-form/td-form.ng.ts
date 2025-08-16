@@ -2,7 +2,8 @@ import { NgTemplateOutlet } from '@angular/common';
 import { HttpClient, HttpErrorResponse, httpResource } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, NavigationStart, Router, RouterLink } from '@angular/router';
+import { filter, Subscription } from 'rxjs';
 import { AuthService } from '@/auth/api/auth.service';
 import {
   AppBreadcrumbsComponent,
@@ -90,7 +91,7 @@ export default class TDForm {
   private readonly authService = inject(AuthService);
   readonly layoutFacade = inject(LayoutFacadeService);
   readonly toasterService = inject(ToasterService);
-
+  private router = inject(Router);
   readonly paramIds = (() => {
     const [id, tdId] = this.route.snapshot.params['id'].split('--') as string[];
     return { id, tdId };
@@ -107,7 +108,10 @@ export default class TDForm {
   });
 
   readonly tdTenorSource = httpResource<TdTenorApiResponse>(() => {
-    return { url: `/api/product/deposits/td/tenor/floating` };
+    if (this.detail()?.tdType === 'FLOATING') {
+      return { url: `/api/product/deposits/td/tenor/floating` };
+    }
+    return undefined;
   });
 
   readonly fixedInterestRatesSource = httpResource<TDFixedInterestRateResponse>(() => {
@@ -143,7 +147,7 @@ export default class TDForm {
   readonly selectedToAccount = computed(() => (this.accountType() === '1' ? this.fromAccount() : this.toAccount()));
 
   readonly availableBalance = signal<number>(0);
-  readonly currency = signal('EGP');
+  readonly currency = signal<'EGP' | 'USD'>('EGP');
   readonly withInterest = signal(true);
   readonly fixedInterestPercentage = signal<number | 0>(0);
   readonly floatingInterestPercentage = signal<number | 0>(0);
@@ -181,7 +185,7 @@ export default class TDForm {
   readonly tdType = computed(() => {
     const data = this.detail();
     let type: any;
-    if (data?.currency === 'USD' && data?.interestType === 'FIXED') {
+    if (data?.tdType === 'FIXED') {
       type = TERMS_AND_CONDITIONS_ID.CORPORATE_FIXED_INTEREST_TD;
     } else {
       type = TERMS_AND_CONDITIONS_ID.CORPORATE_FLOATING_INTEREST_TD;
@@ -190,7 +194,10 @@ export default class TDForm {
   });
 
   constructor() {
-    this.transferData.loadAccountsData('EGP');
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationStart))
+      .subscribe(() => this.softToken?.closeAll?.());
+    this.transferData.loadProductFormData('EGP');
 
     effect(() => {
       const v = !this.detailsSource.isLoading() && this.detail();
@@ -232,6 +239,10 @@ export default class TDForm {
     });
 
     this.amount.valueChanges.subscribe(value => {
+      if (this.availableBalance() <= 0) {
+        console.log(this.availableBalance());
+        this.form.get('amount')?.setErrors({ insufficientBalance: true });
+      }
       const amountValue = Number(value);
       if (this.amount.invalid || isNaN(amountValue)) {
         return;
@@ -246,6 +257,13 @@ export default class TDForm {
       this.floatingInterestPercentage.set(this.getRateForByFrequency(vale));
       this.tenor.set(vale);
       this.interestRate.set(this.floatingInterestPercentage().toString());
+    });
+
+    effect(() => {
+      const data = this.detail();
+      if (data?.currency === 'USD' || data?.currency === 'EGP') {
+        this.currency.set(data.currency);
+      }
     });
   }
 
@@ -270,6 +288,10 @@ export default class TDForm {
     const account = data.accountSelected;
     this.toAccount.set({ ...account, accountNickname: account.nickname });
     this.form.controls.anotherAccount.setValue(account.accountNumber);
+  }
+
+  handleRefreshRequest(request: { type: 'from' | 'to'; currency?: string }) {
+    this.transferData.refreshAccountsData(request.type, request.currency);
   }
 
   goBack() {
@@ -368,15 +390,15 @@ export default class TDForm {
 
   getFixedInterestRate(amount: number): number {
     const rates = this.fixedInterestRates();
-    if (!rates) return 0;
+    if (!rates) return Number(this.detail()?.interestRate);
 
     const matched = rates.find(rate => {
       const from = Number(rate.fromAmt);
       const to = Number(rate.toAmt);
       return amount >= from && amount <= to;
     });
-
-    return matched ? Number(matched.interestRate) : 0;
+    const interest = matched ? Number(matched.interestRate) : Number(this.detail()?.interestRate);
+    return interest;
   }
 
   get selectedDurationLabel(): string {

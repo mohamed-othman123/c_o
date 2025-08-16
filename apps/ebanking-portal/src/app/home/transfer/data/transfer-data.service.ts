@@ -35,17 +35,17 @@ export class TransferDataService {
   readonly beneficiariesLoading = signal<Record<string, boolean>>({});
   readonly beneficiariesError = signal<Record<string, string | null>>({});
 
-  private readonly ongoingRequests = new Set<string>();
-  private readonly ongoingAccountRequests = new Set<string>();
-  private readonly ongoingCharityRequest = signal(false);
-
   readonly charityData = signal<CharityItem[]>([]);
   readonly charityLoading = signal(false);
   readonly charityError = signal<string | null>(null);
 
+  private readonly ongoingRequests = new Set<string>();
+  private readonly ongoingAccountRequests = new Set<string>();
+  private readonly ongoingCharityRequest = signal(false);
+  private readonly loadedBeneficiaryTypes = new Set<string>();
+
   readonly transferTypes = computed(() => this.transferLookupData()?.transferType || []);
   readonly chargeBearers = computed(() => this.transferLookupData()?.chargeBearer || []);
-  readonly frequencyTypes = computed(() => this.transferLookupData()?.frequencyType || []);
   readonly transferNetworksFiltered = computed(() => {
     const data = this.transferLookupData()?.transferNetwork || [];
     return data.filter(x => ['ACH', 'IPN'].includes(x.key));
@@ -53,25 +53,26 @@ export class TransferDataService {
   readonly reasons = computed(() => this.reasonsData().data);
   readonly charityList = computed(() => this.charityData());
 
-  readonly filteredFromAccounts = computed(() => {
-    return (skipAccount?: string) =>
-      this.fromAccountsData().filter(account => !skipAccount || account.accountNumber !== skipAccount);
-  });
+  loadCharityTransferData(currency?: string): void {
+    this.loadFromAccounts(currency);
+    this.loadTransferLookupData();
+    this.loadCharityData();
+  }
 
-  readonly filteredToAccounts = computed(() => {
-    return (skipAccount?: string) =>
-      this.toAccountsData().filter(account => !skipAccount || account.accountNumber !== skipAccount);
-  });
-
-  loadAllTransferData(currency?: string): void {
-    this.loadAccountsData(currency);
+  loadOutsideTransferData(currency?: string): void {
+    this.loadFromAccounts(currency);
     this.loadTransferLookupData();
     this.loadReasonsData();
   }
 
-  loadAllTransferDataWithCharity(currency?: string): void {
-    this.loadAllTransferData(currency);
-    this.loadCharityData();
+  loadInsideTransferData(currency?: string): void {
+    this.loadFromAccounts(currency);
+    this.loadTransferLookupData();
+    this.loadReasonsData();
+  }
+
+  loadProductFormData(currency?: string): void {
+    this.loadFromAccounts(currency);
   }
 
   loadAccountsData(currency?: string): void {
@@ -182,8 +183,6 @@ export class TransferDataService {
       },
     });
   }
-  private readonly loadedBeneficiaryTypes = new Set<string>();
-  private readonly loadedAccountTypes = new Set<string>();
 
   loadBeneficiariesData(beneficiaryType: string): void {
     const cacheKey = beneficiaryType;
@@ -206,9 +205,9 @@ export class TransferDataService {
         this.loadedBeneficiaryTypes.add(cacheKey);
         const beneficiaries = Array.isArray(response.data)
           ? response.data.map(beneficiary => {
-            const icon = PAYMENT_METHODS_OUTSIDE.find(item => item.id === beneficiary.transactionMethod)?.icon;
-            return { ...beneficiary, icon: icon || 'bank' };
-          })
+              const icon = PAYMENT_METHODS_OUTSIDE.find(item => item.id === beneficiary.transactionMethod)?.icon;
+              return { ...beneficiary, icon: icon || 'bank' };
+            })
           : [];
 
         this.beneficiariesData.update(state => ({ ...state, [cacheKey]: beneficiaries }));
@@ -354,16 +353,15 @@ export class TransferDataService {
     let filtered = accounts;
 
     if (skipAccount) {
-      filtered = filtered.filter((account: AccountDTO) => account.accountNumber !== skipAccount);
+      filtered = filtered.filter(account => account.accountNumber !== skipAccount);
     }
 
     if (searchTerm) {
       const term = searchTerm.toLowerCase();
-      filtered = filtered.filter((account: AccountDTO) => {
-        const accountNumber = account.accountNumber?.toString().toLowerCase() || '';
-        const nickname = account.nickname?.toLowerCase() || '';
-        return accountNumber.includes(term) || nickname.includes(term);
-      });
+      filtered = filtered.filter(
+        account =>
+          account.nickname?.toLowerCase().includes(term) || account.accountNumber?.toLowerCase().includes(term),
+      );
     }
 
     return filtered;

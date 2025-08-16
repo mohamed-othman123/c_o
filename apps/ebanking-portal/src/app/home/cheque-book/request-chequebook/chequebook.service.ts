@@ -67,7 +67,7 @@ export class ChequeBookService {
       this.value.set(requestPayload);
       this.chequeBookInfo.set({
         ...requestPayload,
-        accountCurrency: value.linkedAccount.accountCurrency,
+        accountCurrency: this.value().accountCurrency,
         issueFee: this.feesAmount(),
         cifBranch: this.branchName(),
       });
@@ -111,13 +111,18 @@ export class ChequeBookService {
         this.step.set('error');
         this.step.set('success');
         let errorType: ERROR_TYPE = undefined;
-        const apiError = err.error as ApiErrorResponse;
-        const details = apiError?.errorResponse?.error?.errorDetails ?? [];
+        const apiError = err.error as any;
+        let details: { code: string; message: string }[] = [];
+        if (apiError?.errorCode) {
+          details = [{ code: apiError.errorCode, message: apiError.message }];
+        } else if (apiError?.errorResponse?.error?.errorDetails) {
+          details = apiError.errorResponse.error.errorDetails;
+        }
 
         const errorCodes = details.map(d => d.code);
         if (err.status !== 400) {
           errorType = 'API';
-        } else if (errorCodes.includes('TGVCP-002')) {
+        } else if (errorCodes.includes('TGVCP-002') || errorCodes.includes('CHQ-101')) {
           errorType = 'NOTELIGIBLE';
         } else if (
           errorCodes.includes('PROD-101') ||

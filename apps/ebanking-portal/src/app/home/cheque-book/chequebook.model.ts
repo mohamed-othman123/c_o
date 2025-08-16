@@ -76,6 +76,7 @@ export interface ChequeBookRequestDTO {
   accountNumber: string;
   accountNickname: string;
   accountType: string;
+  accountCurrency: string;
   feeDebitedAccountNumber: string;
   branchDetails: string;
   chequebooksIssued: number;

@@ -64,8 +64,8 @@ export class ChequeBookDetail {
     en: {
       UNDER_REVIEW: 'Under Review',
       APPROVED: 'Approved',
-      PRINTING: 'Printed',
-      AT_BRANCH: 'At Branch Side',
+      PRINTING: 'Printing',
+      AT_BRANCH: 'At Branch',
       RECEIVED: 'Received',
     },
     ar: {
@@ -100,7 +100,9 @@ export class ChequeBookDetail {
     effect(() => {
       const detailData = this.data() ?? this.chequebookDetail();
       if (detailData) {
+        console.log('data 1', detailData);
         this.detail.set(detailData);
+        console.log('data', this.detail());
       }
     });
   }

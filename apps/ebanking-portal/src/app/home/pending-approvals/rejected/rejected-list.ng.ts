@@ -52,18 +52,18 @@ import { PendingApprovalFilter } from '../pending-transactions-filter.ng';
 export class RejectedList {
   readonly pendingService = inject(PendingRequestsApprovalsService);
   readonly router = inject(Router);
-  readonly route = inject(ActivatedRoute);
   readonly base64Converter = inject(Base64ConverterService);
   readonly accountDetailsService = inject(AccountDetailsService);
   readonly layoutFacade = inject(LayoutFacadeService);
+
+  readonly tab = input.required<number>();
+  readonly type = input.required<string>();
+
   readonly transferType = signal<any[]>([]);
   readonly loading = signal(false);
   readonly page = new PaginationData();
-  readonly tab = input.required<number>();
   readonly refresh = signal(1);
   readonly date = signal('');
-  readonly queryParams = toSignal(this.route.queryParamMap);
-  readonly type = computed(() => this.queryParams()?.get('type') || '');
 
   readonly filters = computed(() =>
     this.pendingService.buildFilters(
