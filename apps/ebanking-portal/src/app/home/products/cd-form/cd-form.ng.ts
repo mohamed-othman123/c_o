@@ -6,6 +6,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AppBreadcrumbsComponent, CurrencyView, SoftTokenService } from '@/core/components';
 import { RolePermissionDirective } from '@/core/directives/role-permission.directive';
 import { minCurrencyAmountValidator } from '@/core/validators/custom-validators';
+import { PendingRequestsApprovalsService } from '@/home/pending-approvals/pending-approvals.service';
 import { AccountInfo } from '@/home/transfer-details/Model/transfer-details.model';
 import { AccountSelectedView } from '@/home/transfer/components/account-selected/account-selected-view.ng';
 import { CurrencyInputField } from '@/home/transfer/components/currency-field/currency-input';
@@ -65,6 +66,7 @@ export default class CdForm extends FormDeactivate {
   readonly http = inject(HttpClient);
   readonly softToken = inject(SoftTokenService);
   readonly transferData = inject(TransferDataService);
+  readonly pendingService = inject(PendingRequestsApprovalsService);
   readonly route = inject(ActivatedRoute);
 
   readonly paramIds = (() => {
@@ -210,15 +212,12 @@ export default class CdForm extends FormDeactivate {
     this.loading.set(true);
     this.http.post<{ status: string; message: string }>(`/api/product/deposits/create/cd`, request).subscribe({
       next: res => {
-        this.steps.set('completed');
-        this.loading.set(false);
-        this.softToken.closeAll();
+        this._complete();
         if (res.status === 'Failed') {
           this.isError.set('API');
         }
       },
       error: (err: HttpErrorResponse) => {
-        this.steps.set('completed');
         let errorType: ERROR_TYPE = undefined;
         if (err.status !== 400) {
           errorType = 'API';
@@ -230,8 +229,7 @@ export default class CdForm extends FormDeactivate {
           }
         }
         this.isError.set(errorType);
-        this.loading.set(false);
-        this.softToken.closeAll();
+        this._complete();
       },
     });
   };
@@ -248,5 +246,13 @@ export default class CdForm extends FormDeactivate {
       prinLiqAcct,
     };
     return request;
+  }
+
+  private _complete() {
+    this.steps.set('completed');
+    this.loading.set(false);
+    this.softToken.close();
+    this.markDirty(true);
+    this.pendingService.reloadCountRefreshSignal();
   }
 }

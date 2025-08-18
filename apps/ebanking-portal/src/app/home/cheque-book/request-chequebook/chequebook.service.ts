@@ -1,12 +1,19 @@
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { PendingRequestsApprovalsService } from '@/home/pending-approvals/pending-approvals.service';
 import { TransferSaveError } from '@/home/transfer/model';
 import { LayoutFacadeService } from '@/layout/layout.facade.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { dialogPortal } from '@scb/ui/dialog';
 import { markControlsTouched } from '@scb/ui/input';
-import { ApiErrorResponse, ChequeBookInfo, ChequeBookRequestDTO, ERROR_TYPE } from '../chequebook.model';
+import {
+  ApiErrorResponse,
+  ChequeBookInfo,
+  ChequeBookRequestDTO,
+  ERROR_TYPE,
+  LinkedAccountDTO,
+} from '../chequebook.model';
 import { ChequeBookSoftTokenAlert } from './components/chequebook-soft-token.ng';
 
 export type ChequeBookSteps = 'form' | 'otp' | 'success' | 'error';
@@ -16,6 +23,7 @@ export class ChequeBookService {
   readonly http = inject(HttpClient);
   readonly layoutFacade = inject(LayoutFacadeService);
   readonly translateService = inject(TranslocoService);
+  readonly pendingService = inject(PendingRequestsApprovalsService);
   readonly selectedAccountType = signal<string>('From');
   readonly isError = signal<ERROR_TYPE>(undefined);
 
@@ -31,11 +39,33 @@ export class ChequeBookService {
   readonly value = signal<ChequeBookRequestDTO>({} as ChequeBookRequestDTO);
   readonly chequeBookInfo = signal<ChequeBookInfo | undefined>(undefined);
   readonly selectedAccountNumber = signal<string | undefined>(undefined);
+  readonly selectedAccount = signal<LinkedAccountDTO | null>(null);
   readonly feesAmount = signal<number>(0);
   readonly branchName = signal<string>('');
   readonly selectedToAccountNumber = signal<string | undefined>(undefined);
   readonly loading = signal(false);
   readonly isOVDAccount = signal(false);
+  readonly selectedLinkedAccount = signal<any>(null);
+  readonly selectedFeesAccount = signal<any>(null);
+  readonly hasInsufficientBalance = computed(() => {
+    const linkedAccount = this.selectedLinkedAccount();
+    if (linkedAccount && linkedAccount.workingBalance <= 0) {
+      return true;
+    }
+    const feesAccount = this.selectedFeesAccount();
+    if (feesAccount && feesAccount.workingBalance <= 0) {
+      return true;
+    }
+    return false;
+  });
+
+  setLinkedAccount(account: any) {
+    this.selectedLinkedAccount.set(account);
+  }
+
+  setFeesAccount(account: any) {
+    this.selectedFeesAccount.set(account);
+  }
 
   onContinueClick(step: ChequeBookSteps, form: FormGroup) {
     if (step === 'form') {
@@ -44,6 +74,10 @@ export class ChequeBookService {
 
       if (isInvalid) {
         markControlsTouched(form, { dirty: true, touched: true });
+        return;
+      }
+
+      if (this.hasInsufficientBalance()) {
         return;
       }
 
@@ -95,7 +129,7 @@ export class ChequeBookService {
   }
 
   save = (token: string) => {
-    // const request = this.getRequest(token);
+    this.updateToken(token);
     this.loading.set(true);
     this.http.post<ChequeBookInfo>(`/api/product/chequebook/workflow/request`, this.value()).subscribe({
       next: res => {
@@ -103,6 +137,7 @@ export class ChequeBookService {
         this.dialog.closeAll();
         this.step.set('success');
         this.showBreadCrumb.set(false);
+        this.pendingService.reloadCountRefreshSignal();
         if (res.status === 'Failed') {
           this.isError.set('API');
         }
@@ -139,10 +174,10 @@ export class ChequeBookService {
     this.layoutFacade.setCanLeave(true);
   };
 
-  updateToken(token: string) {
+  updateToken(otp: string) {
     this.value.update(currentValue => ({
       ...currentValue,
-      token,
+      otp,
     }));
   }
 

@@ -1,3 +1,4 @@
+import { httpResource } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -12,6 +13,7 @@ import { Card } from '@scb/ui/card';
 import { Error, FormField, Label, PasswordInput } from '@scb/ui/form-field';
 import { Icon } from '@scb/ui/icon';
 import { markControlsTouched } from '@scb/ui/input';
+import { EncryptionService } from '@scb/util/encryption';
 import { ChangePasswordService } from './change-password.service';
 
 type ChangePasswordForm = FormGroup<{
@@ -23,7 +25,7 @@ type ChangePasswordForm = FormGroup<{
 @Component({
   selector: 'app-change-password',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [ChangePasswordService],
+  providers: [ChangePasswordService, EncryptionService],
   imports: [
     ReactiveFormsModule,
     Button,
@@ -145,7 +147,11 @@ export default class ChangePasswordComponent {
   private readonly authStore = inject(AuthStore);
   private readonly changePasswordService = inject(ChangePasswordService);
   private readonly toasterService = inject(ToasterService);
+  private readonly encryptionService = inject(EncryptionService);
   readonly transloco = inject(TranslocoService);
+
+  readonly publicKeyResource = httpResource<{ publicKey: string }>('/api/authentication/auth/gen-key');
+  readonly publicKey = computed<string>(() => this.publicKeyResource.value()?.publicKey || '');
 
   readonly loading = signal(false);
   readonly currentPasswordError = signal(false);
@@ -181,14 +187,11 @@ export default class ChangePasswordComponent {
     },
     {
       text: 'fpRules.rule7',
-      test: (password: string) => !/(.)(\1{2,})/.test(password),
+      test: (password: string) => !/(.)(\1{2,})/.test(password.toLowerCase()),
     },
     {
       text: 'fpRules.rule8',
-      test: (password: string) =>
-        !/abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz|ABC|BCD|CDE|DEF|EFG|FGH|GHI|HIJ|IJK|JKL|KLM|LMN|MNO|NOP|OPQ|PQR|QRS|RST|STU|TUV|UVW|VWX|WXY|XYZ|123|234|345|456|567|678|789/.test(
-          password,
-        ),
+      test: (password: string) => this.hasNoConsecutiveSequences(password),
     },
   ];
 
@@ -231,7 +234,68 @@ export default class ChangePasswordComponent {
     });
   });
 
-  submit() {
+  private hasNoConsecutiveSequences(password: string): boolean {
+    const lowerPassword = password.toLowerCase();
+
+    const alphabeticalSequences = [
+      'abc',
+      'bcd',
+      'cde',
+      'def',
+      'efg',
+      'fgh',
+      'ghi',
+      'hij',
+      'ijk',
+      'jkl',
+      'klm',
+      'lmn',
+      'mno',
+      'nop',
+      'opq',
+      'pqr',
+      'qrs',
+      'rst',
+      'stu',
+      'tuv',
+      'uvw',
+      'vwx',
+      'wxy',
+      'xyz',
+    ];
+
+    const numericalSequences = ['123', '234', '345', '456', '567', '678', '789'];
+
+    for (const sequence of alphabeticalSequences) {
+      if (lowerPassword.includes(sequence)) {
+        return false;
+      }
+    }
+
+    for (const sequence of numericalSequences) {
+      if (password.includes(sequence)) {
+        return false;
+      }
+    }
+
+    const reverseAlphabeticalSequences = alphabeticalSequences.map(seq => seq.split('').reverse().join(''));
+    for (const sequence of reverseAlphabeticalSequences) {
+      if (lowerPassword.includes(sequence)) {
+        return false;
+      }
+    }
+
+    const reverseNumericalSequences = ['321', '432', '543', '654', '765', '876', '987'];
+    for (const sequence of reverseNumericalSequences) {
+      if (password.includes(sequence)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  async submit() {
     if (this.form.invalid) return markControlsTouched(this.form, { dirty: true, touched: true });
 
     const { currentPassword, newPassword, confirmPassword } = this.form.getRawValue();
@@ -239,27 +303,43 @@ export default class ChangePasswordComponent {
     this.currentPasswordError.set(false);
     this.repeatedPasswordError.set(false);
 
-    this.changePasswordService.changePassword(currentPassword, newPassword, confirmPassword).subscribe({
-      next: response => {
-        this.router.navigate(['/dashboard']);
-        this.toasterService.showSuccess({
-          severity: 'success',
-          summary: this.transloco.translate('resetPassword.successTitle'),
+    try {
+      const encryptedCurrentPassword = await this.encryptionService.encryptData(currentPassword, this.publicKey());
+      const encryptedNewPassword = await this.encryptionService.encryptData(newPassword, this.publicKey());
+      const encryptedConfirmPassword = await this.encryptionService.encryptData(confirmPassword, this.publicKey());
+
+      this.changePasswordService
+        .changePassword(
+          encryptedCurrentPassword.encryptedPassword,
+          encryptedNewPassword.encryptedPassword,
+          encryptedConfirmPassword.encryptedPassword,
+          this.publicKey(),
+        )
+        .subscribe({
+          next: response => {
+            this.loading.set(false);
+            this.router.navigate(['/dashboard']);
+            this.toasterService.showSuccess({
+              severity: 'success',
+              summary: this.transloco.translate('resetPassword.successTitle'),
+            });
+          },
+          error: (error: any) => {
+            this.loading.set(false);
+            if (error.error.code === 'AUTH-401') {
+              this.currentPasswordError.set(true);
+            }
+            if (error.error.code === 'AUTH-409') {
+              this.repeatedPasswordError.set(true);
+            }
+            if (error.status === 401 || error.status === 403) {
+              this.router.navigate(['/login']);
+            }
+          },
         });
-      },
-      error: (error: any) => {
-        this.loading.set(false);
-        if (error.error.code === 'AUTH-401') {
-          this.currentPasswordError.set(true);
-        }
-        if (error.error.code === 'AUTH-409') {
-          this.repeatedPasswordError.set(true);
-        }
-        if (error.status === 401 || error.status === 403) {
-          this.router.navigate(['/login']);
-        }
-      },
-    });
+    } catch (error) {
+      this.loading.set(false);
+    }
   }
 
   private passwordValidator() {

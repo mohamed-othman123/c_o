@@ -1,4 +1,5 @@
 import { Beneficiary } from '@/home/beneficiary/models/models';
+import { AccountDTO, ChargeBearer, TransferNetwork, TransferType } from '@/home/transfer/model';
 
 export interface ApiRes<T> {
   data: T;
@@ -12,10 +13,13 @@ export interface ProductApprovalRes {
   users: Users;
 }
 
+export interface TimelineRes {
+  approvalRejection: ApprovalRejection[];
+  users: Users;
+}
+
 interface Users {
   [x: string]: LevelUser[];
-  //   CHECKER_LEVEL_2: LevelUser[];
-  //   CHECKER_LEVEL_3: LevelUser[];
 }
 
 export interface LevelUser {
@@ -23,7 +27,7 @@ export interface LevelUser {
   id: string;
 }
 
-interface ApprovalRejection {
+export interface ApprovalRejection {
   status: string;
   role: string;
   approverName: string;
@@ -45,10 +49,12 @@ interface ProductDetail {
   debitAccountHolderNickName: string;
   creditPrincipleAccount: string;
   creditAccountHolderNickName: string;
+  accountNickName: string;
+  accountNumber: string;
   amount: string;
   currency: string;
   interestRate: string;
-  chequebookAvailable: boolean;
+  chequebook: boolean;
   minimumDepositAmount: string;
   minimumDepositCurrency: string;
   frequency: string;
@@ -77,18 +83,14 @@ export interface ChequebookDetail {
   leavesCount: number;
   createdBy: string;
   createdAt: string;
+  approved: number;
   requiredApprovalLevel: number;
-}
-
-export interface DelegationDetailsRes {
-  details: ProductDetail &
-    ChequebookDetail & {
-      from: { nickname: string; accountNumber: string };
-      to: { nickname: string; accountNumber: string };
-      beneficiary: Beneficiary;
-    };
-  approvalRejection: ApprovalRejection[];
-  users: Users;
+  accountNickname: string;
+  accountType: string;
+  accountCurrency: string;
+  branchDetails: string;
+  issueFee: number;
+  submittedBy: string;
 }
 
 export interface TransferApprovalStatus {
@@ -106,4 +108,66 @@ export interface PendingRequest {
   requestNumber: string;
   transferType: string;
   transferStatus: string;
+}
+
+export interface ITransferDetails {
+  transferId: string;
+  transferAmount: number;
+  transferCurrency: string;
+  fromAccount: {
+    accountNumber: string;
+    accountNickname: string;
+    accountType: string;
+  };
+  toAccount: {
+    accountNumber: string;
+    accountNickname: string;
+    accountType: string;
+  };
+  transferType: TransferType;
+  transferStatus: string;
+  transferWorkflowStatus: 'PENDING_APPROVAL' | 'APPROVED' | 'REJECTED' | 'WITHDRAW';
+  description: string;
+  valueDate: string;
+  transactionDate: string;
+  referenceId: string;
+  convertedAmount: number;
+  exchangeRate: {
+    currencyName: string;
+    buy: number;
+    sell: number;
+  };
+  beneficiary: Beneficiary;
+  transferReason: string;
+  transferNetwork: TransferNetwork;
+  chargeBearer: ChargeBearer;
+  fees: number;
+  feesCurrency: string;
+  scheduleDto: {
+    submitDate: string;
+    endDate: string;
+    numberOfTransfers: number;
+    frequencyType: string;
+  };
+  status: string;
+  errors: {
+    field: string;
+    code: string;
+    message: string;
+  }[];
+}
+
+export interface TransferApprovalDetails {
+  approvalTimeline: {
+    role: string;
+    fullName: string;
+    username: string;
+    status: string;
+    isCurrentUser: true;
+    timestamp: string;
+  }[];
+  checkerUsers: {
+    [x: string]: LevelUser[];
+  };
+  totalNumberOfApproval: number;
 }

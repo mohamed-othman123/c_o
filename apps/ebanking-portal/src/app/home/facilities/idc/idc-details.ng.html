@@ -57,6 +57,7 @@
             </p>
           </div>
           <app-last-updated
+            class="hidden"
             [date]="lastUpdatedAt()"
             (refresh)="idcDetailsResource.reload()" />
         </div>

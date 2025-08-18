@@ -61,7 +61,7 @@
                   [name]="chequeBookService.isError() ? 'web-error' : 'web-success'"
                   class="text-3xl" />
 
-                <p class="text-text-primary head-lg-s mf-2xl text-center">
+                <p class="text-text-primary head-lg-s mf-xl text-center">
                   @switch (chequeBookService.isError()) {
                     @case ('API') {
                       {{ t('form.apiFails') }}

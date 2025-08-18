@@ -15,6 +15,7 @@ import {
 } from '@/core/components';
 import { RolePermissionDirective } from '@/core/directives/role-permission.directive';
 import { minCurrencyAmountValidator } from '@/core/validators/custom-validators';
+import { PendingRequestsApprovalsService } from '@/home/pending-approvals/pending-approvals.service';
 import { AccountInfo } from '@/home/transfer-details/Model/transfer-details.model';
 import { AccountSelectedView } from '@/home/transfer/components/account-selected/account-selected-view.ng';
 import { CurrencyInputField } from '@/home/transfer/components/currency-field/currency-input';
@@ -91,6 +92,7 @@ export default class TDForm {
   private readonly authService = inject(AuthService);
   readonly layoutFacade = inject(LayoutFacadeService);
   readonly toasterService = inject(ToasterService);
+  readonly pendingService = inject(PendingRequestsApprovalsService);
   private router = inject(Router);
   readonly paramIds = (() => {
     const [id, tdId] = this.route.snapshot.params['id'].split('--') as string[];
@@ -196,7 +198,7 @@ export default class TDForm {
   constructor() {
     this.router.events
       .pipe(filter(event => event instanceof NavigationStart))
-      .subscribe(() => this.softToken?.closeAll?.());
+      .subscribe(() => this.softToken?.close?.());
     this.transferData.loadProductFormData('EGP');
 
     effect(() => {
@@ -328,7 +330,8 @@ export default class TDForm {
           this.steps.set('completed');
         }
         this.loading.set(false);
-        this.softToken.closeAll();
+        this.softToken.close();
+        this.pendingService.reloadCountRefreshSignal();
       },
       error: (err: HttpErrorResponse) => {
         this.steps.set('completed');
@@ -344,7 +347,7 @@ export default class TDForm {
         }
         this.isError.set(errorType);
         this.loading.set(false);
-        this.softToken.closeAll();
+        this.softToken.close();
       },
     });
   };

@@ -16,7 +16,7 @@ const emptyTokens: Tokens = {
 
 export const loadTokensFromStorage = (): Tokens => {
   try {
-    const stored = sessionStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(STORAGE_KEY);
     console.log('loadTokensFromStorage: stored value =', stored);
 
     if (!stored) {
@@ -43,7 +43,7 @@ export const loadTokensFromStorage = (): Tokens => {
 export const saveTokensToStorage = (tokens: Tokens): void => {
   try {
     console.log('saveTokensToStorage: saving tokens =', tokens);
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(tokens));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tokens));
     console.log('saveTokensFromStorage: tokens saved successfully');
   } catch (error) {
     console.error('saveTokensToStorage: error saving tokens:', error);
@@ -52,12 +52,12 @@ export const saveTokensToStorage = (tokens: Tokens): void => {
 
 export const clearTokensFromStorage = (): void => {
   console.log('Clearing tokens from storage...');
-  const before = sessionStorage.getItem(STORAGE_KEY);
+  const before = localStorage.getItem(STORAGE_KEY);
   console.log('Tokens before clearing:', before);
 
   try {
-    sessionStorage.removeItem(STORAGE_KEY);
-    const after = sessionStorage.getItem(STORAGE_KEY);
+    localStorage.removeItem(STORAGE_KEY);
+    const after = localStorage.getItem(STORAGE_KEY);
     console.log('Tokens after clearing:', after);
 
     if (after === null) {

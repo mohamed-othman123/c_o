@@ -13,7 +13,6 @@ import { WaitingList } from './waiting/waiting-list.ng';
 @Component({
   selector: 'app-pending-approvals',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  providers: [PendingRequestsApprovalsService],
   imports: [
     Tabs,
     Tab,

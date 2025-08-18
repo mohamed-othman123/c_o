@@ -12,6 +12,7 @@ import {
 } from '@/core/components';
 import { RolePermissionDirective } from '@/core/directives/role-permission.directive';
 import { apiStatus, handleParams } from '@/core/models/api';
+import { LayoutFacadeService } from '@/layout/layout.facade.service';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { Button } from '@scb/ui/button';
 import { Icon } from '@scb/ui/icon';
@@ -41,12 +42,14 @@ import { CreditCardRes } from './model';
 export class CreditCard {
   readonly http = inject(HttpClient);
   readonly router = inject(Router);
+  readonly layoutFacade = inject(LayoutFacadeService);
 
   readonly ccData = httpResource<CreditCardRes>(() => {
     const params = {
       pageStart: this.page.reqPageNumber(),
       pageSize: this.page.rows(),
     };
+    const _ = this.layoutFacade.currentLanguage();
     return { url: '/api/dashboard/facilities-overview/CcList', params: handleParams(params) };
   });
   readonly status = apiStatus(this.ccData.status);

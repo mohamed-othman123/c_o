@@ -1,3 +1,4 @@
+import { httpResource } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, inject, input, output, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -13,6 +14,7 @@ import { Card } from '@scb/ui/card';
 import { Error, FormField, Label, PasswordInput } from '@scb/ui/form-field';
 import { Icon } from '@scb/ui/icon';
 import { markControlsTouched } from '@scb/ui/input';
+import { EncryptionService } from '@scb/util/encryption';
 import { SuccessComponent } from '../components/success.ng';
 
 type ResetForm = FormGroup<{
@@ -143,14 +145,17 @@ type ResetForm = FormGroup<{
 })
 export class ResetPasswordComponent {
   private readonly router = inject(Router);
-
+  private encryptionService = inject(EncryptionService);
   readonly username = input.required<string>();
-  readonly api = input.required<(password: string) => Observable<any>>();
+  readonly api = input.required<(password: string, key: string) => Observable<any>>();
   readonly afterSuccess = output();
 
   readonly loading = signal(false);
   readonly error = signal(false);
   readonly success = signal(false);
+
+  readonly publicKeyResource = httpResource<{ publicKey: string }>('/api/authentication/auth/gen-key');
+  readonly publicKey = computed<string>(() => this.publicKeyResource.value()?.publicKey || '');
 
   private readonly requirements = [
     {
@@ -179,7 +184,7 @@ export class ResetPasswordComponent {
     },
     {
       text: 'fpRules.rule7',
-      test: (password: string) => !/(.)(\1{2,})/.test(password),
+      test: (password: string) => !/(.)(\1{2,})/.test(password.toLowerCase()),
     },
     {
       text: 'fpRules.rule8',
@@ -225,14 +230,15 @@ export class ResetPasswordComponent {
     });
   });
 
-  submit() {
+  async submit() {
     if (this.form.invalid) return markControlsTouched(this.form, { dirty: true, touched: true });
 
     const { password } = this.form.getRawValue();
     this.loading.set(true);
     this.error.set(false);
     const api = this.api();
-    api(password).subscribe({
+    const encryptedKey = await this.encryptionService.encryptData(password, this.publicKey());
+    api(encryptedKey.encryptedPassword, this.publicKey()).subscribe({
       next: () => {
         this.success.set(true);
         this.afterSuccess.emit();

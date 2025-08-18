@@ -86,7 +86,7 @@ export class OutsideTransferForm implements OnInit, OnDestroy {
     transferAmount: this.currencyField,
     transferCurrency: this.transferCurrency,
     description: this.descriptionField,
-    token: new FormControl('123456', { nonNullable: true }),
+    token: new FormControl('12345678', { nonNullable: true }),
     isSchedule: this.transfer.isSchedule,
     scheduleDto: this.transfer.scheduleDto,
   });

@@ -1,16 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { httpResource } from '@angular/common/http';
-import {
-  afterRenderEffect,
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  ElementRef,
-  inject,
-  signal,
-  untracked,
-  viewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, ElementRef, inject, signal, viewChild } from '@angular/core';
 import { Skeleton, TCRef } from '@/core/components';
 import { LayoutFacadeService } from '@/layout/layout.facade.service';
 import { TranslocoDirective } from '@jsverse/transloco';
@@ -47,7 +36,8 @@ import { NgxExtendedPdfViewerModule } from 'ngx-extended-pdf-viewer';
             [language]="layoutFacade.isArabic() ? 'ar-EG' : 'en-US'"
             [showSidebarButton]="false"
             [showToolbar]="false"
-            [textLayer]="true">
+            [textLayer]="true"
+            (pagesLoaded)="onPdfLoaded()">
           </ngx-extended-pdf-viewer>
         }
       </div>
@@ -80,23 +70,26 @@ export class TermsAndConditionsContent {
   readonly base64PDF = computed(() => this.pdfSource.value()?.pdfBase64 || '');
   readonly pdfSrc = computed(() => (this.base64PDF() ? `data:application/pdf;base64,${this.base64PDF()}` : ''));
 
-  constructor() {
-    afterRenderEffect({
-      read: cleanup => {
-        if (!this.pdfSrc()) return;
-        setTimeout(() => {
-          const el = this.doc.querySelector<HTMLDivElement>('#viewerContainer')!;
-          const listen = () => {
-            const totalHeight = el.scrollTop + el.offsetHeight;
-            if (el.scrollHeight - 5 < totalHeight && !untracked(this.enableButton)) {
-              this.enableButton.set(true);
-            }
-          };
-          el.addEventListener('scroll', listen);
-          cleanup(() => el.removeEventListener('scroll', listen));
-        }, 100);
-      },
-    });
+  onPdfLoaded() {
+    const el = this.doc.querySelector<HTMLDivElement>('#viewerContainer');
+
+    if (!el) {
+      this.enableButton.set(true);
+      return;
+    }
+
+    const listen = () => {
+      const totalHeight = el.scrollTop + el.offsetHeight;
+      if (el.scrollHeight - 5 < totalHeight) {
+        this.enableButton.set(true);
+      }
+    };
+
+    if (el.scrollHeight <= el.offsetHeight + 5) {
+      this.enableButton.set(true);
+    } else {
+      el.addEventListener('scroll', listen);
+    }
   }
 
   close(accepted = false) {

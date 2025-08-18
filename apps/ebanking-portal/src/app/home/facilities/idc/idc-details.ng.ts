@@ -48,6 +48,7 @@ export class IDCDetails {
   readonly idcNumber = computed(() => this.route.snapshot.paramMap.get('idcNumber') || '');
 
   readonly idcDetailsResource = httpResource<IdcDetails>(() => {
+    const _ = this.layoutFacade.currentLanguage();
     return { url: `/api/dashboard/facilities-overview/idc/${this.idcNumber()}/details` };
   });
 

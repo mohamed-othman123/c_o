@@ -32,6 +32,18 @@
       {{ t('change') }}
     </button>
   </div>
+
+  <!-- Validation Error Message - Show below the account box when balance is negative or zero -->
+  @if (showValidationError()) {
+    <div
+      class="mt-sm p-sm gap-sm flex items-center"
+      *transloco="let t; prefix: 'chequeBook.form'">
+      <icon
+        name="info-circle"
+        class="w-[18px] flex-none text-red-500" />
+      <span class="text-sm font-medium text-red-600">{{ t('insufficientBalance') }}</span>
+    </div>
+  }
 } @else {
   <div
     (click)="openDrawer()"

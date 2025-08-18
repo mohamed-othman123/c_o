@@ -48,6 +48,7 @@ export class LoansTabComponent {
   readonly refresh = signal(1);
   readonly LoansResource = httpResource<LoansListResponse>(() => {
     const _ = this.refresh();
+    const __ = this.layoutFacade.currentLanguage();
     const params = new HttpParams()
       .set('pageStart', this.pageNumber().toString())
       .set('pageSize', this.rows().toString());

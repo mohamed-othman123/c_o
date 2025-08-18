@@ -3,6 +3,7 @@ import { Component, computed, inject } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AppBreadcrumbsComponent, CardSkeletonComponent, CurrencyView, DateView } from '@/core/components';
 import { apiStatus } from '@/core/models/api';
+import { LayoutFacadeService } from '@/layout/layout.facade.service';
 import { TranslocoDirective } from '@jsverse/transloco';
 import { Button } from '@scb/ui/button';
 import { Card } from '@scb/ui/card';
@@ -27,10 +28,12 @@ import { Icon } from '@scb/ui/icon';
 })
 export class LGsDetails {
   private route = inject(ActivatedRoute);
+  readonly layoutFacade = inject(LayoutFacadeService);
 
   readonly lgNumber = this.route.snapshot.paramMap.get('lgNumber') || '';
 
   readonly lgsDetailsResource = httpResource<LgsDetails>(() => {
+    const _ = this.layoutFacade.currentLanguage();
     return { url: `/api/dashboard/facilities-overview/lg/${this.lgNumber}` };
   });
 

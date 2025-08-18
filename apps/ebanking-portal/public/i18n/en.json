@@ -893,7 +893,7 @@
         "lgType": "LG Type",
         "lgAmount": "LG Amount",
         "cashCover": "Cash Cover",
-        "coverPercentage": "Cover Cover %",
+        "coverPercentage": "Cover Percentage",
         "maturityDate": "Expiry Date",
         "issuanceDate": "Issuance Date",
         "action": "Actions"
@@ -1042,11 +1042,11 @@
   },
   "overdraftDetailsPage": {
     "upcomingDues": "Upcoming Dues",
-    "transactionsHistory": "Transaction History",
+    "transactionsHistory": "Transactions list",
     "basicDetails": {
       "title": "Secured Overdraft Small Business",
       "lastUpdatedAt": "Last update",
-      "overdraftSummary": "Overdraft Account Details",
+      "overdraftSummary": "Overdraft Summary",
       "Accountnumber": "Account Number",
       "IBAN": "IBAN",
       "linkedaccount": "Cash Cover Account",
@@ -1116,7 +1116,7 @@
         "description": "Description",
         "debitAmount": "Debit",
         "creditAmount": "Credit",
-        "balanceAfter": "Ending Balance"
+        "balanceAfter": "Balance"
       },
       "empty": {
         "apiError": "Something went wrong!",
@@ -1970,6 +1970,16 @@
     "withdraw": "Withdraw",
     "productDetails": "Product Details",
     "PENDING": "Pending",
+    "noOfChequebook": "Number of Chequebooks",
+    "leaves": "Leaves",
+    "deliveryBranch": "Delivery Branch",
+    "fees": "Fees",
+    "chequebookDetails": "Chequebook Details",
+    "transferDetails": "Transfer Details",
+    "from": "From",
+    "WITHDRAW": "Withdraw",
+    "1W": "1W",
+    "REJECTED": "Rejected",
     "depositForm": {
       "creditedPrincipleAccount": "Credited Principle Account",
       "sameDebitedAccount": "Same debited account",
@@ -2035,7 +2045,7 @@
       "sameDebitedAccount": "Same debited account",
       "chooseAnotherAccount": "Choose another account",
       "chooseDuration": "Choose Duration",
-      "deductAmount": "Deducted Amount",
+      "deductAmount": "Amount",
       "amountHint": "Monthly Interest: {{percentage}}%",
       "change": "Change",
       "submitRequest": "Submit Request",
@@ -2083,10 +2093,10 @@
       "infoTitle": "Collection instruction",
       "collectionPeriodTitle": "Collection Period",
       "collectionPeriodText": "The authorized person (or company representative) must visit the selected branch to receive the cheque book within <span class='font-semibold'>2 months</span> from the request date.<br>If the cheque book is not collected within this period, it will be <span class='font-semibold'>automatically terminated.</span>",
-      "requiredDocsTitle": "Required Documents for Collection",
+      "requiredDocsTitle": "To complete the collection process, the representative must present:",
       "requiredDocs": [
-        "A valid national ID",
-        "An official delegation letter authorizing them to receive the cheque book on behalf of the company"
+        " <span class='font-semibold'> valid national ID </span>",
+        "An official  <span class='font-semibold'>delegation letter</span> authorizing them to receive the cheque book on behalf of the company"
       ]
     },
     "table": {
@@ -2114,7 +2124,8 @@
       "tandcrequired": "This section is required",
       "notEligible": "A chequebook request is already in progress. You can submit a new request once you receive the current chequebook.",
       "invalidToken": "Invalid or expired token. Please try again.",
-      "apiFails": "Something went wrong. Please try again later."
+      "apiFails": "Something went wrong. Please try again later.",
+      "insufficientBalance": "Insufficient Balance"
     },
     "requestStatus": {
       "title": "Chequebook Request Status",
@@ -2143,7 +2154,7 @@
       "requested": "Requested ",
       "requestDate": "Request Date",
       "chequesBooks": "Number of chequebook",
-      "leaves": "Leaves",
+      "leaves": "Number of Leaves",
       "fees": "Fees",
       "branch": "Delivery Branch",
       "linkedAccount": "Cheque-Linked Account",
@@ -2166,6 +2177,7 @@
     "searchOptions": "Search",
     "transferType": "Transfer Type",
     "requestType": "Request Type",
+    "searchPlaceholder": "Search for...",
     "tabs": {
       "pending": "Pending",
       "approved": "Approved",
@@ -2212,7 +2224,7 @@
       "rejectRemark": "Enter Reason of Rejection",
       "rejectRemarkRequired": "Rejection reason required",
       "title": "Reject Transaction",
-      "desc": "Please provide a reason for rejecting this transaction",
+      "desc": "Are you sure you want to reject the transaction?",
       "yes": "Reject",
       "no": "Cancel"
     },

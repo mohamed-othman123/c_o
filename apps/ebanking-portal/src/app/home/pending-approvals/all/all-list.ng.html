@@ -69,9 +69,9 @@
               <th class="mf-sm !font-medium">
                 {{ t('table.requestNumber') }}
               </th>
-              @if (type() !== 'cheque') {
+              @if (type() === 'product' || type() === 'transfer') {
                 <th class="mf-sm !font-medium">
-                  {{ t('table.requestType') }}
+                  {{ type() === 'product' ? t('table.requestType') : t('table.transferType') }}
                 </th>
               }
               <th class="mf-sm !font-medium">
@@ -88,8 +88,9 @@
           <ng-template
             #body
             let-transaction>
+            @let requestId = transaction.requestId ?? (transaction.id || transaction.requestNumber);
             <tr
-              [routerLink]="transaction.requestId"
+              [routerLink]="requestId"
               class="cursor-pointer">
               <td class="body-sm">
                 <date-view
@@ -98,7 +99,7 @@
                 </date-view>
               </td>
               <td>
-                {{ transaction.requestId ?? (transaction.id || transaction.requestNumber) }}
+                {{ requestId }}
               </td>
 
               @if (type() !== 'cheque') {
@@ -131,8 +132,12 @@
                 <app-action-buttons
                   [type]="type()"
                   [requestId]="transaction.requestId || transaction.requestNumber || transaction.id"
-                  [status]="transaction.status"
-                  [approved]="transaction.approved"
+                  [status]="
+                    transaction.status === 'PENDING' || transaction.requestStatus === 'PENDING_APPROVAL'
+                      ? 'PENDING'
+                      : transaction.status || transaction.requestStatus
+                  "
+                  [approved]="transaction.approved ?? transaction.approvalStatus?.approvedNumber ?? 0"
                   (reload)="allListResource.reload()" />
               </td>
             </tr>

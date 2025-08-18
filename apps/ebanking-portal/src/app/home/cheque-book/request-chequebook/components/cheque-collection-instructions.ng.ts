@@ -35,7 +35,7 @@ import { SafeHtmlPipe } from 'primeng/menu';
           <h3 class="body-md font-semibold">{{ t('chequeBookDetails.requiredDocsTitle') }}</h3>
           <ul class="body-md text-text-primary list-inside list-disc space-y-1">
             @for (doc of t('chequeBookDetails.requiredDocs', { returnObjects: true }); track $index) {
-              <li>{{ doc }}</li>
+              <li [innerHTML]="doc"></li>
             }
           </ul>
         </div>

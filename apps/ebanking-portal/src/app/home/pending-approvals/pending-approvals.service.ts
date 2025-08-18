@@ -2,6 +2,7 @@ import { HttpClient, httpResource, HttpResourceRequest } from '@angular/common/h
 import { inject, Injectable, signal } from '@angular/core';
 import { AuthService } from '@/auth/api/auth.service';
 import { SoftTokenService, ToasterService } from '@/core/components';
+import { CountResponse } from '@/layout/containers/home/Home.container';
 import { LayoutFacadeService } from '@/layout/layout.facade.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { alertPortal } from '@scb/ui/alert-dialog';
@@ -10,7 +11,7 @@ import { TransferLookupData } from '../transactions-history/model';
 import { mapStatus, PendingApprovalsList, RequestTypeResponse } from './model';
 import { RejectRequest } from './reject-request/reject-request.ng';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class PendingRequestsApprovalsService {
   private readonly layoutFacade = inject(LayoutFacadeService);
   readonly softToken = inject(SoftTokenService);
@@ -24,7 +25,7 @@ export class PendingRequestsApprovalsService {
   readonly loading = signal(false);
   readonly requestType = signal('');
   readonly currentTab = signal(0);
-
+  readonly reloadSignal = signal(1);
   isMaker(): boolean {
     const userRoles = this.authService.getRolesFromToken();
     return userRoles.includes('MAKER') && !userRoles.includes('SUPER_USER');
@@ -50,28 +51,34 @@ export class PendingRequestsApprovalsService {
     this.loading.set(true);
 
     const finalRequestId = payload.requestId || payload.id;
-    const { url, method, otpKey, payloadValue } = this.getRequestConfig('withdraw');
-    const requestPayload = {
-      [otpKey]: '12345678',
-      requestId: finalRequestId,
-      action: payloadValue,
-    };
+    const { url, method, otpKey, payloadValue, sendPayload } = this.getRequestConfig('withdraw', finalRequestId);
 
-    this.http.request(method, url, { body: requestPayload }).subscribe({
+    const options: any = {};
+    if (sendPayload) {
+      options.body = {
+        [otpKey]: payload.token,
+        requestId: finalRequestId,
+        action: payloadValue,
+      };
+    }
+
+    this.http.request(method, url, options).subscribe({
       next: () => {
-        this.withdrawLoadingId.set('');
+        this.loading.set(false);
         this.toaster.showSuccess({
           summary: this.transloco.translate('pendingApprovals.withdrawSuccess.title'),
           detail: this.transloco.translate('pendingApprovals.withdrawSuccess.subTitle'),
         });
+
         callback();
+        this.reloadCountRefreshSignal();
       },
       error: () => {
         this.toaster.showError({
-          summary: '',
+          summary: this.transloco.translate('pendingApprovals.error.apiError'),
           detail: this.transloco.translate('pendingApprovals.error.apiErrorDetail'),
         });
-        this.withdrawLoadingId.set('');
+        this.loading.set(false);
       },
     });
   };
@@ -81,32 +88,33 @@ export class PendingRequestsApprovalsService {
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     callback: Function,
   ) => {
-    this.loading.set(true);
+    const finalRequestId = payload.requestId || payload.id;
+    const { url, method, otpKey, payloadValue, rejectRemark } = this.getRequestConfig('reject');
     const requestPayload = {
-      token: '12345678',
-      requestId: payload.requestId,
-      action: 'REJECT',
-      remark: payload.remark ?? '', // extra remark field if needed
+      [otpKey]: '12345678',
+      requestId: finalRequestId,
+      action: payloadValue,
+      [rejectRemark as string]: payload?.remark ?? '',
     };
 
-    //this.withdrawLoadingId.set(requestPayload.requestId);
-    const url = `/api/product/product/request/actions`;
+    this.loading.set(true);
 
-    this.http.put(url, requestPayload).subscribe({
+    this.http.request(method, url, { body: requestPayload }).subscribe({
       next: () => {
-        this.withdrawLoadingId.set('');
+        this.loading.set(false);
         this.toaster.showSuccess({
           summary: this.transloco.translate('pendingApprovals.rejectSuccess.title'),
           detail: this.transloco.translate('pendingApprovals.rejectSuccess.subTitle'),
         });
         callback();
+        this.reloadCountRefreshSignal();
       },
       error: () => {
         this.toaster.showError({
-          summary: '',
+          summary: this.transloco.translate('pendingApprovals.error.apiError'),
           detail: this.transloco.translate('pendingApprovals.error.apiErrorDetail'),
         });
-        this.withdrawLoadingId.set('');
+        this.loading.set(false);
       },
     });
   };
@@ -115,50 +123,46 @@ export class PendingRequestsApprovalsService {
   approveRequest(requestId: string, callback: Function) {
     this.softToken.open(this.loading.asReadonly(), (token: string) => {
       if (token) {
-        this.approveProcess({ requestId, token }, callback);
+        this.approveProcess({ requestId }, token, callback);
       }
     });
   }
 
   approveProcess = (
     payload: any,
+    token: string,
     // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
     callback: Function,
   ) => {
     this.loading.set(true);
 
-    const { url, method, otpKey, payloadValue } = this.getRequestConfig('approve');
-    const requestPayload = {
-      [otpKey]: '12345678',
-      requestId: payload.requestId ?? payload.id,
-      action: payloadValue,
-    };
+    const { url, method, otpKey, payloadValue, sendPayload } = this.getRequestConfig('approve', payload.requestId);
 
-    // const requestPayload = {
-    //   token: '12345678',
-    //   requestId: payload.requestId ? payload.requestId : payload.id,
-    //   action: 'APPROVE',
-    // };
+    const options: any = {};
+    if (sendPayload) {
+      options.body = {
+        [otpKey]: token,
+        requestId: payload.requestId,
+        action: payloadValue,
+      };
+    }
 
-    // //this.withdrawLoadingId.set(requestPayload.requestId);
-    // // const url = `/api/product/product/request/actions`;
-    // const { url, method } = this.getRequestConfig('approve');
-
-    this.http.request(method, url, { body: requestPayload }).subscribe({
+    this.http.request(method, url, options).subscribe({
       next: () => {
-        this.withdrawLoadingId.set('');
+        this.loading.set(false);
         this.toaster.showSuccess({
           summary: this.transloco.translate('pendingApprovals.approvedSuccess.title'),
           detail: this.transloco.translate('pendingApprovals.approvedSuccess.subTitle'),
         });
         callback();
+        this.reloadCountRefreshSignal();
       },
       error: () => {
         this.toaster.showError({
-          summary: '',
+          summary: this.transloco.translate('pendingApprovals.error.apiError'),
           detail: this.transloco.translate('pendingApprovals.error.apiErrorDetail'),
         });
-        this.withdrawLoadingId.set('');
+        this.loading.set(false);
       },
     });
   };
@@ -343,24 +347,65 @@ export class PendingRequestsApprovalsService {
     return tab;
   }
 
-  getRequestConfig(requestType: string): {
+  getRequestConfig(
+    requestType: string,
+    requestId?: string,
+  ): {
     url: string;
-    method: 'put' | 'post';
+    method: 'put' | 'post' | 'patch' | 'delete';
     otpKey: 'otp' | 'token';
-    payloadValue: string;
+    payloadValue?: string;
+    rejectRemark?: 'note' | 'remark';
+    sendPayload: boolean;
   } {
-    const action = requestType.toLowerCase();
-    const isCheque = this.requestType() === 'cheque';
-    const url = isCheque ? `/api/product/chequebook/workflow/${action}` : `/api/product/product/request/actions`;
-    const method = isCheque ? 'post' : 'put';
+    let url = `/api/product/product/request/actions`;
+    let method: 'put' | 'post' | 'patch' | 'delete' = 'put';
+    let sendPayload = true;
 
-    const otpKey: 'otp' | 'token' = isCheque ? 'otp' : 'token';
-    const payloadValue = isCheque ? 'APPROVED' : action.toUpperCase();
+    const action = requestType.toLowerCase();
+    const reqType = this.requestType();
+
+    if (reqType === 'transfer') {
+      sendPayload = false;
+
+      switch (action) {
+        case 'approve':
+          url = `/api/transfer/transfer-workflow/approve/${requestId}`;
+          method = 'post';
+          break;
+        case 'reject':
+          url = `/api/transfer/transfer-workflow/reject`;
+          method = 'patch';
+          break;
+        case 'withdraw':
+          url = `/api/transfer/transfer-workflow/withdraw/${requestId}`;
+          method = 'delete';
+          break;
+        default:
+          url = `/api/transfer/transfer-workflow/approve/${requestId}`;
+          method = 'post';
+      }
+    } else if (reqType === 'cheque') {
+      sendPayload = true;
+      url =
+        action === 'withdraw'
+          ? `/api/product/chequebook/workflow/withdraw`
+          : `/api/product/chequebook/workflow/approve`;
+      method = 'post';
+    }
+
+    const otpKey: 'otp' | 'token' = reqType === 'cheque' ? 'otp' : 'token';
+    const payloadValue = this.getPayloadValue(reqType === 'cheque', action);
+    const rejectRemark =
+      action === 'reject' ? (reqType === 'cheque' || reqType === 'transfer' ? 'note' : 'remark') : undefined;
+
     return {
       url,
       method,
       otpKey,
-      payloadValue,
+      ...(sendPayload && { payloadValue }),
+      ...(rejectRemark && { rejectRemark }),
+      sendPayload,
     };
   }
 
@@ -373,5 +418,54 @@ export class PendingRequestsApprovalsService {
     } else {
       return checkerStatuses[this.currentTab()] || 'PENDING_MY_APPROVAL';
     }
+  }
+  getPendingResource(type: 'cheque' | 'product' | 'transfer') {
+    if (type === 'cheque') {
+      return httpResource<any>(() => ({
+        url: this.isMaker()
+          ? '/api/product/chequebook/workflow/status'
+          : '/api/product/chequebook/workflow/checker/status',
+        params: { status: 'PENDING' },
+      }));
+    }
+
+    if (type === 'product') {
+      return httpResource<CountResponse>(() => ({
+        url: '/api/product/product/request/count/pending',
+      }));
+    }
+
+    if (type === 'transfer') {
+      return httpResource<any>(() => ({
+        url: this.isMaker()
+          ? `/api/transfer/transfer-workflow/maker-pending/pending_approval?pageSize=10&pageStart=0`
+          : `/api/transfer/transfer-workflow/checker-pending/pending_my_approval?pageSize=10&pageStart=0`,
+      }));
+    }
+
+    throw new Error('Invalid type passed to getPendingResource');
+  }
+
+  private getPayloadValue(isCheque: boolean, action: string): string {
+    if (isCheque) {
+      switch (action) {
+        case 'approve':
+          return 'APPROVED';
+        case 'reject':
+          return 'REJECTED';
+        case 'withdraw':
+          return 'WITHDRAW';
+        default:
+          return action.toUpperCase();
+      }
+    }
+    if (this.requestType() === 'product' && action === 'withdraw') {
+      return 'CANCEL';
+    }
+
+    return action.toUpperCase();
+  }
+  reloadCountRefreshSignal() {
+    this.reloadSignal.update(v => v + 1);
   }
 }

@@ -1,11 +1,12 @@
 import { httpResource } from '@angular/common/http';
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, effect, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { AuthService } from '@/auth/api/auth.service';
 import { ToasterComponent } from '@/core/components';
 import { RolePermissionDirective } from '@/core/directives/role-permission.directive';
+import { PendingRequestsApprovalsService } from '@/home/pending-approvals/pending-approvals.service';
 import { HeaderDashboard, Logo, ShellItem } from '@/layout/components';
 import { LayoutPanel } from '@/layout/components/app-layout-accodion/app-layout-panel';
 import { SettingsPanel } from '@/layout/components/app-layout-accodion/app-settings-panel';
@@ -42,6 +43,7 @@ export class HomeContainer {
   readonly route = inject(ActivatedRoute);
   readonly layoutFacade = inject(LayoutFacadeService);
   readonly auth = inject(AuthService);
+  readonly pendingService = inject(PendingRequestsApprovalsService);
   readonly activeChild = toSignal(
     this.router.events.pipe(
       filter(e => e instanceof NavigationEnd),
@@ -60,23 +62,9 @@ export class HomeContainer {
     const userRoles = this.auth.getRolesFromToken();
     return userRoles.includes('MAKER') && !userRoles.includes('SUPER_USER');
   }
-
-  readonly chequeResource = httpResource<any>(() => ({
-    url: this.isMaker() ? '/api/product/chequebook/workflow/status' : '/api/product/chequebook/workflow/checker/status',
-    params: {
-      status: 'PENDING',
-    },
-  }));
-
-  readonly productResource = httpResource<CountResponse>(() => ({
-    url: '/api/product/product/request/count/pending',
-  }));
-
-  readonly transferResource = httpResource<any>(() => ({
-    url: this.isMaker()
-      ? `/api/transfer/transfer-workflow/maker-pending/pending_approval?pageSize=10&pageStart=0`
-      : `/api/transfer/transfer-workflow/checker-pending/pending_approval?pageSize=10&pageStart=0`,
-  }));
+  readonly chequeResource = this.pendingService.getPendingResource('cheque');
+  readonly productResource = this.pendingService.getPendingResource('product');
+  readonly transferResource = this.pendingService.getPendingResource('transfer');
 
   readonly chequeCount = computed(() => this.chequeResource.value()?.requests?.length ?? 0);
   readonly productCount = computed(() => this.productResource.value()?.data.count ?? null);
@@ -118,6 +106,12 @@ export class HomeContainer {
 
   constructor() {
     this.auth.me().subscribe();
+    effect(() => {
+      this.pendingService.reloadSignal();
+      this.transferResource.reload();
+      this.chequeResource.reload();
+      this.productResource.reload();
+    });
   }
 }
 

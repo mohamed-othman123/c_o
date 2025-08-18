@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ApiResult } from '@/models/api';
 
@@ -23,7 +23,10 @@ export class ActivateUserService {
     return this.http.post<ApiResult<null>>(`/api/authentication/activate/validate`, data);
   }
 
-  createPassword(data: { username: string; password: string }) {
-    return this.http.post<ApiResult<null>>(`/api/authentication/activate/setPassword`, data);
+  createPassword(data: { username: string; password: string; key: string }) {
+    const headers = new HttpHeaders({
+      'public-key': data.key,
+    });
+    return this.http.post<ApiResult<null>>(`/api/authentication/activate/setPassword`, data, { headers });
   }
 }

@@ -17,22 +17,26 @@ import { PendingRequestsApprovalsService } from './pending-approvals.service';
     <section
       class="space-x-md"
       *transloco="let t; prefix: 'pendingApprovals.button'">
-      <button
-        *rolePermission="['CHECKER']"
-        scbButton
-        [size]="buttonSize()"
-        (click)="approveRequest($event)">
-        {{ t('approve') }}
-      </button>
-      <button
-        *rolePermission="['CHECKER']"
-        scbButton
-        [size]="buttonSize()"
-        variant="secondary"
-        (click)="rejectRequest($event)">
-        {{ t('reject') }}
-      </button>
-      @if (status() === 'PENDING' && approved() === 0) {
+      @if (status() === 'PENDING' || status() === 'PENDING_APPROVAL') {
+        <button
+          *rolePermission="['CHECKER']"
+          scbButton
+          [size]="buttonSize()"
+          (click)="approveRequest($event)">
+          {{ t('approve') }}
+        </button>
+      }
+      @if (status() === 'PENDING' || status() === 'PENDING_APPROVAL') {
+        <button
+          *rolePermission="['CHECKER']"
+          scbButton
+          [size]="buttonSize()"
+          variant="secondary"
+          (click)="rejectRequest($event)">
+          {{ t('reject') }}
+        </button>
+      }
+      @if ((status() === 'PENDING' || status() === 'PENDING_APPROVAL') && approved() === 0) {
         <button
           *rolePermission="['MAKER']"
           scbButton
@@ -61,7 +65,7 @@ export class ActionButtons {
   withdraw(event: MouseEvent) {
     event.stopPropagation();
     const callback = () => {
-      this.softToken.closeAll();
+      this.softToken.close();
       this.reload.emit();
     };
     this.pendingService.withdraw(this.requestId(), callback);
@@ -81,7 +85,7 @@ export class ActionButtons {
   approveRequest(event: MouseEvent) {
     event.stopPropagation();
     const callback = () => {
-      this.softToken.closeAll();
+      this.softToken.close();
       this.reload.emit();
     };
     this.pendingService.approveRequest(this.requestId(), callback);

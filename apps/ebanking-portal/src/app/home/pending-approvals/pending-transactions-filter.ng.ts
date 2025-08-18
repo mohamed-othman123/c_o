@@ -190,7 +190,7 @@ import { PendingRequestsApprovalsService } from './pending-approvals.service';
                 class="prefix text-input-icon-enabled" />
               <input
                 scbInput
-                placeholder="Search for..." />
+                [placeholder]="t('pendingApprovals.searchPlaceholder')" />
             </scb-form-field>
           }
         </div>

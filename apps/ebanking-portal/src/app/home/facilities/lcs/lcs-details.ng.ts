@@ -47,6 +47,8 @@ export class LCsDetails {
   readonly lcNumber = computed(() => this.route.snapshot.paramMap.get('lcNumber') || '');
 
   readonly lcsDetailsResource = httpResource<LcsDetails>(() => {
+    const _ = this.layoutFacade.currentLanguage();
+    const __ = this.layoutFacade.currentLanguage();
     return { url: `/api/dashboard/facilities-overview/lc/${this.lcNumber()}/details` };
   });
 

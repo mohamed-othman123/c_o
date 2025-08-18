@@ -152,11 +152,12 @@ export default class ForgetPasswordContainerComponent {
   }
 
   // This function is an arrow because we have to pass it as an input
-  forgetPassword = (password: string) => {
+  forgetPassword = (password: string, key: string) => {
     return this.fpService.forgetPassword({
       username: this.fpStore.username(),
       password,
       token: this.fpStore.resetToken(),
+      key,
     });
   };
 

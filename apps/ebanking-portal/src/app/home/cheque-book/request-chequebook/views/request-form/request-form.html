@@ -70,7 +70,7 @@
                     <icon
                       name="info-circle"
                       class="w-[20px] flex-none"
-                      [pTooltip]="t('feeWaivedTooltip')"
+                      [pTooltip]="shouldShowTooltip() ? t('feeWaivedTooltip') : ''"
                       tooltipPosition="top" />
                     {{ t('totalFeesHint') }}
                     @if (chequeBookFeeResource.isLoading()) {

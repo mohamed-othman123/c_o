@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { ApiResult } from '@/models/api';
 
@@ -20,7 +20,10 @@ export class ForgetPasswordService {
     return this.http.post<ApiResult<{ token: string }>>(`/api/authentication/otp/validate`, data);
   }
 
-  forgetPassword(data: { username: string; password: string; token: string }) {
-    return this.http.post<ApiResult<null>>(`/api/authentication/auth/forget-password`, data);
+  forgetPassword(data: { username: string; password: string; token: string; key: string }) {
+    const headers = new HttpHeaders({
+      'public-key': data.key,
+    });
+    return this.http.post<ApiResult<null>>(`/api/authentication/auth/forget-password`, data, { headers });
   }
 }

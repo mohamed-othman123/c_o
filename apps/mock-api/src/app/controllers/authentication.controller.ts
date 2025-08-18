@@ -90,7 +90,11 @@ export class AuthenticationController {
 
   @Post('auth/forget-password')
   @HttpCode(HttpStatus.OK)
-  forgetPassword(@Body('password') password: string, @Body('token') token: string) {
+  forgetPassword(
+    @Headers('public-key') publicKey: string,
+    @Body('password') password: string,
+    @Body('token') token: string,
+  ) {
     return {
       message: 'Success',
     };
@@ -116,7 +120,7 @@ export class AuthenticationController {
 
   @Post('activate/setPassword')
   @HttpCode(HttpStatus.NO_CONTENT)
-  createPassword(@Body('password') password: string) {
+  createPassword(@Body('password') password: string, @Headers('public-key') publicKey: string) {
     return null; // No content
   }
 

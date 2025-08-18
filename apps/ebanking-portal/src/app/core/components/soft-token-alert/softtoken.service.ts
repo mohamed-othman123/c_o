@@ -1,13 +1,15 @@
 import { Injectable, Signal } from '@angular/core';
 import { dialogPortal } from '@scb/ui/dialog';
+import { DialogRef } from '@scb/ui/portal';
 import { SoftTokenAlert } from './soft-token-alert.ng';
 
 @Injectable({ providedIn: 'root' })
 export class SoftTokenService {
   private readonly dialog = dialogPortal();
+  private _diaRef?: DialogRef;
 
   open(loading: Signal<boolean>, save: (token: string) => void) {
-    this.dialog.open(SoftTokenAlert, {
+    this._diaRef = this.dialog.open(SoftTokenAlert, {
       width: '440px',
       maxWidth: '95vw',
       disableClose: true,
@@ -23,7 +25,8 @@ export class SoftTokenService {
     });
   }
 
-  closeAll() {
-    this.dialog.closeAll();
+  close() {
+    this._diaRef?.close();
+    this._diaRef = undefined;
   }
 }

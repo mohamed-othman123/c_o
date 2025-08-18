@@ -32,7 +32,7 @@ import { Tooltip } from '@scb/ui/tooltip';
       (click)="href() && layout.itemClick()">
       <icon
         [name]="iconName()"
-        class="{{ 'w-2xl ' + (active() ? 'text-icon-brand' : '') }}" />
+        class="{{ 'flex-none w-2xl ' + (active() ? 'text-icon-brand' : '') }}" />
       @if (!layout.iconMode()) {
         {{ n }}
       }

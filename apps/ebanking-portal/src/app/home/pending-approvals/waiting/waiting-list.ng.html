@@ -69,9 +69,11 @@
               <th class="mf-sm !font-medium">
                 {{ t('table.requestNumber') }}
               </th>
-              <th class="mf-sm !font-medium">
-                {{ t('table.requestType') }}
-              </th>
+              @if (type() === 'product' || type() === 'transfer') {
+                <th class="mf-sm !font-medium">
+                  {{ type() === 'product' ? t('table.requestType') : t('table.transferType') }}
+                </th>
+              }
               <th class="mf-sm !font-medium">
                 {{ t('table.amount') }}
               </th>
@@ -83,22 +85,25 @@
           <ng-template
             #body
             let-transaction>
+            @let requestId = transaction.requestId ?? (transaction.id || transaction.requestNumber);
             <tr
-              [routerLink]="transaction.requestId"
+              [routerLink]="requestId"
               class="cursor-pointer">
               <td class="body-sm">
                 <date-view
-                  [value]="transaction.createdDate || transaction.createdAt"
+                  [value]="transaction.createdDate || transaction.createdAt || transaction.requestDate"
                   format="d MMM yyyy">
                 </date-view>
               </td>
               <td>
-                {{ transaction.requestId ?? transaction.id }}
+                {{ requestId }}
               </td>
 
-              <td>
-                {{ transaction.accountType || transaction.requestType }}
-              </td>
+              @if (type() === 'product' || type() === 'transfer') {
+                <td>
+                  {{ transaction.accountType || transaction.requestType || transaction.transferType }}
+                </td>
+              }
 
               <td>
                 <currency-view
@@ -106,13 +111,12 @@
                   [currency]="transaction.currency || transaction.accountCurrency"
                   size="sm" />
               </td>
-
               <td class="body-sm">
                 <div class="gap-xs flex">
                   @for (
                     step of pendingService.getApprovalSteps(
-                      transaction.requiredApproval,
-                      transaction.approved ?? 0,
+                      transaction.approvalStatus?.totalNumberOfApproval ?? transaction.requiredApproval,
+                      transaction.approvalStatus?.approvedNumber ?? transaction.approved ?? 0,
                       transaction.rejected ?? 0
                     );
                     track $index

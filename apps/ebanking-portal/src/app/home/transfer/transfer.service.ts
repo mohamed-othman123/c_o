@@ -10,6 +10,7 @@ import { LayoutFacadeService } from '@/layout/layout.facade.service';
 import { TranslocoService } from '@jsverse/transloco';
 import { markControlsTouched } from '@scb/ui/input';
 import { Beneficiary } from '../beneficiary/models/models';
+import { PendingRequestsApprovalsService } from '../pending-approvals/pending-approvals.service';
 import {
   CharityItem,
   FrequencyType,
@@ -27,6 +28,7 @@ export class TransferService {
   readonly layoutFacade = inject(LayoutFacadeService);
   readonly translateService = inject(TranslocoService);
   readonly transferData = inject(TransferDataService);
+  readonly pendingService = inject(PendingRequestsApprovalsService);
 
   readonly fromAccount = new FormGroup({
     accountNumber: new FormControl('', { validators: [Validators.required], nonNullable: true }),
@@ -304,15 +306,17 @@ export class TransferService {
     this.step.set('form');
   }
 
-  saveTransfer = () => {
+  saveTransfer = (token: string) => {
+    this.updateToken(token);
     this.loading.set(true);
     this.http
       .post<TransferSaveRes>(`/api/transfer/transfers/create`, this.value())
       .pipe(
         finalize(() => {
-          this.softToken.closeAll();
+          this.softToken.close();
           this.loading.set(false);
           this.layoutFacade.setCanLeave(true);
+          this.pendingService.reloadCountRefreshSignal();
         }),
       )
       .subscribe({

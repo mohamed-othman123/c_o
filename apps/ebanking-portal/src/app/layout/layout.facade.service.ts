@@ -1,4 +1,5 @@
 import { computed, inject, Injectable, linkedSignal, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { PRIMENG_I18N } from '@/core/config/primeng.i18n';
 import { AppLanguage, LayoutStore } from '@/layout/layout-store';
 import { TranslocoService } from '@jsverse/transloco';
@@ -27,6 +28,10 @@ export class LayoutFacadeService {
   readonly isLightTheme = computed(() => this.layoutStore.theme() === 'light');
   readonly isDarkTheme = computed(() => this.layoutStore.theme() === 'dark');
   readonly language = this.layoutStore.language;
+  readonly currentLanguage = toSignal(this.translocoService.langChanges$, {
+    initialValue: this.translocoService.getActiveLang() as AppLanguage,
+  });
+
   readonly isArabic = computed(() => this.language() === 'ar');
   readonly isEnglish = computed(() => this.language() === 'en');
   private readonly storage = inject(StorageService);

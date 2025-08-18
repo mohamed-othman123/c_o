@@ -1,4 +1,4 @@
-import { Component, inject, input, output, signal } from '@angular/core';
+import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { CurrencyView } from '@/core/components';
 import { LinkedAccountDTO, LinkedAccountInfo } from '@/home/cheque-book/chequebook.model';
 import { TranslocoDirective } from '@jsverse/transloco';
@@ -25,6 +25,14 @@ export class LinkedAccountField {
   readonly selectedAccount = signal<LinkedAccountDTO | null>(null);
 
   readonly accountList = signal<LinkedAccountDTO[]>([]);
+  readonly hasInsufficientBalance = computed(() => {
+    const account = this.selectedAccount();
+    if (!account) return false;
+    return account.workingBalance <= 0;
+  });
+  readonly showValidationError = computed(() => {
+    return this.hasInsufficientBalance();
+  });
 
   openDrawer() {
     this.open.set(true);
@@ -52,6 +60,13 @@ export class LinkedAccountField {
   }
 
   accountChange(account: LinkedAccountDTO) {
+    // Update the service with the selected account
+    if (this.type() === 'linked') {
+      this.transfer.setLinkedAccount(account);
+    } else if (this.type() === 'debit') {
+      this.transfer.setFeesAccount(account);
+    }
+
     this.accountSelected.emit({
       type: this.type(),
       accountSelected: account,

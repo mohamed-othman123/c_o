@@ -418,7 +418,7 @@
     "accounts": "الحسابات",
     "currentAccount": "الحساب الجاري",
     "chequeBook": "دفتر الشيكات",
-    "pendingApprovals": "لا توجد بيانات",
+    "pendingApprovals": "الموافقات المعلقة",
     "changePassword": "تغيير كلمة المرور"
   },
   "breadcrumbs": {
@@ -431,7 +431,7 @@
     "certificateDetail": "تفاصيل الشهادة",
     "chequesOut": "الشيكات الصادرة",
     "facilities": "ملخص التسهيلات",
-    "overdraftDetails": "تفاصيل الحد الجاري المدين",
+    "overdraftDetails": "ملخص  الحد جاري مدين",
     "loanDetails": "تفاصيل القرض",
     "lcsDetails": "تفاصيل الاعتماد المستندي",
     "lgsDetails": "تفاصيل خطاب الضمان",
@@ -460,7 +460,7 @@
     "chequeBook": "إدارة دفاتر الشيكات",
     "requestNewChecquebook": "طلب دفتر شيكات جديد",
     "chequeBookDetails": "تفاصيل طلب دفتر الشيكات",
-    "pendingApprovals": "لا توجد بيانات",
+    "pendingApprovals": "الموافقات المعلقة",
     "changePassword": "تغيير كلمة المرور",
     "cheques": "الشيكات"
   },
@@ -863,7 +863,7 @@
     "facilitiesLgs": {
       "title": "خطابات الضمان",
       "filterBy": "تصفية حسب: ",
-      "filterPlaceholder": "نوع خطاب الضمان",
+      "filterPlaceholder": "نوع الخطاب",
       "clearFilter": "مسح الكل",
       "apply": "تطبيق",
       "reset": "إعادة ضبط",
@@ -878,8 +878,8 @@
         "lgType": "نوع خطاب الضمان",
         "lgAmount": "مبلغ خطاب الضمان",
         "cashCover": "الغطاء النقدي",
-        "coverPercentage": "الغطاء النقدي %",
-        "maturityDate": "تاريخ الانتهاء",
+        "coverPercentage": "نسبة الغطاء النقدى",
+        "maturityDate": "تاريخ الاستحقاق",
         "issuanceDate": "تاريخ الإصدار",
         "action": "إجراء"
       },
@@ -914,10 +914,10 @@
       "table": {
         "accountNumber": "رقم الحساب",
         "accountName": "اسم الحساب",
-        "utilizedAmount": "المبلغ المستخدم",
+        "utilizedAmount": "المبلغ المستحق",
         "currency": "العملة",
         "dueAmount": "المبلغ المستحق",
-        "dueDate": "موعد الاستحقاق",
+        "dueDate": "تاريخ الاستحقاق",
         "action": "إجراء",
         "payNowAction": "ادفع الآن"
       },
@@ -1004,7 +1004,7 @@
       "beneficiaryName": "اسم المستفيد",
       "commissionsDebitedAccount": "حساب الخصم الخاص بالعمولات",
       "noOfExtensions": "عدد مد آجال خطاب الضمان",
-      "lgPurpose": "غرض خطاب الضمان",
+      "lgPurpose": "غرض إصدار خطاب الضمان",
       "cashCoverDetails": "تفاصيل الغطاء النقدي",
       "cashCoverAmount": "مبلغ الغطاء النقدي",
       "cashCoverPercentage": "نسبة الغطاء النقدي",
@@ -1027,7 +1027,7 @@
   },
   "overdraftDetailsPage": {
     "upcomingDues": "أجندة الاستحقاقات",
-    "transactionsHistory": "تاريخ المعاملات",
+    "transactionsHistory": "المعاملات",
     "basicDetails": {
       "title": "جاري مدين بضمان ـ منشآت صغيره",
       "lastUpdatedAt": "آخر تحديث",
@@ -1097,10 +1097,10 @@
       "table": {
         "transactionDate": "تاريخ المعاملة",
         "referenceNumber": "الرقم المرجعي",
-        "description": "وصف المعاملة",
+        "description": "وصف المعاملات",
         "debitAmount": "مدين",
         "creditAmount": "دائن",
-        "balanceAfter": "الرصيد النهائي"
+        "balanceAfter": "الرصيد"
       },
       "empty": {
         "apiError": "حدث خطأ ما!",
@@ -1940,6 +1940,16 @@
     "withdraw": "سحب الطلب",
     "productDetails": "تفاصيل المنتج",
     "PENDING": "المعلقة",
+    "noOfChequebook": "عدد دفاتر الشيكات",
+    "leaves": "إجازات",
+    "deliveryBranch": "فرع الاستلام",
+    "fees": "العمولات",
+    "chequebookDetails": "تفاصيل دفتر الشيكات",
+    "transferDetails": "تفاصيل التحويلات",
+    "from": "من",
+    "WITHDRAW": "سحب الطلب",
+    "1W": "1W",
+    "REJECTED": "تم الرفض",
     "depositForm": {
       "creditedPrincipleAccount": "الحساب المُحوَّل إليه أصل المبلغ",
       "sameDebitedAccount": "الحساب المخصوم منه",
@@ -2005,7 +2015,7 @@
       "sameDebitedAccount": "الحساب المخصوم منه",
       "chooseAnotherAccount": "اختر حسابًا آخر",
       "chooseDuration": "اختر المدة",
-      "deductAmount": "المبلغ المخصوم",
+      "deductAmount": "المبلغ",
       "amountHint": "الفائدة الشهرية: %{{percentage}}",
       "submitRequest": "إرسال الطلب",
       "change": "تغيير ",
@@ -2050,9 +2060,12 @@
     "chequeBookDetails": {
       "infoTitle": "تعليمات التحصيل",
       "collectionPeriodTitle": "يرجى العلم",
-      "collectionPeriodText": "يجب على الشخص المفوض (أو ممثل الشركة) التوجه إلى الفرع المحدد لاستلام دفتر الشيكات <span class='font-semibold'>خلال شهرين</span>من تاريخ الطلب.<br>في حال عدم استلام دفتر الشيكات خلال هذه المدة، سيتم  <span class='font-semibold'>إلغاؤه تلقائيًا.</span>",
+      "collectionPeriodText": "يجب على الشخص المفوض (أو ممثل الشركة) التوجه إلى الفرع المحدد لاستلام دفتر الشيكات <span class='font-semibold'>خلال شهرين </span>من تاريخ الطلب.<br>في حال عدم استلام دفتر الشيكات خلال هذه المدة، سيتم  <span class='font-semibold'>إلغاؤه تلقائيًا.</span>",
       "requiredDocsTitle": "يجب على الممثل تقديم ما يلي عند الاستلام",
-      "requiredDocs": ["بطاقة رقم قومي سارية", "تفويض رسمي يثبت أحقيته في استلام دفتر الشيكات نيابة عن الشركة"]
+      "requiredDocs": [
+        "<span class='font-semibold'>بطاقة رقم قومي سارية </span> ",
+        "<span class='font-semibold'>تفويض </span>رسمي يثبت أحقيته في استلام دفتر الشيكات نيابة عن الشركة"
+      ]
     },
     "table": {
       "requestDate": "تاريخ الطلب",
@@ -2079,7 +2092,8 @@
       "tandcrequired": "يرجى إدخال البيانات هنا",
       "notEligible": "يوجد طلب دفتر شيكات قيد المعالجة حاليًا. يمكنك تقديم طلب جديد بمجرد استلام الدفتر الحالي.",
       "invalidToken": "رمز التحقق غير صالح أو منتهي. يُرجى المحاولة مرة أخرى.",
-      "apiFails": "حدث خطأ ما. يرجى المحاولة لاحقًا."
+      "apiFails": "حدث خطأ ما. يرجى المحاولة لاحقًا.",
+      "insufficientBalance": "الرصيد غير كافي"
     },
     "requestStatus": {
       "title": "حالة طلب دفتر الشيكات",
@@ -2104,7 +2118,7 @@
       "requested": "تم الطلب ",
       "requestDate": "تاريخ الطلب",
       "chequesBooks": "عدد دفاتر الشيكات",
-      "leaves": "إجازات",
+      "leaves": "عدد ورق الدفتر",
       "fees": "العمولات",
       "branch": "فرع الاستلام",
       "linkedAccount": "الحساب المرتبط بدفتر الشيكات",
@@ -2117,8 +2131,8 @@
   "pendingApprovals": {
     "allList": "الكل",
     "filterBy": "التصفية حسب",
-    "title": "لا توجد بيانات",
-    "pendingApprovalsTitle": "لا توجد بيانات",
+    "title": "الموافقات المعلقة",
+    "pendingApprovalsTitle": "الموافقات المعلقة",
     "pendingRequestsTitle": "الطلبات المعلقة",
     "transfer": "التحويلات",
     "product": "المنتجات المصرفية",
@@ -2126,6 +2140,7 @@
     "searchOptions": "بحث",
     "transferType": "نوع التحويل",
     "requestType": "نوع الطلب",
+    "searchPlaceholder": "بحث حسب...",
     "tabs": {
       "pending": "الطلبات المعلقة",
       "approved": "الطلبات الموافق عليها",
@@ -2163,32 +2178,32 @@
     "withdrawConfirmation": {
       "title": "معاملة السحب",
       "desc": "هل أنت متأكد أنك تريد سحب هذه المعاملة؟ قد لا يكون من الممكن التراجع عن هذا الإجراء.",
-      "yes": "نعم، سحب",
-      "no": "لا, إلغاء"
+      "yes": "تأكيد",
+      "no": "رجوع"
     },
     "rejectRequest": {
-      "rejectRemark": "Enter Reason of Rejection",
-      "rejectRemarkRequired": "Rejection reason required",
-      "title": "Reject Transaction",
-      "desc": "Please provide a reason for rejecting this transaction",
-      "yes": "Reject",
-      "no": "إلغاء"
+      "rejectRemark": "أدخل سبب الرفض",
+      "rejectRemarkRequired": "سبب الرفض مطلوب",
+      "title": "رفض المعاملة",
+      "desc": "هل أنت متأكد أنك تريد رفض المعاملة؟",
+      "yes": "تأكيد",
+      "no": "رجوع"
     },
     "success": {
-      "title": "Withdraw",
-      "subTitle": "Withdraw successfully."
+      "title": "سحب",
+      "subTitle": "تم السحب بنجاح"
     },
     "withdrawSuccess": {
-      "title": "Withdraw request successful",
-      "subTitle": "Your request has been withdrawn successfully"
+      "title": "تم السحب بنجاح",
+      "subTitle": "تم سحب طلبك بنجاح"
     },
     "rejectSuccess": {
-      "title": "Reject successful",
-      "subTitle": "The request was rejected successfully"
+      "title": "تم الرفض بنجاح",
+      "subTitle": "تم رفض الطلب بنجاح"
     },
     "approvedSuccess": {
-      "title": "Approve successful",
-      "subTitle": "The request was approved successfully"
+      "title": "تمت الموافقة بنجاح",
+      "subTitle": "تمت الموافقة على الطلب بنجاح"
     },
     "error": {
       "apiError": "حدث خطأ ما!",

@@ -172,8 +172,8 @@ export default class ActivateUserContainerComponent {
   }
 
   // This function is an arrow because we have to pass it as an input
-  createPassword = (password: string) => {
-    return this.auService.createPassword({ username: this.au.username(), password });
+  createPassword = (password: string, key: string) => {
+    return this.auService.createPassword({ username: this.au.username(), password, key });
   };
 
   resendOtp() {

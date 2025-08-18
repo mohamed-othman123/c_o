@@ -72,6 +72,7 @@ export class RequestNewChequeBookForm {
   readonly numberOfChequebooks = signal<number | null>(null);
   readonly numberOfLeave = signal<number | null>(null);
   readonly accountNumber = signal<number | null>(null);
+  readonly shouldShowTooltip = signal(true);
 
   readonly chequeBookType = computed(() => {
     return TERMS_AND_CONDITIONS_ID.CHEQUE_BOOK;
@@ -132,6 +133,11 @@ export class RequestNewChequeBookForm {
   constructor() {
     this.form.get('chequebooksIssued')?.valueChanges.subscribe(val => {
       this.numberOfChequebooks.set(val ? Number(val) : null);
+      if (val && Number(val) > 0) {
+        this.shouldShowTooltip.set(false);
+      } else {
+        this.shouldShowTooltip.set(true);
+      }
     });
 
     this.form.get('leavesCount')?.valueChanges.subscribe(val => {
