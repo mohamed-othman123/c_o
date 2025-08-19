@@ -79,25 +79,29 @@
         class="text-xl" />
       <h4 class="mt-sm mb-sm mf-lg font-semibold">
         {{
-          currency() === 'EGP'
-            ? t('empty.title')
-            : currency() === 'USD'
-              ? t('hasNoUsdAccount.title')
-              : type() === 'from'
-                ? t('hasNotReceiveEGPAccount.title')
-                : t('hasOnlyOneForeignAccount.title')
+          shouldShowAdditionalMessage() && currency()
+            ? t('noAdditionalAccount.title', { currency: currency() })
+            : currency() === 'EGP'
+              ? t('empty.title')
+              : currency() === 'USD'
+                ? t('hasNoUsdAccount.title')
+                : type() === 'from'
+                  ? t('hasNotReceiveEGPAccount.title')
+                  : t('hasOnlyOneForeignAccount.title')
         }}
       </h4>
 
       <p class="text-text-tertiary text-sm-sm">
         {{
-          currency() === 'EGP'
-            ? t('empty.subTitle')
-            : currency() === 'USD'
-              ? t('hasNoUsdAccount.subTitle')
-              : type() === 'from'
-                ? t('hasNotReceiveEGPAccount.subTitle')
-                : t('hasOnlyOneForeignAccount.subTitle')
+          shouldShowAdditionalMessage() && currency()
+            ? t('noAdditionalAccount.subTitle', { currency: currency() })
+            : currency() === 'EGP'
+              ? t('empty.subTitle')
+              : currency() === 'USD'
+                ? t('hasNoUsdAccount.subTitle')
+                : type() === 'from'
+                  ? t('hasNotReceiveEGPAccount.subTitle')
+                  : t('hasOnlyOneForeignAccount.subTitle')
         }}
       </p>
     </div>
@@ -164,25 +168,29 @@
               class="text-xl" />
             <h4 class="mt-sm mb-sm mf-lg font-semibold">
               {{
-                currency() === 'EGP'
-                  ? t('empty.title')
-                  : currency() === 'USD'
-                    ? t('hasNoUsdAccount.title')
-                    : type() === 'from'
-                      ? t('hasNotReceiveEGPAccount.title')
-                      : t('hasOnlyOneForeignAccount.title')
+                shouldShowAdditionalMessage() && currency()
+                  ? t('noAdditionalAccount.title', { currency: currency() })
+                  : currency() === 'EGP'
+                    ? t('empty.title')
+                    : currency() === 'USD'
+                      ? t('hasNoUsdAccount.title')
+                      : type() === 'from'
+                        ? t('hasNotReceiveEGPAccount.title')
+                        : t('hasOnlyOneForeignAccount.title')
               }}
             </h4>
 
             <p class="text-text-tertiary text-sm-sm">
               {{
-                currency() === 'EGP'
-                  ? t('empty.subTitle')
-                  : currency() === 'USD'
-                    ? t('hasNoUsdAccount.subTitle')
-                    : type() === 'from'
-                      ? t('hasNotReceiveEGPAccount.subTitle')
-                      : t('hasOnlyOneForeignAccount.subTitle')
+                shouldShowAdditionalMessage() && currency()
+                  ? t('noAdditionalAccount.subTitle', { currency: currency() })
+                  : currency() === 'EGP'
+                    ? t('empty.subTitle')
+                    : currency() === 'USD'
+                      ? t('hasNoUsdAccount.subTitle')
+                      : type() === 'from'
+                        ? t('hasNotReceiveEGPAccount.subTitle')
+                        : t('hasOnlyOneForeignAccount.subTitle')
               }}
             </p>
           </div>

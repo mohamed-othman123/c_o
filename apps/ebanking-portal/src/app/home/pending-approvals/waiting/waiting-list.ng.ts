@@ -1,13 +1,12 @@
 import { CurrencyPipe, DatePipe, DecimalPipe } from '@angular/common';
 import { httpResource } from '@angular/common/http';
 import { ChangeDetectionStrategy, Component, computed, effect, inject, input, signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { CurrencyView, DateView, PaginationData, TablePagination, TableSkeletonComponent } from '@/core/components';
-import { apiStatus, handleParams } from '@/core/models/api';
+import { apiStatus } from '@/core/models/api';
 import { AccountDetailsService } from '@/home/account-details/account-details.service';
 import { LayoutFacadeService } from '@/layout/layout.facade.service';
-import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
+import { TranslocoDirective } from '@jsverse/transloco';
 import { Button } from '@scb/ui/button';
 import { Card } from '@scb/ui/card';
 import { Icon } from '@scb/ui/icon';
@@ -16,9 +15,8 @@ import { PaginatorModule } from 'primeng/paginator';
 import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { TooltipModule } from 'primeng/tooltip';
-import { ActionButtons } from '../action-buttons.ng';
 import { ApprovalProgress } from '../approval-progress.ng';
-import { AllListResponse, mapStatus, PendingApprovalsList } from '../model';
+import { AllListResponse } from '../model';
 import { PendingRequestsApprovalsService } from '../pending-approvals.service';
 import { PendingApprovalFilter } from '../pending-transactions-filter.ng';
 
@@ -46,7 +44,6 @@ import { PendingApprovalFilter } from '../pending-transactions-filter.ng';
     PendingApprovalFilter,
     Button,
     ApprovalProgress,
-    ActionButtons,
     RouterLink,
   ],
   templateUrl: './waiting-list.ng.html',

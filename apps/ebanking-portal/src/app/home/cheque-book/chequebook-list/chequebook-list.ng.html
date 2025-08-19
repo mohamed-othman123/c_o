@@ -192,7 +192,7 @@
                             'text-text-warning': item.status.toLowerCase() !== 'received',
                             'text-text-success': item.status.toLowerCase() === 'received',
                           }">
-                          {{ item.status }}</span
+                          {{ t('statusMap.' + item.status.toLocaleLowerCase()) }}</span
                         >
                       </scb-badge>
                     </div>

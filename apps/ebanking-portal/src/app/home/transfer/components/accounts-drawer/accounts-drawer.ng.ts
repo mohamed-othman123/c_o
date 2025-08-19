@@ -100,6 +100,13 @@ export class AccountsDrawer {
   readonly isLoadingState = input<boolean>(false);
   readonly errorState = input<string | null>(null);
   readonly availableCurrencies = input<string[]>([]);
+  readonly shouldShowAdditionalMessage = computed(() => {
+    const skipAcc = this.skipAccount();
+    const filtered = this.filteredList();
+    const list = this.list();
+
+    return !!skipAcc && filtered.length === 0 && list.length > 0;
+  });
 
   readonly accountListChange = output<AccountDTO[]>();
   readonly refreshRequest = output<{ type: 'from' | 'to'; currency?: string }>();

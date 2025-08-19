@@ -25,6 +25,7 @@ type ResetForm = FormGroup<{
 @Component({
   selector: 'app-reset-password',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [EncryptionService],
   imports: [
     ReactiveFormsModule,
     Card,

@@ -44,7 +44,10 @@ export class AuthenticationController {
     const { accessToken, refreshToken, expiresIn } = this.jwtService.generateTokens({
       username,
       email: 'hatem@corporate.com',
-      roles: ['CHECKER', 'SUPER_USER'],
+      realm_access: {
+        roles: ['SUPER_USER'],
+      },
+      roles: ['MAKER', 'SUPER_USER'],
       companyName: 'AL-Hatem Group',
     });
 

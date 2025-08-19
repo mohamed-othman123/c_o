@@ -5,7 +5,6 @@ import { ToasterService } from '@/core/components';
 import { noScriptsOrHtmlTagsValidator } from '@/core/validators/custom-validators';
 import { LayoutFacadeService } from '@/layout/layout.facade.service';
 import { TranslocoDirective, TranslocoService } from '@jsverse/transloco';
-import { Autofocus } from '@scb/ui/a11y';
 import { Button } from '@scb/ui/button';
 import { FormField, Label, ScbInput } from '@scb/ui/form-field';
 import { Icon } from '@scb/ui/icon';
@@ -16,19 +15,7 @@ import { PendingRequestsApprovalsService } from '../pending-approvals.service';
   selector: 'reject-request-form',
   templateUrl: './reject-request.ng.html',
   providers: [ToasterService],
-  imports: [
-    Button,
-    Icon,
-    TranslocoDirective,
-    Autofocus,
-    TranslocoDirective,
-    Icon,
-    Label,
-    Button,
-    ScbInput,
-    ReactiveFormsModule,
-    FormField,
-  ],
+  imports: [Button, Icon, TranslocoDirective, Icon, Label, Button, ScbInput, ReactiveFormsModule, FormField],
   host: {
     class: 'flex flex-col',
   },

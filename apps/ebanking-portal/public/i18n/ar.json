@@ -219,10 +219,9 @@
   "quickAction": {
     "quickAction": "إجراءات سريعة",
     "instantTransfer": "إجراء تحويل",
-    "timeDeposits": "إنشاء وديعة لأجل",
     "chequeRequest": "طلب دفاتر شيكات",
-    "logout": "تسجيل الخروج",
-    "chequeBook": "إدارة دفاتر الشيكات"
+    "newAccount": "إنشاء حساب جديد",
+    "timeDeposits": "إنشاء وديعة لأجل"
   },
   "dashboard": {
     "dashboardText": "لوحة البيانات",
@@ -1408,6 +1407,10 @@
     "empty": {
       "title": "لا يوجد حسابات",
       "subTitle": "يرجى إضافة حسابات"
+    },
+    "noAdditionalAccount": {
+      "title": "لا توجد حسابات {{currency}} إضافية",
+      "subTitle": "ليس لديك أي حسابات {{currency}} أخرى متاحة للاختيار"
     }
   },
   "transfer": {
@@ -2064,7 +2067,7 @@
       "requiredDocsTitle": "يجب على الممثل تقديم ما يلي عند الاستلام",
       "requiredDocs": [
         "<span class='font-semibold'>بطاقة رقم قومي سارية </span> ",
-        "<span class='font-semibold'>تفويض </span>رسمي يثبت أحقيته في استلام دفتر الشيكات نيابة عن الشركة"
+        "<span class='font-semibold'>تفويض رسمي </span> يثبت أحقيته في استلام دفتر الشيكات نيابة عن الشركة"
       ]
     },
     "table": {
@@ -2126,6 +2129,13 @@
       "accountType": "نوع الحساب",
       "currency": "العملة",
       "feesDebitAccount": "رقم الحساب المخصوم منه الرسوم"
+    },
+    "statusMap": {
+      "under review": "قيد المراجعة",
+      "approved": "تمت الموافقة",
+      "printing": "تم الطباعة",
+      "at branch": "في الفرع",
+      "received": "تم الاستلام"
     }
   },
   "pendingApprovals": {

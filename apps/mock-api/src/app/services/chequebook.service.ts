@@ -19,7 +19,7 @@ export class ChequeBookService {
 
   public generateMockChequeBookRequests(count: number): ChequeBookRequest[] {
     const nicknames = ['John Doe', 'Alice Smith', 'شركة السلام', 'Ahmed 7amada', 'Tech Corp'];
-    const statusLabels: string[] = ['Under Review', 'Approved', 'Printed', 'At Branch Side', 'Received'];
+    const statusLabels: string[] = ['Under Review', 'Approved', 'Printing', 'At Branch', 'Received'];
 
     const currencies = ['EGP', 'USD'];
     const accountTypes = ['Current', 'Saving'];
@@ -157,7 +157,7 @@ I am fully responsible for the Mobile number I have inserted into this applicati
     const day = date.getDate().toString().padStart(2, '0');
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const year = date.getFullYear();
-    return `${day}-${month}-${year}`;
+    return `${year}-${month}-${day}`;
   }
 
   private parseDate(dateStr: string): Date {

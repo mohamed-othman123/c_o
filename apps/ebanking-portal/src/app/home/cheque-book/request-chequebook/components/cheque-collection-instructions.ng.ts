@@ -14,11 +14,11 @@ import { SafeHtmlPipe } from 'primeng/menu';
       class="bg-info-tint mt-4 flex w-full flex-col items-start overflow-hidden rounded-2xl p-4 md:flex-row">
       <!-- Icon -->
       <icon
-        class="w-3xl"
+        class="w-3xl text-[#00518D]"
         name="info-circle"></icon>
 
       <!-- Content -->
-      <div class="mt-2 flex w-full flex-col gap-4 md:mt-0 md:ml-4">
+      <div class="mt-2 flex w-full flex-col gap-4 md:mt-0 ltr:md:ml-4 rtl:md:mr-4">
         <!-- Title -->
         <h2 class="text-text-primary body-lg-s">{{ t('chequeBookDetails.infoTitle') }}</h2>
 
@@ -32,7 +32,7 @@ import { SafeHtmlPipe } from 'primeng/menu';
 
         <!-- Required Documents -->
         <div class="flex flex-col gap-1">
-          <h3 class="body-md font-semibold">{{ t('chequeBookDetails.requiredDocsTitle') }}</h3>
+          <h3 class="body-md">{{ t('chequeBookDetails.requiredDocsTitle') }}</h3>
           <ul class="body-md text-text-primary list-inside list-disc space-y-1">
             @for (doc of t('chequeBookDetails.requiredDocs', { returnObjects: true }); track $index) {
               <li [innerHTML]="doc"></li>

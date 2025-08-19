@@ -29,7 +29,7 @@ import { Icon } from '@scb/ui/icon';
         routerLink="/products/accounts"
         class="gap-md flex w-[50px] cursor-pointer flex-col items-center justify-center text-center sm:w-auto 2xl:w-[50px]">
         <icon name="gov-payment" />
-        <p class="body-sm">{{ t('quickAction.govPayment') }}</p>
+        <p class="body-sm">{{ t('quickAction.newAccount') }}</p>
       </div>
       <div
         routerLink="/products/time-deposits"
